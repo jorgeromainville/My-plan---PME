@@ -52,7 +52,7 @@ font:14px/1.4 system-ui,sans-serif;color:#8A8F8B;text-align:center;}`;
 // Mapa principal: pines por tipo, tamaño según zoom, long-press para crear.
 // La navegación dentro del WebView se bloquea desde el nativo
 // (onShouldStartLoadWithRequest) para que la atribución no saque de la app.
-export function buildMainHtml(centerLat: number, centerLng: number): string {
+export function buildMainHtml(centerLat: number, centerLng: number, zoom = 13): string {
   return `<!DOCTYPE html><html><head><meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no"/>
 <link rel="stylesheet" href="${ML_CSS}"/>
@@ -67,7 +67,7 @@ var map=new maplibregl.Map({
   container:'m',
   style:'${STYLE}',
   center:[${centerLng},${centerLat}],
-  zoom:13,
+  zoom:${zoom},
   attributionControl:{compact:true},
   dragRotate:false,
   pitchWithRotate:false,
@@ -191,7 +191,8 @@ setTimeout(function(){map.resize();},300);
 }
 
 // Mini-mapa con un pin arrastrable. Avisa {type:'move',lat,lng} al soltar o tocar.
-export function buildPickerHtml(lat: number, lng: number): string {
+// `withMarker=false` → mapa neutral (sin punto elegido) para tocar y marcar.
+export function buildPickerHtml(lat: number, lng: number, withMarker = true): string {
   return `<!DOCTYPE html><html><head><meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
 <link rel="stylesheet" href="${ML_CSS}"/>
@@ -206,21 +207,30 @@ var map=new maplibregl.Map({
   container:'m',
   style:'${STYLE}',
   center:[${lng},${lat}],
-  zoom:15,
+  zoom:${withMarker ? 15 : 5},
   attributionControl:{compact:true},
   dragRotate:false,
   pitchWithRotate:false,
   touchPitch:false
 });
 map.touchZoomRotate.disableRotation();
-var mk=new maplibregl.Marker({draggable:true,color:'#E07A5F'}).setLngLat([${lng},${lat}]).addTo(map);
+var mk=null;
 function send(){
+  if(!mk) return;
   var p=mk.getLngLat();
   window.ReactNativeWebView.postMessage(JSON.stringify({type:'move',lat:p.lat,lng:p.lng}));
 }
-mk.on('dragend',send);
-map.on('click',function(e){mk.setLngLat(e.lngLat);send();});
-window.setPoint=function(la,ln){mk.setLngLat([ln,la]);map.jumpTo({center:[ln,la],zoom:15});};
+function put(la,ln){
+  if(!mk){
+    mk=new maplibregl.Marker({draggable:true,color:'#E07A5F'}).setLngLat([ln,la]).addTo(map);
+    mk.on('dragend',send);
+  } else {
+    mk.setLngLat([ln,la]);
+  }
+}
+${withMarker ? 'put(' + lat + ',' + lng + ');' : ''}
+map.on('click',function(e){put(e.lngLat.lat,e.lngLat.lng);send();});
+window.setPoint=function(la,ln){put(la,ln);map.jumpTo({center:[ln,la],zoom:15});};
 setTimeout(function(){map.resize();},300);
 }catch(err){boom('No se pudo iniciar el mapa: '+err);}}
 </script></body></html>`;

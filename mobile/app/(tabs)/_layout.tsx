@@ -35,8 +35,8 @@ export default function TabsLayout() {
         tabBarLabelStyle: { fontSize: 11, fontWeight: '700' },
       }}
     >
-      <Tabs.Screen name="index" options={{ title: 'Inicio', tabBarIcon: () => <Text>⊞</Text> }} />
-      <Tabs.Screen name="mapa" options={{ title: 'Mapa', tabBarIcon: () => <Text>◎</Text> }} />
+      <Tabs.Screen name="index" options={{ title: 'Inicio', tabBarIcon: () => <Text style={styles.tabIcon}>🏠</Text> }} />
+      <Tabs.Screen name="mapa" options={{ title: 'Mapa', tabBarIcon: () => <Text style={styles.tabIcon}>🗺️</Text> }} />
       <Tabs.Screen
         name="plus"
         options={{
@@ -44,8 +44,8 @@ export default function TabsLayout() {
           tabBarButton: () => <CenterButton />,
         }}
       />
-      <Tabs.Screen name="planificador" options={{ title: 'Planificador', tabBarIcon: () => <Text>📅</Text> }} />
-      <Tabs.Screen name="estadisticas" options={{ title: 'Estadísticas', tabBarIcon: () => <Text>📈</Text> }} />
+      <Tabs.Screen name="planificador" options={{ title: 'Planificador', tabBarIcon: () => <Text style={styles.tabIcon}>📅</Text> }} />
+      <Tabs.Screen name="estadisticas" options={{ title: 'Estadísticas', tabBarIcon: () => <Text style={styles.tabIcon}>📈</Text> }} />
     </Tabs>
   );
 }
@@ -73,4 +73,5 @@ const styles = StyleSheet.create({
     elevation: 4,
   },
   plusTxt: { color: '#fff', fontSize: 34, lineHeight: 34, fontWeight: '400' },
+  tabIcon: { fontSize: 20 },
 });

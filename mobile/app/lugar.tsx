@@ -10,6 +10,8 @@ import { createPlace, deletePlace, getPlace, updatePlace, DEFAULT_PLACE_CATS } f
 import { colors } from '../src/theme/colors';
 
 // Formulario de lugar: punto arrastrable (MapLibre + OpenFreeMap) + categorías con color.
+const PERU = { lat: -9.19, lng: -75.0152 };
+
 export default function LugarForm() {
   const router = useRouter();
   const pickWeb = useRef<WebView>(null);
@@ -67,13 +69,6 @@ export default function LugarForm() {
     }
   }
 
-  function setLima() {
-    setLat(-12.0464);
-    setLng(-77.0428);
-    if (lat == null || lng == null) setMapKey((k) => k + 1);
-    else pickWeb.current?.injectJavaScript('window.setPoint(-12.0464,-77.0428);true;');
-  }
-
   function onPickMsg(e: WebViewMessageEvent) {
     try {
       const m = JSON.parse(e.nativeEvent.data);
@@ -86,8 +81,9 @@ export default function LugarForm() {
     }
   }
 
+  // Siempre hay mapa: si aún no hay punto, se muestra neutral para tocarlo.
   const pickerHtml = useMemo(
-    () => (lat != null && lng != null ? buildPickerHtml(lat, lng) : null),
+    () => buildPickerHtml(lat ?? PERU.lat, lng ?? PERU.lng, lat != null && lng != null),
     // solo se reconstruye al montar (mapKey); los arrastres no remontan
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [mapKey],
@@ -170,7 +166,7 @@ export default function LugarForm() {
         </View>
 
         <Text style={s.label}>Punto en el mapa *</Text>
-        {lat != null && lng != null && pickerHtml ? (
+        {pickerHtml ? (
           <WebView
             key={mapKey}
             ref={pickWeb}
@@ -184,15 +180,13 @@ export default function LugarForm() {
             originWhitelist={['*']}
             scrollEnabled={false}
           />
-        ) : (
-          <Text style={s.hint}>Sin punto. Usa tu ubicación o toca "Lima" para empezar.</Text>
-        )}
+        ) : null}
+        {lat == null ? (
+          <Text style={s.hint}>Toca el mapa para marcar el punto o usa «Mi ubicación».</Text>
+        ) : null}
         <View style={s.row}>
           <Pressable onPress={useMine} style={s.mini} disabled={locating}>
             <Text style={s.miniTxt}>{locating ? '…' : '📍'} Mi ubicación</Text>
-          </Pressable>
-          <Pressable onPress={setLima} style={s.miniGhost}>
-            <Text style={s.miniGhostTxt}>Lima</Text>
           </Pressable>
         </View>
 
@@ -253,8 +247,6 @@ const s = StyleSheet.create({
   hint: { color: colors.muted, fontSize: 12, marginBottom: 8 },
   mini: { flex: 1, backgroundColor: colors.primary, borderRadius: 12, padding: 12, alignItems: 'center' },
   miniTxt: { color: '#fff', fontWeight: '800' },
-  miniGhost: { borderWidth: 1, borderColor: colors.line, borderRadius: 12, padding: 12, alignItems: 'center' },
-  miniGhostTxt: { color: colors.muted, fontWeight: '700' },
   error: { color: colors.danger, marginTop: 12 },
   btn: { marginTop: 18, backgroundColor: colors.purple, borderRadius: 14, padding: 15, alignItems: 'center' },
   btnTxt: { color: '#fff', fontWeight: '800' },

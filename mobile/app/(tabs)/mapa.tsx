@@ -16,7 +16,8 @@ import { colors } from '../../src/theme/colors';
 // Nota en src/components/mapHtml.ts.
 
 const FILTERS = ['Todos', 'Personas', 'Lugares', 'Amigos', 'Clientes', 'Proveedores', 'Familia', 'Trabajo', 'Casa'];
-const LIMA = { lat: -12.0464, lng: -77.0428 };
+// Centro neutral hasta que llegue tu ubicación o los pines (sin ciudades fijas).
+const PERU = { lat: -9.19, lng: -75.0152 };
 
 // Mapa a sangre completa (WebView absoluto + controles flotando encima):
 // buscador + filtros + pines por tipo + tarjeta + mi ubicación + crear con mantener presionado.
@@ -35,8 +36,9 @@ export default function Mapa() {
   const [sel, setSel] = useState<MapItem | null>(null);
   const [pending, setPending] = useState<{ lat: number; lng: number } | null>(null);
   const [error, setError] = useState('');
+  const [locating, setLocating] = useState(false);
 
-  const html = useMemo(() => buildMainHtml(LIMA.lat, LIMA.lng), []);
+  const html = useMemo(() => buildMainHtml(PERU.lat, PERU.lng, 5), []);
 
   // Color real de cada categoría de contacto (una sola carga, se cachea).
   async function ensureCatColors() {
@@ -143,19 +145,35 @@ export default function Mapa() {
     else web.current?.injectJavaScript('window.clearPick();true;');
   }, [pending]);
 
+  // Botón "mi ubicación": pinta al instante la última posición conocida y luego
+  // afina con la exacta (antes solo centraba una vez al abrir la pestaña).
   async function goMine() {
+    if (locating) return;
+    setLocating(true);
+    setError('');
     try {
       const { status } = await Location.requestForegroundPermissionsAsync();
       if (status !== 'granted') {
         setError('Permiso de ubicación denegado.');
         return;
       }
-      const pos = await Location.getCurrentPositionAsync({});
-      web.current?.injectJavaScript(
-        `window.showMine(${pos.coords.latitude},${pos.coords.longitude});true;`,
-      );
+      const last = await Location.getLastKnownPositionAsync().catch(() => null);
+      if (last && ready.current) {
+        web.current?.injectJavaScript(
+          `window.showMine(${last.coords.latitude},${last.coords.longitude});true;`,
+        );
+      }
+      const pos = await Location.getCurrentPositionAsync({}).catch(() => null);
+      if (pos && ready.current) {
+        web.current?.injectJavaScript(
+          `window.showMine(${pos.coords.latitude},${pos.coords.longitude});true;`,
+        );
+      }
+      if (!pos && !last) setError('No se pudo obtener tu ubicación.');
     } catch {
       setError('No se pudo obtener tu ubicación.');
+    } finally {
+      setLocating(false);
     }
   }
 
@@ -202,7 +220,7 @@ export default function Mapa() {
         </View>
 
         <Pressable onPress={goMine} style={s.mine} accessibilityLabel="Mi ubicación">
-          <Text style={s.mineTxt}>◎</Text>
+          <Text style={s.mineTxt}>{locating ? '…' : '🎯'}</Text>
         </Pressable>
         <View style={s.zoom}>
           <Pressable
