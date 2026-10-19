@@ -1,0 +1,32 @@
+{
+  "name": "Planner Today",
+  "slug": "planner-today",
+  "version": "0.1.0",
+  "scheme": "plannertoday",
+  "orientation": "portrait",
+  "icon": "./assets/icon.png",
+  "userInterfaceStyle": "automatic",
+  "splash": {
+    "backgroundColor": "#FAF6EF"
+  },
+  "ios": {
+    "supportsTablet": true,
+    "bundleIdentifier": "com.plannertoday.app"
+  },
+  "android": {
+    "package": "com.plannertoday.app",
+    "adaptiveIcon": {
+      "backgroundColor": "#FAF6EF"
+    }
+  },
+  "plugins": [
+    "expo-router",
+    "@react-native-community/datetimepicker",
+    "expo-localization",
+    "expo-camera",
+    "expo-notifications"
+  ],
+  "experiments": {
+    "typedRoutes": true
+  }
+}

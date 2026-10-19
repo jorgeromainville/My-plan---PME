@@ -1,0 +1,306 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// Fase 1: modelo completo para no reconstruir después.
+// Cada tabla lleva userId para separación total por usuario.
+
+model User {
+  id           String   @id @default(cuid())
+  name         String
+  email        String   @unique
+  passwordHash String
+  phone        String?
+  currency     String   @default("PEN")
+  theme        String   @default("auto")
+  weekStartsOn String   @default("monday")
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  contacts          Contact[]
+  contactCategories ContactCategory[]
+  incomes           Income[]
+  expenses          Expense[]
+  expenseCategories ExpenseCategory[]
+  tasks             Task[]
+  events            Event[]
+  goals             Goal[]
+  goalLogs          GoalLog[]
+  places            Place[]
+  attachments       Attachment[]
+  notifications     Notification[]
+  settings          Setting[]
+  refreshTokens     RefreshToken[]
+
+  @@index([email])
+}
+
+model RefreshToken {
+  id        String   @id @default(cuid())
+  userId    String
+  tokenHash String
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+}
+
+model ContactCategory {
+  id     String @id @default(cuid())
+  userId String
+  name   String
+  color  String?
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, name])
+}
+
+model Contact {
+  id             String    @id @default(cuid())
+  userId         String
+  firstName      String
+  lastName       String?
+  phone          String?
+  whatsapp       String?
+  email          String?
+  address        String?
+  latitude       Float?
+  longitude      Float?
+  category       String    @default("Otros")
+  notes          String?
+  lastContactAt  DateTime?
+  nextContactAt  DateTime?
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+  user           User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  incomeItems      Income[]    @relation("IncomeClient")
+  events         Event[]   @relation("EventContacts")
+
+  @@index([userId, nextContactAt])
+  @@index([userId, category])
+}
+
+model Income {
+  id          String   @id @default(cuid())
+  userId      String
+  date        DateTime
+  title       String // producto, servicio u otro ingreso
+  category    String   @default("General")
+  quantity    Float    @default(1)
+  unitPrice   Float
+  total       Float // calculado: quantity x unitPrice
+  clientId    String?
+  payMethod   String   @default("Efectivo") // Efectivo|Yape|Plin|Tarjeta|Transferencia|Otro
+  note        String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  client      Contact? @relation("IncomeClient", fields: [clientId], references: [id], onDelete: SetNull)
+  items       IncomeItem[]
+
+  @@index([userId, date])
+}
+
+model IncomeItem {
+  id        String @id @default(cuid())
+  incomeId  String
+  title     String
+  quantity  Float
+  unitPrice Float
+  total     Float
+  income    Income @relation(fields: [incomeId], references: [id], onDelete: Cascade)
+}
+
+model ExpenseCategory {
+  id     String @id @default(cuid())
+  userId String
+  name   String
+  color  String?
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, name])
+}
+
+model Expense {
+  id        String   @id @default(cuid())
+  userId    String
+  date      DateTime
+  title     String
+  category  String   @default("Otros")
+  amount    Float
+  kind      String   @default("variable") // fijo | variable
+  note      String?
+  createdAt DateTime @default(now())
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, date])
+  @@index([userId, category])
+}
+
+model Task {
+  id          String   @id @default(cuid())
+  userId      String
+  title       String
+  date        DateTime
+  time        String?
+  priority    String   @default("media") // baja | media | alta
+  category    String   @default("General")
+  description String?
+  status      String   @default("pendiente") // pendiente | en_progreso | completada
+  contactId   String?
+  goalId      String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, date])
+  @@index([userId, status])
+}
+
+model Event {
+  id          String    @id @default(cuid())
+  userId      String
+  title       String
+  type        String    @default("Evento") // Evento | Reunión | Personal | Trabajo | Otro
+  color       String?
+  isBackup    Boolean   @default(false) // plan respaldo: se ve opaco y va después
+  date        DateTime
+  startTime   String
+  endTime     String
+  location    String?
+  placeId     String?
+  description String? // reporte / notas
+  notifyMins  Int       @default(30)
+  repeat      String    @default("none") // none|daily|weekly|monthly|mon_wed|tue_thu|mon_wed_fri|weekdays|weekends
+  repeatUntil DateTime? // fecha límite de la repetición (opcional)
+  goalId      String? // meta de horas a la que suma este evento
+  goal        Goal?     @relation(fields: [goalId], references: [id], onDelete: SetNull)
+  done        Boolean   @default(false) // check manual (el auto es por hora pasada)
+  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  contacts    Contact[] @relation("EventContacts")
+  place       Place?    @relation(fields: [placeId], references: [id], onDelete: SetNull)
+
+  @@index([userId, date])
+}
+
+model Goal {
+  id         String    @id @default(cuid())
+  userId     String
+  title      String
+  kind       String    // ventas | contactos | tareas | horas | custom
+  filter     String?   // ej. categoría de contactos a contar
+  members    String?   // JSON: ids de contactos elegidos (metas de contactos)
+  period     String    // day | week | month
+  target     Float
+  current    Float     @default(0)
+  unit       String    @default("u")
+  deadline   DateTime?
+  status     String    @default("activa") // activa | completada (pausada retirado)
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
+  user       User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  logs       GoalLog[]
+  events     Event[]
+
+  @@index([userId, period])
+}
+
+model GoalLog {
+  id        String   @id @default(cuid())
+  goalId    String
+  userId    String
+  date      DateTime @default(now())
+  amount    Float
+  note      String?
+  createdAt DateTime @default(now())
+  goal      Goal     @relation(fields: [goalId], references: [id], onDelete: Cascade)
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([goalId, date])
+  @@index([userId, date])
+}
+
+model Place {
+  id        String   @id @default(cuid())
+  userId    String
+  name      String
+  category  String   @default("Personalizado")
+  address   String?
+  latitude  Float?
+  longitude Float?
+  note      String?
+  color     String?
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  events    Event[]
+
+  @@index([userId, category])
+}
+
+model Attachment {
+  id        String   @id @default(cuid())
+  userId    String
+  ownerType String // contact | income | expense | task | event | place
+  ownerId   String
+  url       String
+  mime      String?
+  createdAt DateTime @default(now())
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, ownerType, ownerId])
+}
+
+model Notification {
+  id        String   @id @default(cuid())
+  userId    String
+  type      String // task | event | followup | goal | reminder
+  title     String
+  body      String
+  fireAt    DateTime
+  sent      Boolean  @default(false)
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, fireAt])
+}
+
+model DailyStat {
+  id           String   @id @default(cuid())
+  userId       String
+  day          DateTime @db.Date
+  salesTotal   Float    @default(0)
+  expensesTotal Float   @default(0)
+  tasksDone    Int      @default(0)
+  workHours    Float    @default(0)
+  studyHours   Float    @default(0)
+  eventsDone   Int      @default(0)
+  productivity Float    @default(0)
+
+  @@unique([userId, day])
+}
+
+model WeeklyStat {
+  id           String   @id @default(cuid())
+  userId       String
+  weekStart    DateTime @db.Date
+  salesTotal   Float    @default(0)
+  expensesTotal Float   @default(0)
+  tasksDone    Int      @default(0)
+  productivity Float    @default(0)
+
+  @@unique([userId, weekStart])
+}
+
+model Setting {
+  id     String @id @default(cuid())
+  userId String
+  key    String
+  value  String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, key])
+}

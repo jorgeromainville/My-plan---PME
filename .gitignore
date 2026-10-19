@@ -1,0 +1,28 @@
+# Dependencias
+node_modules/
+
+# Expo / Metro
+.expo/
+.expo-shared/
+web-build/
+dist/
+
+# Compilados del backend
+backend/dist/
+
+# Variables de entorno (secretos: GEMINI_API_KEY, OCRSPACE_KEY, Google Maps)
+.env
+.env.*
+!.env.example
+
+# Fotos y archivos subidos en local
+backend/uploads/
+
+# Logs
+*.log
+npm-debug.log*
+yarn-error.log*
+
+# Sistema
+.DS_Store
+Thumbs.db
