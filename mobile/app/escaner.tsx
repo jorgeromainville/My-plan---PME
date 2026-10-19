@@ -1,4 +1,5 @@
 import { CameraView, useCameraPermissions } from 'expo-camera';
+import * as FileSystem from 'expo-file-system/legacy';
 import { useRouter } from 'expo-router';
 import React, { useEffect, useRef, useState } from 'react';
 import { Image, Pressable, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
@@ -25,6 +26,14 @@ function normTime(t: string): string | null {
   return `${String(h).padStart(2, '0')}:${String(min).padStart(2, '0')}`;
 }
 
+// La foto del horario es temporal: se borra al repetir y al salir de la pantalla.
+function discardPhoto(uri: string | null) {
+  if (!uri) return;
+  FileSystem.deleteAsync(uri, { idempotent: true }).catch(() => {
+    // ya no existe o no se puede borrar: no molesta
+  });
+}
+
 // Escáner de horarios: foto → OCR → clases editables → eventos semanales.
 // También acepta texto pegado (por si la foto sale mal).
 export default function Escaner() {
@@ -38,7 +47,6 @@ export default function Escaner() {
   const [showRaw, setShowRaw] = useState(false);
   const [pasted, setPasted] = useState('');
   const [rows, setRows] = useState<Row[]>([]);
-  const [imageUrl, setImageUrl] = useState<string | undefined>(undefined);
   // Fin de la repetición: "AAAA-MM-DD" que sale del calendario nativo; '' = +4 meses.
   // (Antes era texto libre: un "2027 10 24" con espacios reventaba al convertir a fecha.)
   const [until, setUntil] = useState('');
@@ -47,6 +55,13 @@ export default function Escaner() {
   const [tick, setTick] = useState(0);
   const [aiOn, setAiOn] = useState<boolean | null>(null);
   const [fact, setFact] = useState('');
+
+  // La foto vive solo en la caché del celular mientras esta pantalla está abierta.
+  const photoRef = useRef<string | null>(null);
+  useEffect(() => {
+    photoRef.current = photo;
+  }, [photo]);
+  useEffect(() => () => discardPhoto(photoRef.current), []);
 
   // ¿La IA del escáner está configurada? (indica si conviene activarla)
   useEffect(() => {
@@ -103,7 +118,8 @@ export default function Escaner() {
         setPhoto(uri);
         setRaw('');
         setRows([]);
-        setImageUrl(undefined);
+        discardPhoto(photoRef.current);
+        if (p.uri !== uri) discardPhoto(p.uri);
         setDone(0);
       }
     } catch {
@@ -117,8 +133,10 @@ export default function Escaner() {
     if (!photo || busy) return;
     try {
       const { manipulateAsync, SaveFormat } = await import('expo-image-manipulator');
+      const old = photo;
       const r = await manipulateAsync(photo, [{ rotate: 90 }], { compress: 0.7, format: SaveFormat.JPEG });
       setPhoto(r.uri);
+      discardPhoto(old);
     } catch {
       setError('No se pudo girar la foto.');
     }
@@ -131,7 +149,6 @@ export default function Escaner() {
     try {
       const r = await uploadScan(photo);
       setRaw(r.text);
-      setImageUrl(r.imageUrl);
       setAiOn(r.ai ?? false);
       // Preferimos lo que entendió la IA; si no hay, parser de reglas local.
       const cands = r.candidates?.length ? r.candidates : parseScheduleText(r.text);
@@ -210,7 +227,6 @@ export default function Escaner() {
       const n = await createScannedEvents(
         rows.map((r) => ({ title: r.title.trim(), weekday: r.weekday, start: normTime(r.start)!, end: normTime(r.end)! })),
         untilISO,
-        imageUrl,
       );
       setDone(n);
     } catch (e) {
@@ -260,7 +276,7 @@ export default function Escaner() {
               <>
                 <Image source={{ uri: photo }} style={s.preview} resizeMode="contain" />
                 <View style={s.row}>
-                  <Pressable style={s.miniGhost} onPress={() => { setPhoto(null); setRows([]); setRaw(''); }}>
+                  <Pressable style={s.miniGhost} onPress={() => { discardPhoto(photo); setPhoto(null); setRows([]); setRaw(''); }}>
                     <Text style={s.miniGhostTxt}>Repetir</Text>
                   </Pressable>
                   <Pressable style={s.miniGhost} onPress={rotatePhoto} disabled={!!busy} accessibilityLabel="Girar 90 grados">
@@ -371,7 +387,7 @@ export default function Escaner() {
 
         {done > 0 ? (
           <View style={s.ok}>
-            <Text style={s.okT}>✓ {done} eventos creados en tu planificador{imageUrl ? ', con la foto de referencia' : ''}.</Text>
+            <Text style={s.okT}>✓ {done} eventos creados en tu planificador.</Text>
             <Pressable style={s.mini} onPress={() => router.replace('/planificador')}>
               <Text style={s.miniTxt}>Ver planificador</Text>
             </Pressable>

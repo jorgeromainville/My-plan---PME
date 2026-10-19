@@ -32,7 +32,6 @@ model User {
   goals             Goal[]
   goalLogs          GoalLog[]
   places            Place[]
-  attachments       Attachment[]
   notifications     Notification[]
   settings          Setting[]
   refreshTokens     RefreshToken[]
@@ -240,19 +239,6 @@ model Place {
   events    Event[]
 
   @@index([userId, category])
-}
-
-model Attachment {
-  id        String   @id @default(cuid())
-  userId    String
-  ownerType String // contact | income | expense | task | event | place
-  ownerId   String
-  url       String
-  mime      String?
-  createdAt DateTime @default(now())
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-
-  @@index([userId, ownerType, ownerId])
 }
 
 model Notification {

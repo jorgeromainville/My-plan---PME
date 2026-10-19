@@ -2,7 +2,6 @@ import cors from 'cors';
 import express from 'express';
 import helmet from 'helmet';
 import morgan from 'morgan';
-import path from 'node:path';
 import { asyncHandler } from './middleware/asyncHandler';
 import { requireAuth } from './middleware/auth';
 import { errorHandler } from './middleware/errorHandler';
@@ -16,7 +15,7 @@ import { financeSummary } from './controllers/finance.controller';
 import { goalsRoutes } from './routes/goals.routes';
 import { incomesRoutes } from './routes/incomes.routes';
 import { settingsRoutes } from './routes/settings.routes';
-import { attachmentsRoutes, scannerRoutes } from './routes/scanner.routes';
+import { scannerRoutes } from './routes/scanner.routes';
 import { placesRoutes } from './routes/places.routes';
 import { statsRoutes } from './routes/stats.routes';
 import { tasksRoutes } from './routes/tasks.routes';
@@ -45,8 +44,6 @@ export function buildApp() {
   app.use('/api/stats', statsRoutes);
   app.use('/api/places', placesRoutes);
   app.use('/api/scanner', scannerRoutes);
-  app.use('/api/attachments', attachmentsRoutes);
-  app.use('/uploads', express.static(path.join(process.cwd(), 'uploads')));
 
   // Placeholders Fase 7-8: montan aquí places.
   app.get('/api', (_req, res) => res.json({ name: 'Planner Today API', version: '0.1.0' }));

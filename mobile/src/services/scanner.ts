@@ -7,7 +7,6 @@ const BASE = API_BASE;
 
 export interface ScanResult {
   text: string;
-  imageUrl: string; // relativa, ej. /uploads/scans/x.jpg
   candidates?: ScheduleCandidate[]; // clases ya estructuradas por la IA
   ai?: boolean; // true = respondió la IA
   aiError?: string; // motivo si la IA falló
@@ -67,17 +66,16 @@ export async function uploadScan(photoUri: string): Promise<ScanResult> {
   return JSON.parse(res.body) as ScanResult;
 }
 
-// Crea un evento semanal por candidato + adjunta la foto del horario a cada uno.
+// Crea un evento semanal por candidato. La foto del horario no se guarda:
+// solo se usa en memoria para leerla.
 export async function createScannedEvents(
   cands: ScheduleCandidate[],
   repeatUntil?: string | null,
-  imageUrl?: string,
 ): Promise<number> {
   const until = repeatUntil === undefined ? defaultSemesterEnd() : repeatUntil;
-  const fullUrl = imageUrl ? BASE + imageUrl : undefined;
   let n = 0;
   for (const c of cands) {
-    const ev = await createEvent({
+    await createEvent({
       title: c.title,
       type: 'Estudio',
       isBackup: false,
@@ -91,18 +89,6 @@ export async function createScannedEvents(
       contactIds: [],
     });
     n += 1;
-    if (fullUrl) {
-      await api(
-        '/api/attachments',
-        {
-          method: 'POST',
-          body: JSON.stringify({ ownerType: 'event', ownerId: ev.id, url: fullUrl, mime: 'image/jpeg' }),
-        },
-        await storage.getToken(),
-      ).catch(() => {
-        // el evento ya quedó; el adjunto es referencia
-      });
-    }
   }
   return n;
 }

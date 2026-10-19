@@ -27,7 +27,6 @@ export default function NuevoRegistro() {
     if (key === 'meta') return router.push('/meta');
     if (key === 'lugar') return router.push('/lugar');
     if (key === 'escaner') return router.push('/escaner');
-    // lugar, galería → Fases 7, 8
   }
   return (
     <SafeAreaView style={s.safe}>
@@ -59,16 +58,6 @@ export default function NuevoRegistro() {
             </Pressable>
           ))}
         </View>
-        <Pressable style={s.gallery}>
-          <View style={s.gIcon}>
-            <Text>🖼️</Text>
-          </View>
-          <View style={{ flex: 1 }}>
-            <Text style={s.gTitle}>Agregar desde la galería</Text>
-            <Text style={s.gSub}>Guardar una foto o documento</Text>
-          </View>
-          <Text>›</Text>
-        </Pressable>
       </ScrollView>
     </SafeAreaView>
   );
@@ -91,8 +80,4 @@ const s = StyleSheet.create({
   icon: { fontSize: 26 },
   cardTitle: { fontSize: 17, fontWeight: '800', color: colors.text },
   cardSub: { fontSize: 12, color: colors.muted, marginTop: 2 },
-  gallery: { marginTop: 12, backgroundColor: '#fff', borderRadius: radius.lg, padding: 14, flexDirection: 'row', alignItems: 'center', gap: 12 },
-  gIcon: { width: 52, height: 52, borderRadius: 14, backgroundColor: colors.blueBg, alignItems: 'center', justifyContent: 'center' },
-  gTitle: { fontWeight: '800', color: colors.text },
-  gSub: { color: colors.muted, fontSize: 12 },
 });

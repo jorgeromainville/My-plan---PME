@@ -15,7 +15,7 @@ versiones que se fijaron manualmente y por qué, y decisiones pendientes del usu
 ## Dónde estamos
 
 - **Fase 1 terminada** (ver `FASES.md`). App corre en Expo Go, backend `/health` OK.
-- **Siguiente:** Fase 8 — Avanzadas (adjuntos, push, offline, producción).
+- **Siguiente:** Fase 8 — Avanzadas (push, seguridad/tema, producción).
 - **Bloqueo abierto:** Postgres local rechaza usuario `planner` → sin `prisma migrate`. Decisión del usuario: omitir DB por ahora.
 
 ## Stack real (no el planeado)
@@ -146,9 +146,10 @@ versiones que se fijaron manualmente y por qué, y decisiones pendientes del usu
 13. Pager de 3 páginas + zoom con `PanResponder` de 2 dedos (sin librerías); `layoutDay` acepta `zoom`.
 14. Gestos nativos (`gesture-handler` 2.32 + `reanimated` 4.5 + `worklets`, incluidos en Expo Go): regla de oro — nunca `ref.current =` en objetos capturados por worklets, todo mutable en `useSharedValue`; `GestureHandlerRootView` en `_layout`.
 15. REVERT 2026-10-08: los WARN de worklets (`ref.current` y `shared.value` en render) no compensaban → fuera las 4 libs; pager manual + candado, zoom con botones, `PanResponder` con captura y salvavidas. Reintentarlo solo con planeación dedicada.
-16. Offline (2026-10-19): `syncCore.ts` (puro, probado con tsx: 14/14) + `sync.ts` (cola en `@planner/pendingOps` + `@planner/idMap`). `api.ts` cachea los GET en `@planner/cache:<ruta>` (timeout 8 s; escáner 60 s) y encola POST/PATCH/DELETE de entidades. **Solo cuerpos JSON**: escáner/adjuntos (FormData) y `/api/auth/*` necesitan conexión. Los endpoints derivados (`/api/finance/summary`, `/api/stats/overview`) se cachean pero **no** se recalculan con la cola; `/api/places/map/items` sí tiene overlay propio (`applyMapOverlay`). Al cerrar sesión se borran caché + cola + idMap. Sin LWW por `updatedAt`: un solo dispositivo, la cola FIFO ya deja el último cambio.
+16. Offline (2026-10-19): `syncCore.ts` (puro, probado con tsx: 14/14) + `sync.ts` (cola en `@planner/pendingOps` + `@planner/idMap`). `api.ts` cachea los GET en `@planner/cache:<ruta>` (timeout 8 s; escáner 60 s) y encola POST/PATCH/DELETE de entidades. **Solo cuerpos JSON**: escáner (FormData) y `/api/auth/*` necesitan conexión. Los endpoints derivados (`/api/finance/summary`, `/api/stats/overview`) se cachean pero **no** se recalculan con la cola; `/api/places/map/items` sí tiene overlay propio (`applyMapOverlay`). Al cerrar sesión se borran caché + cola + idMap. Sin LWW por `updatedAt`: un solo dispositivo, la cola FIFO ya deja el último cambio.
 17. Mapa en Android: el WebView emite `touchcancel` a los ~500 ms al abrir el menú de selección y mataba el pulsado largo de 650 ms → se quitó ese listener, se puso `-webkit-touch-callout/user-select:none` y umbral de 12 px (ahora 550 ms). El botón "crear punto" vive en `pending` y navega a `/lugar?lat&lng`.
 18. `rewritePath` debe mapear **por segmentos**: reemplazar subcadenas hacía que `tmp_1` corrompiera `tmp_15`. La cola deduplica POST idénticos (mismo path+cuerpo) dentro de 15 min: un doble toque por falta de feedback creaba N eventos; Perfil → "Descartar pendientes" vacía la cola. Los datos curiosos del escáner están en `mobile/src/data/funFacts.ts` (8 % de guiños).
+19. Adjuntos **descartados** (2026-10-19): el escáner ya no escribe la foto (ni en el PC ni en la BD). `POST /api/scanner/ocr` recibe el `Buffer` en memoria (OCR.space y Gemini lo aceptan así), no devuelve `imageUrl`, y la tabla `Attachment`/`/api/attachments`/`backend/uploads` se eliminaron (migración `20261019000000_drop_attachment`). En el celular, `escaner.tsx` borra la foto temporal al repetir y al desmontar (`FileSystem.deleteAsync`).
 
 ## Pendientes concretos
 
@@ -158,6 +159,6 @@ versiones que se fijaron manualmente y por qué, y decisiones pendientes del usu
 - [ ] Iniciar git en la raíz (`git init`, primer commit de Fase 1)
 - [ ] Acceso invitado local + botón Google "Próximamente" (decidido 2026-10-06)
 - [x] IP LAN automática (2026-10-16): `api.ts` deriva el host de Metro (`expoConfig.hostUri`) → la app sigue al Wi-Fi sin tocar `.env`. La IP se ve en Perfil ("Servidor: …").
-- [x] APIs externas en planner: Nager.Date (feriados) + Open-Meteo (clima). Resto (Fixer, Nominatim, adjuntos, validación, GCal) en Fase 8/9.
+- [x] APIs externas en planner: Nager.Date (feriados) + Open-Meteo (clima). Resto (Fixer, Nominatim, validación, GCal) en Fase 8/9.
 - [x] Mapa: **MapLibre GL + OpenFreeMap** en WebView (`mobile/src/components/mapHtml.ts`). OpenFreeMap = gratis, sin API key, sin límite de peticiones y **con uso comercial permitido** (lo que hace falta para Play Store). Se descartaron: **Esri World Street Map** y **MapTiler free** (ambos solo uso NO comercial; MapTiler comercial = $30/mes) y **CARTO** (pide key). La key de Google **ya existe** en `mobile/.env` (`EXPO_PUBLIC_GOOGLE_MAPS_KEY`), pero el proyecto de Cloud **no tiene facturación**: Google responde "You must enable Billing on the Google Cloud Project" → Google Maps imposible hasta activarla. Si algún día hay dinero: Google/MapTiler y solo se cambia la URL del estilo. Package `com.plannertoday.app`.
 - [x] Escáner: `OCRSPACE_KEY` configurada en `backend/.env` (2026-10-15) y verificada con HTTP 200 real.
