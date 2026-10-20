@@ -1,4 +1,4 @@
-# Planner Today — Mapa de fases
+# My Plan — Mapa de fases
 
 Estado general: **Fases 1–7 terminadas y verificadas**. Fase 8 en curso; Fase 9 pendiente.
 

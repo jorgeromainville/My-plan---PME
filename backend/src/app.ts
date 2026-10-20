@@ -62,7 +62,7 @@ export function buildApp() {
   app.use('/api/scanner', scannerRoutes);
 
   // Placeholders Fase 7-8: montan aquí places.
-  app.get('/api', (_req, res) => res.json({ name: 'Planner Today API', version: '0.1.0' }));
+  app.get('/api', (_req, res) => res.json({ name: 'My Plan API', version: '0.1.0' }));
 
   app.use(errorHandler);
   return app;

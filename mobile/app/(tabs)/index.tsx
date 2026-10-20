@@ -125,7 +125,7 @@ export default function Inicio() {
             )}
           </View>
           <View style={{ flex: 1 }}>
-            <Text style={styles.appName}>Planner Today</Text>
+            <Text style={styles.appName}>My Plan</Text>
             <Text style={styles.appSub}>Inicio</Text>
           </View>
           <Icon name="search" size={20} color={colors.muted} style={styles.hIcon} />

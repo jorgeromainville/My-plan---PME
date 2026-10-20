@@ -1,5 +1,5 @@
 ---
-title: Términos de uso — Planner Today
+title: Términos de uso — My Plan
 ---
 
 # Términos de uso
@@ -8,11 +8,11 @@ title: Términos de uso — Planner Today
 
 ## 1. Aceptación
 
-Al crear una cuenta o usar Planner Today aceptas estos términos y la política de privacidad. Si no estás de acuerdo, no uses el servicio.
+Al crear una cuenta o usar My Plan aceptas estos términos y la política de privacidad. Si no estás de acuerdo, no uses el servicio.
 
 ## 2. Descripción del servicio
 
-Planner Today te ayuda a organizar tu día, agenda, ingresos y gastos, metas, contactos y lugares, con recordatorios locales y un escáner de horarios. El servicio puede cambiar o interrumpirse mientras está en desarrollo. Por ahora es gratuito; si en el futuro hay funciones de pago, se avisará antes.
+My Plan te ayuda a organizar tu día, agenda, ingresos y gastos, metas, contactos y lugares, con recordatorios locales y un escáner de horarios. El servicio puede cambiar o interrumpirse mientras está en desarrollo. Por ahora es gratuito; si en el futuro hay funciones de pago, se avisará antes.
 
 ## 3. Tu cuenta
 
@@ -57,4 +57,4 @@ Estos términos se rigen por las leyes de la República del Perú.
 
 ## 12. Contacto
 
-Planner Today · Perú · **soporte@plannertoday.app**
+My Plan · Perú · **soporte@myplan.today**

@@ -53,7 +53,7 @@ export function LegalPage({
           </Card>
         ))}
 
-        <Text style={s.foot}>Planner Today · Perú</Text>
+        <Text style={s.foot}>My Plan · Perú</Text>
       </ScrollView>
     </SafeAreaView>
   );

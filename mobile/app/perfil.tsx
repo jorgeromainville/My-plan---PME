@@ -438,7 +438,7 @@ export default function Perfil() {
           <Pressable style={s.ghost} onPress={() => router.push('/terminos')}>
             <Text style={s.ghostTxt}>Términos de uso</Text>
           </Pressable>
-          <Text style={s.remSub}>Planner Today · 19 oct 2026</Text>
+          <Text style={s.remSub}>My Plan · 19 oct 2026</Text>
         </Card>
         <Card>
           <Text style={s.title2}>Seguridad</Text>

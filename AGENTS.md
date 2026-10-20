@@ -1,4 +1,4 @@
-# AGENTS.md — Planner Today
+# AGENTS.md — My Plan
 
 Dos paquetes independientes, sin workspace raíz. Instalar/ejecutar cada uno por separado.
 Anfitrión Windows, PowerShell (`copy`, no `cp`).

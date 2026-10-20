@@ -150,7 +150,10 @@ export async function api<T>(
   }
 
   const noRefresh =
-    path === '/api/auth/login' || path === '/api/auth/register' || path === '/api/auth/refresh';
+    path === '/api/auth/login' ||
+    path === '/api/auth/register' ||
+    path === '/api/auth/google' ||
+    path === '/api/auth/refresh';
   if (res.status === 401 && retry && !noRefresh) {
     // Intenta renovar una vez con el refresh token.
     try {

@@ -1,6 +1,6 @@
 // Texto legal de la app. Mantener en sintonía con docs/legal/*.md.
 export const LEGAL_UPDATED = '19 de octubre de 2026';
-export const LEGAL_CONTACT = 'soporte@plannertoday.app';
+export const LEGAL_CONTACT = 'soporte@myplan.today';
 
 export interface LegalSection {
   title: string;
@@ -12,7 +12,7 @@ export const privacySections: LegalSection[] = [
   {
     title: '1. Quién trata tus datos',
     paragraphs: [
-      'Planner Today es una aplicación de organización personal desarrollada por el equipo de Planner Today (Perú). Para cualquier consulta sobre esta política o sobre tus datos, escribe a ' +
+      'My Plan es una aplicación de organización personal desarrollada por el equipo de My Plan (Perú). Para cualquier consulta sobre esta política o sobre tus datos, escribe a ' +
         LEGAL_CONTACT +
         '.',
     ],
@@ -21,7 +21,7 @@ export const privacySections: LegalSection[] = [
     title: '2. Qué datos guardamos',
     paragraphs: ['Solo guardamos lo necesario para que la app funcione:'],
     bullets: [
-      'Cuenta: nombre, correo electrónico y contraseña cifrada (bcrypt). El teléfono es opcional.',
+      'Cuenta: nombre, correo electrónico y contraseña cifrada (bcrypt) o inicio de sesión con Google, si eliges esa opción. El teléfono es opcional.',
       'Preferencias: moneda, tema, inicio de semana, recordatorios y país de feriados.',
       'Contenido que creas: contactos, ingresos y gastos (importes, categorías, fechas), tareas, eventos, metas, lugares con coordenadas y notas.',
       'Registros técnicos: fecha, hora, IP y ruta de las peticiones, para seguridad y diagnóstico.',
@@ -49,6 +49,7 @@ export const privacySections: LegalSection[] = [
       'El contenido se guarda en el servidor del servicio. Solo se envían datos a terceros cuando usas una función que los necesita:',
     ],
     bullets: [
+      'Google: inicio de sesión, solo si eliges «Continuar con Google» (no recibe el contenido que creas).',
       'OCR.space: imagen del horario para extraer texto.',
       'Google Gemini: imagen del horario para interpretarla, si la IA está activa.',
       'OpenFreeMap: teselas del mapa.',
@@ -66,7 +67,7 @@ export const privacySections: LegalSection[] = [
   {
     title: '7. Seguridad',
     paragraphs: [
-      'Contraseñas cifradas con bcrypt, sesiones con tokens de corta duración, límite de intentos de acceso y comunicación cifrada con HTTPS en producción. Ningún sistema es infalible: si detectas un problema, escríbenos.',
+      'Contraseñas cifradas con bcrypt o acceso mediante Google, sesiones con tokens de corta duración, límite de intentos de acceso y comunicación cifrada con HTTPS en producción. Ningún sistema es infalible: si detectas un problema, escríbenos.',
     ],
   },
   {
@@ -91,7 +92,7 @@ export const privacySections: LegalSection[] = [
   },
   {
     title: '11. Contacto',
-    paragraphs: ['Planner Today · Perú · ' + LEGAL_CONTACT],
+    paragraphs: ['My Plan · Perú · ' + LEGAL_CONTACT],
   },
 ];
 
@@ -99,13 +100,13 @@ export const termsSections: LegalSection[] = [
   {
     title: '1. Aceptación',
     paragraphs: [
-      'Al crear una cuenta o usar Planner Today aceptas estos términos y la política de privacidad. Si no estás de acuerdo, no uses el servicio.',
+      'Al crear una cuenta o usar My Plan aceptas estos términos y la política de privacidad. Si no estás de acuerdo, no uses el servicio.',
     ],
   },
   {
     title: '2. Descripción del servicio',
     paragraphs: [
-      'Planner Today te ayuda a organizar tu día, agenda, ingresos y gastos, metas, contactos y lugares, con recordatorios locales y un escáner de horarios. El servicio puede cambiar o interrumpirse mientras está en desarrollo. Por ahora es gratuito; si en el futuro hay funciones de pago, se avisará antes.',
+      'My Plan te ayuda a organizar tu día, agenda, ingresos y gastos, metas, contactos y lugares, con recordatorios locales y un escáner de horarios. El servicio puede cambiar o interrumpirse mientras está en desarrollo. Por ahora es gratuito; si en el futuro hay funciones de pago, se avisará antes.',
     ],
   },
   {
@@ -166,6 +167,6 @@ export const termsSections: LegalSection[] = [
   },
   {
     title: '12. Contacto',
-    paragraphs: ['Planner Today · Perú · ' + LEGAL_CONTACT],
+    paragraphs: ['My Plan · Perú · ' + LEGAL_CONTACT],
   },
 ];

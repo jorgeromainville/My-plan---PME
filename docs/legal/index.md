@@ -1,10 +1,10 @@
 ---
-title: Legal — Planner Today
+title: Legal — My Plan
 ---
 
-# Planner Today — Legal
+# My Plan — Legal
 
 - [Política de privacidad](privacidad.html)
 - [Términos de uso](terminos.html)
 
-Contacto: **soporte@plannertoday.app**
+Contacto: **soporte@myplan.today**

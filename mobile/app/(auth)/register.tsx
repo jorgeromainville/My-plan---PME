@@ -2,6 +2,7 @@ import { useRouter } from 'expo-router';
 import React, { useState } from 'react';
 import { Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { GoogleButton } from '../../src/components/GoogleButton';
 import { register } from '../../src/services/auth';
 import { useSession } from '../../src/store/useSession';
 import { colors, useThemedStyles, type ThemeColors } from '../../src/theme/colors';
@@ -37,8 +38,15 @@ export default function Register() {
         <Pressable style={s.btn} onPress={onRegister}>
           <Text style={s.btnTxt}>Registrarme</Text>
         </Pressable>
+        <GoogleButton
+          onError={setError}
+          onSuccess={async (r) => {
+            await signIn(r.access, r.user);
+            router.replace('/(tabs)');
+          }}
+        />
         <Text style={s.legal}>
-          Al crear tu cuenta aceptas los{' '}
+          Al crear tu cuenta (con correo o Google) aceptas los{' '}
           <Text style={s.link} onPress={() => router.push('/terminos')}>
             términos de uso
           </Text>{' '}

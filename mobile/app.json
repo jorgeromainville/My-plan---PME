@@ -1,8 +1,8 @@
 {
-  "name": "Planner Today",
-  "slug": "planner-today",
+  "name": "My Plan",
+  "slug": "my-plan",
   "version": "0.1.0",
-  "scheme": "plannertoday",
+  "scheme": "myplan",
   "orientation": "portrait",
   "icon": "./assets/icon.png",
   "userInterfaceStyle": "automatic",
@@ -11,10 +11,12 @@
   },
   "ios": {
     "supportsTablet": true,
-    "bundleIdentifier": "com.plannertoday.app"
+    "bundleIdentifier": "app.myplan.today",
+    "buildNumber": "1"
   },
   "android": {
-    "package": "com.plannertoday.app",
+    "package": "app.myplan.today",
+    "versionCode": 1,
     "adaptiveIcon": {
       "backgroundColor": "#FAF6EF"
     }

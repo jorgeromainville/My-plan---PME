@@ -7,7 +7,7 @@ Play Console pide una **URL pública** de la política de privacidad (y, desde 2
 
 ## Antes de publicar
 
-1. **Confirma el correo de contacto.** Ahora es `soporte@plannertoday.app`. Si ese buzón no existe, cámbialo en `mobile/src/data/legal.ts` y en los dos `.md`.
+1. **Confirma el correo de contacto.** Ahora es `soporte@myplan.today`. Si ese buzón no existe, cámbialo en `mobile/src/data/legal.ts` y en los dos `.md`.
 2. Revisa que la fecha de «Última actualización» sea la correcta.
 3. Si el backend pasa a producción con HTTPS, la frase de seguridad ya es correcta. Si sigue en HTTP, no publiques la política todavía.
 

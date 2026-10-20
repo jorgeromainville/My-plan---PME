@@ -1,22 +1,22 @@
 ---
-title: Política de privacidad — Planner Today
+title: Política de privacidad — My Plan
 ---
 
 # Política de privacidad
 
 **Última actualización:** 19 de octubre de 2026
 
-Planner Today es una aplicación de organización personal desarrollada por el equipo de Planner Today (Perú).
+My Plan es una aplicación de organización personal desarrollada por el equipo de My Plan (Perú).
 
 ## 1. Quién trata tus datos
 
-El responsable del tratamiento es el equipo de Planner Today. Para cualquier consulta sobre esta política o sobre tus datos, escribe a **soporte@plannertoday.app**.
+El responsable del tratamiento es el equipo de My Plan. Para cualquier consulta sobre esta política o sobre tus datos, escribe a **soporte@myplan.today**.
 
 ## 2. Qué datos guardamos
 
 Solo guardamos lo necesario para que la app funcione:
 
-- **Cuenta:** nombre, correo electrónico y contraseña cifrada (bcrypt). El teléfono es opcional.
+- **Cuenta:** nombre, correo electrónico y contraseña cifrada (bcrypt) o inicio de sesión con Google, si eliges esa opción. El teléfono es opcional.
 - **Preferencias:** moneda, tema, inicio de semana, recordatorios y país de feriados.
 - **Contenido que creas:** contactos, ingresos y gastos (importes, categorías, fechas), tareas, eventos, metas, lugares con coordenadas y notas.
 - **Registros técnicos:** fecha, hora, IP y ruta de las peticiones, para seguridad y diagnóstico.
@@ -38,6 +38,7 @@ Prestar el servicio y sincronizar tus datos entre sesiones; calcular resúmenes,
 
 El contenido se guarda en el servidor del servicio. Solo se envían datos a terceros cuando usas una función que los necesita:
 
+- **Google:** inicio de sesión, solo si eliges «Continuar con Google» (no recibe el contenido que creas).
 - **OCR.space:** imagen del horario para extraer texto.
 - **Google Gemini:** imagen del horario para interpretarla, si la IA está activa.
 - **OpenFreeMap:** teselas del mapa.
@@ -52,11 +53,11 @@ Tratamos los datos con tu consentimiento y para ejecutar el servicio (Ley 29733 
 
 ## 7. Seguridad
 
-Contraseñas cifradas con bcrypt, sesiones con tokens de corta duración, límite de intentos de acceso y comunicación cifrada con HTTPS en producción. Ningún sistema es infalible: si detectas un problema, escríbenos.
+Contraseñas cifradas con bcrypt o acceso mediante Google, sesiones con tokens de corta duración, límite de intentos de acceso y comunicación cifrada con HTTPS en producción. Ningún sistema es infalible: si detectas un problema, escríbenos.
 
 ## 8. Tus derechos
 
-Puedes acceder, corregir y eliminar tus datos. Desde Perfil puedes cambiar tu nombre, contraseña y preferencias, y eliminar la cuenta completa en **Perfil → Eliminar cuenta** (se borra en cascada). También puedes escribir a **soporte@plannertoday.app**. Responderemos en un plazo razonable.
+Puedes acceder, corregir y eliminar tus datos. Desde Perfil puedes cambiar tu nombre, contraseña y preferencias, y eliminar la cuenta completa en **Perfil → Eliminar cuenta** (se borra en cascada). También puedes escribir a **soporte@myplan.today**. Responderemos en un plazo razonable.
 
 ## 9. Menores
 
@@ -68,4 +69,4 @@ Podemos actualizar esta política. Publicaremos la nueva versión en la app con 
 
 ## 11. Contacto
 
-Planner Today · Perú · **soporte@plannertoday.app**
+My Plan · Perú · **soporte@myplan.today**

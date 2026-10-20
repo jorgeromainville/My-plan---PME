@@ -2,6 +2,7 @@ import { useRouter } from 'expo-router';
 import React, { useState } from 'react';
 import { Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { GoogleButton } from '../../src/components/GoogleButton';
 import { login } from '../../src/services/auth';
 import { useSession } from '../../src/store/useSession';
 import { colors, useThemedStyles, type ThemeColors } from '../../src/theme/colors';
@@ -32,7 +33,7 @@ export default function Login() {
   return (
     <SafeAreaView style={s.safe}>
       <View style={s.body}>
-        <Text style={s.title}>Planner Today</Text>
+        <Text style={s.title}>My Plan</Text>
         <Text style={s.sub}>Iniciar sesión</Text>
         <TextInput placeholderTextColor={colors.muted} style={s.input} placeholder="Correo" value={email} onChangeText={setEmail} autoCapitalize="none" keyboardType="email-address" />
         <TextInput placeholderTextColor={colors.muted} style={s.input} placeholder="Contraseña" value={pass} onChangeText={setPass} secureTextEntry />
@@ -40,6 +41,18 @@ export default function Login() {
         <Pressable style={[s.btn, busy && s.btnOff]} onPress={onLogin} disabled={busy}>
           <Text style={s.btnTxt}>{busy ? 'Entrando…' : 'Entrar'}</Text>
         </Pressable>
+        <View style={s.orRow}>
+          <View style={s.orLine} />
+          <Text style={s.orTxt}>o</Text>
+          <View style={s.orLine} />
+        </View>
+        <GoogleButton
+          onError={setError}
+          onSuccess={async (r) => {
+            await signIn(r.access, r.user);
+            router.replace('/(tabs)');
+          }}
+        />
         <Pressable onPress={() => router.push('/(auth)/register')}>
           <Text style={s.link}>Crear cuenta</Text>
         </Pressable>
@@ -58,6 +71,9 @@ function createStyles(colors: ThemeColors) {
   btn: { backgroundColor: colors.primary, borderRadius: 14, padding: 15, alignItems: 'center', marginTop: 6 },
   btnOff: { opacity: 0.6 },
   btnTxt: { color: colors.onPrimary, fontWeight: '800' },
+  orRow: { flexDirection: 'row', alignItems: 'center', gap: 10, marginTop: 14 },
+  orLine: { flex: 1, height: 1, backgroundColor: colors.line },
+  orTxt: { color: colors.muted, fontSize: 12, fontWeight: '700' },
   link: { textAlign: 'center', marginTop: 14, fontWeight: '700', color: colors.text },
 });
 }

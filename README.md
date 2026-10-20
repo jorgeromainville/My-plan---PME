@@ -1,4 +1,4 @@
-# Planner Today — Fase 1
+# My Plan
 
 ## Qué incluye
 - App Expo + TypeScript + Expo Router (tabs: Inicio, Mapa, +, Planificador, Estadísticas)
