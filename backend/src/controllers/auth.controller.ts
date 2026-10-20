@@ -1,8 +1,11 @@
 import type { Request, Response } from 'express';
+import { OAuth2Client } from 'google-auth-library';
 import { z } from 'zod';
 import { prisma } from '../config/db';
 import { hashPassword, verifyPassword } from '../utils/password';
 import { signAccess, signRefresh, verifyRefresh } from '../utils/jwt';
+
+const googleClient = new OAuth2Client();
 
 const registerSchema = z.object({
   name: z.string().min(1),
@@ -31,8 +34,79 @@ export async function login(req: Request, res: Response) {
   const data = loginSchema.parse(req.body);
   const user = await prisma.user.findUnique({ where: { email: data.email } });
   if (!user) return res.status(401).json({ error: 'Credenciales inválidas' });
+  if (!user.passwordHash) {
+    return res.status(401).json({ error: 'Esta cuenta entra con Google. Usa "Continuar con Google".' });
+  }
   const ok = await verifyPassword(data.password, user.passwordHash);
   if (!ok) return res.status(401).json({ error: 'Credenciales inválidas' });
+  res.json({
+    user: {
+      id: user.id,
+      name: user.name,
+      email: user.email,
+      currency: user.currency,
+      currencySymbol: user.currencySymbol,
+      theme: user.theme,
+      weekStartsOn: user.weekStartsOn,
+    },
+    access: signAccess(user.id),
+    refresh: signRefresh(user.id),
+  });
+}
+
+// GET /api/auth/google/config — el client ID es público; la app lo pide en
+// tiempo de ejecución para poder cambiar de proyecto de Google sin recompilar.
+export async function googleConfig(_req: Request, res: Response) {
+  const clientId = process.env.GOOGLE_CLIENT_ID?.trim() ?? '';
+  res.json({ enabled: Boolean(clientId), clientId: clientId || null });
+}
+
+const googleSchema = z.object({ idToken: z.string().min(20) });
+
+// POST /api/auth/google — valida el idToken de Google y crea/vincula la cuenta.
+export async function googleLogin(req: Request, res: Response) {
+  const { idToken } = googleSchema.parse(req.body);
+  const audience = process.env.GOOGLE_CLIENT_ID?.trim();
+  if (!audience) {
+    return res.status(503).json({ error: 'Google no está configurado en el servidor.' });
+  }
+
+  let payload;
+  try {
+    const ticket = await googleClient.verifyIdToken({ idToken, audience });
+    payload = ticket.getPayload();
+  } catch {
+    return res.status(401).json({ error: 'No pudimos validar tu cuenta de Google. Intenta de nuevo.' });
+  }
+
+  if (!payload?.sub || !payload.email) {
+    return res.status(401).json({ error: 'La cuenta de Google no tiene correo disponible.' });
+  }
+  if (payload.email_verified === false) {
+    return res.status(401).json({ error: 'Tu correo de Google no está verificado.' });
+  }
+
+  const email = payload.email.toLowerCase();
+  const name = (payload.name || email.split('@')[0]).slice(0, 80);
+
+  let user = await prisma.user.findUnique({ where: { googleId: payload.sub } });
+  if (!user) {
+    const byEmail = await prisma.user.findUnique({ where: { email } });
+    if (byEmail) {
+      // Vincula Google a una cuenta existente y quita la contraseña local:
+      // el correo no estaba verificado, así que dejarla viva permitiría que
+      // quien la creó conservara acceso a la cuenta del dueño real del correo.
+      user = await prisma.user.update({
+        where: { id: byEmail.id },
+        data: { googleId: payload.sub, passwordHash: null },
+      });
+    } else {
+      user = await prisma.user.create({
+        data: { name, email, googleId: payload.sub },
+      });
+    }
+  }
+
   res.json({
     user: {
       id: user.id,
@@ -100,6 +174,9 @@ export async function changePassword(req: Request & { userId?: string }, res: Re
   }
   const user = await prisma.user.findUnique({ where: { id: req.userId! } });
   if (!user) return res.status(404).json({ error: 'Usuario no encontrado' });
+  if (!user.passwordHash) {
+    return res.status(400).json({ error: 'Esta cuenta entra con Google y no tiene contraseña local.' });
+  }
   const ok = await verifyPassword(currentPassword, user.passwordHash);
   if (!ok) return res.status(400).json({ error: 'La contraseña actual no es correcta.' });
   await prisma.user.update({

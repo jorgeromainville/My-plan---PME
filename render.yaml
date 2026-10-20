@@ -32,3 +32,5 @@ services:
         value: gemini-flash-lite-latest
       - key: GEMINI_MODEL_FALLBACKS
         value: gemini-3-flash-preview,gemini-flash-latest
+      - key: GOOGLE_CLIENT_ID
+        sync: false

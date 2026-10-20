@@ -14,7 +14,9 @@ model User {
   id           String   @id @default(cuid())
   name         String
   email        String   @unique
-  passwordHash String
+  // Nullable: las cuentas creadas con Google no tienen contraseña local.
+  passwordHash String?
+  googleId     String?  @unique
   phone        String?
   currency     String   @default("PEN")
   currencySymbol String @default("S/")
