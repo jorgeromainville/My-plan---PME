@@ -146,8 +146,9 @@ Estado general: **Fases 1–7 terminadas y verificadas**. Fase 8 en curso; Fase 
 - [x] Seguridad (2026-10-19): límite de intentos en memoria (`src/middleware/rateLimit.ts`): login 10/15 min por IP+correo, registro 20/h por IP, cambio de clave 5/15 min (429 con `Retry-After`). `PATCH /api/auth/password` (verifica la actual, mínimo 8) y `DELETE /api/auth/account` (confirmar escribiendo **ELIMINAR** desde Perfil → borra en cascada). `x-powered-by` apagado; CORS solo acepta apps nativas (sin `Origin`), `localhost`/`127.0.0.1` y `CORS_ORIGINS`. Perfil tiene tarjetas **Seguridad** y **Eliminar cuenta**. Pendiente: revocar refresh tokens al cambiar la clave (hoy el access vive 15 min y el refresh 30 d).
 - [x] Legal y privacidad (2026-10-19): pantallas **`/privacidad`** y **`/terminos`** (públicas, también accesibles desde el registro), tarjeta **Legal** en Perfil (al final, junto a Seguridad y Eliminar cuenta) y enlaces desde el alta. Texto canónico en `mobile/src/data/legal.ts`; copia para publicar en `docs/legal/*.md` (GitHub Pages, carpeta `/docs`) con la URL que pedirá Play Console. El correo de contacto es provisional hasta confirmarlo.
 - [x] Limpieza: datos demo eliminables desde la app (2026-10-19, ver arriba)
-- [ ] Preparación producción (builds Android/iOS, variables, logs)
-- [ ] Decidir stack al iniciar: Supabase (todo junto) vs Render + Neon, + Sentry día 1, builds EAS
+- [x] Backend en la nube (2026-10-20): **Neon Postgres + Render free** (`https://my-plan-api.onrender.com`), deploy desde GitHub con `render.yaml`, migraciones automáticas al arrancar, secretos en el dashboard de Render y móvil apuntando a la nube. Verificado por HTTPS: `/health`, registro, login, tarea y borrado de cuenta en cascada. Pendiente: pinger sobre `/health` (el plan free duerme a los 15 min).
+- [ ] Preparación producción (builds EAS Android/iOS, variables, logs)
+- [ ] Sentry día 1 (errores de backend y app)
 
 ## ⬜ FASE 9 — Nube y colaboración
 
