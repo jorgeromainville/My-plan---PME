@@ -3,7 +3,35 @@ import { useFocusEffect } from 'expo-router';
 import React, { useCallback } from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { rescheduleReminders } from '../../src/services/reminders';
-import { colors, useThemedStyles, type ThemeColors } from '../../src/theme/colors';
+import { usePrefs } from '../../src/store/usePrefs';
+import { andeanColors, colors, useThemedStyles, type ThemeColors } from '../../src/theme/colors';
+
+// Banda tejida del tema "Típico": franjas y rombos como en los textiles.
+const BAND = [
+  andeanColors.primary,
+  andeanColors.yellow,
+  andeanColors.blue,
+  andeanColors.bg,
+  andeanColors.green,
+  andeanColors.purple,
+];
+
+function TextileBand() {
+  return (
+    <View pointerEvents="none" style={StyleSheet.absoluteFill}>
+      <View style={{ flexDirection: 'row', height: 5 }}>
+        {Array.from({ length: 48 }).map((_, i) => (
+          <View key={i} style={{ flex: 1, backgroundColor: BAND[i % BAND.length] }} />
+        ))}
+      </View>
+      <View style={{ flexDirection: 'row', height: 2, opacity: 0.55 }}>
+        {Array.from({ length: 24 }).map((_, i) => (
+          <View key={i} style={{ flex: 1, backgroundColor: BAND[(i + 3) % BAND.length] }} />
+        ))}
+      </View>
+    </View>
+  );
+}
 
 function CenterButton() {
   const styles = useThemedStyles(createStyles);
@@ -22,6 +50,7 @@ function CenterButton() {
 
 export default function TabsLayout() {
   const styles = useThemedStyles(createStyles);
+  const theme = usePrefs((s) => s.theme);
   // Reprograma avisos al volver a la app (con throttle interno de 15 min).
   useFocusEffect(useCallback(() => {
     rescheduleReminders().catch(() => {});
@@ -32,6 +61,7 @@ export default function TabsLayout() {
       screenOptions={{
         headerShown: false,
         tabBarStyle: styles.bar,
+        tabBarBackground: theme === 'andean' ? () => <TextileBand /> : undefined,
         tabBarActiveTintColor: colors.text,
         tabBarInactiveTintColor: colors.muted,
         tabBarLabelStyle: { fontSize: 11, fontWeight: '700' },

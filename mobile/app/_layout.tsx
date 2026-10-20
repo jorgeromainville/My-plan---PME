@@ -25,7 +25,9 @@ export default function RootLayout() {
   useEffect(() => {
     if (!loaded) return;
     const inAuth = segments[0] === '(auth)';
-    if (!token && !inAuth) router.replace('/(auth)/login');
+    // Privacidad y términos son públicos: se pueden leer antes de crear cuenta.
+    const isPublic = inAuth || segments[0] === 'privacidad' || segments[0] === 'terminos';
+    if (!token && !isPublic) router.replace('/(auth)/login');
     if (token && inAuth) router.replace('/(tabs)');
   }, [loaded, token, segments]);
 
@@ -63,6 +65,8 @@ export default function RootLayout() {
         <Stack.Screen name="meta" options={{ presentation: 'modal' }} />
         <Stack.Screen name="lugar" options={{ presentation: 'modal' }} />
         <Stack.Screen name="escaner" options={{ presentation: 'modal' }} />
+        <Stack.Screen name="privacidad" />
+        <Stack.Screen name="terminos" />
       </Stack>
     </>
   );

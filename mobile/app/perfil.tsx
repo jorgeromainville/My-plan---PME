@@ -319,57 +319,6 @@ export default function Perfil() {
           </Pressable>
         </Card>
         <Card>
-          <Text style={s.title2}>Seguridad</Text>
-          <Text style={s.label}>Contraseña actual</Text>
-          <TextInput
-            value={curPass}
-            onChangeText={setCurPass}
-            style={s.input}
-            secureTextEntry
-            placeholder="Tu contraseña"
-          />
-          <Text style={s.label}>Nueva contraseña (mínimo 8 caracteres)</Text>
-          <TextInput
-            value={newPass}
-            onChangeText={setNewPass}
-            style={s.input}
-            secureTextEntry
-            placeholder="Nueva contraseña"
-          />
-          <Pressable
-            style={[s.btn, passBusy && { opacity: 0.6 }]}
-            onPress={onChangePassword}
-            disabled={passBusy}
-          >
-            <Text style={s.btnTxt}>{passBusy ? 'Guardando…' : 'Cambiar contraseña'}</Text>
-          </Pressable>
-          {passMsg ? <Text style={s.remSub}>{passMsg}</Text> : null}
-        </Card>
-        <Card>
-          <Text style={s.title2}>Eliminar cuenta</Text>
-          <Text style={s.remSub}>
-            Borra tu perfil y todos tus datos (ingresos, gastos, tareas, eventos, metas, lugares y
-            contactos). No se puede deshacer.
-          </Text>
-          <Text style={s.label}>Escribe ELIMINAR para confirmar</Text>
-          <TextInput
-            value={confirmText}
-            onChangeText={setConfirmText}
-            style={s.input}
-            placeholder="ELIMINAR"
-            autoCapitalize="characters"
-            autoCorrect={false}
-          />
-          <Pressable
-            style={[s.danger, (delBusy || confirmText.trim() !== 'ELIMINAR') && { opacity: 0.5 }]}
-            onPress={onDeleteAccount}
-            disabled={delBusy || confirmText.trim() !== 'ELIMINAR'}
-          >
-            <Text style={s.dangerTxt}>{delBusy ? 'Eliminando…' : 'Eliminar mi cuenta'}</Text>
-          </Pressable>
-          {delMsg ? <Text style={s.remSub}>{delMsg}</Text> : null}
-        </Card>
-        <Card>
           <Text style={s.title2}>Agenda</Text>
           <Text style={s.label}>País de feriados</Text>
           <View style={s.row}>
@@ -471,6 +420,67 @@ export default function Perfil() {
           >
             <Text style={s.ghostTxt}>Descartar pendientes</Text>
           </Pressable>
+        </Card>
+        <Card>
+          <Text style={s.title2}>Legal</Text>
+          <Pressable style={s.ghost} onPress={() => router.push('/privacidad')}>
+            <Text style={s.ghostTxt}>Política de privacidad</Text>
+          </Pressable>
+          <Pressable style={s.ghost} onPress={() => router.push('/terminos')}>
+            <Text style={s.ghostTxt}>Términos de uso</Text>
+          </Pressable>
+          <Text style={s.remSub}>Planner Today · 19 oct 2026</Text>
+        </Card>
+        <Card>
+          <Text style={s.title2}>Seguridad</Text>
+          <Text style={s.label}>Contraseña actual</Text>
+          <TextInput
+            value={curPass}
+            onChangeText={setCurPass}
+            style={s.input}
+            secureTextEntry
+            placeholder="Tu contraseña"
+          />
+          <Text style={s.label}>Nueva contraseña (mínimo 8 caracteres)</Text>
+          <TextInput
+            value={newPass}
+            onChangeText={setNewPass}
+            style={s.input}
+            secureTextEntry
+            placeholder="Nueva contraseña"
+          />
+          <Pressable
+            style={[s.btn, passBusy && { opacity: 0.6 }]}
+            onPress={onChangePassword}
+            disabled={passBusy}
+          >
+            <Text style={s.btnTxt}>{passBusy ? 'Guardando…' : 'Cambiar contraseña'}</Text>
+          </Pressable>
+          {passMsg ? <Text style={s.remSub}>{passMsg}</Text> : null}
+        </Card>
+        <Card>
+          <Text style={s.title2}>Eliminar cuenta</Text>
+          <Text style={s.remSub}>
+            Borra tu perfil y todos tus datos (ingresos, gastos, tareas, eventos, metas, lugares y
+            contactos). No se puede deshacer.
+          </Text>
+          <Text style={s.label}>Escribe ELIMINAR para confirmar</Text>
+          <TextInput
+            value={confirmText}
+            onChangeText={setConfirmText}
+            style={s.input}
+            placeholder="ELIMINAR"
+            autoCapitalize="characters"
+            autoCorrect={false}
+          />
+          <Pressable
+            style={[s.danger, (delBusy || confirmText.trim() !== 'ELIMINAR') && { opacity: 0.5 }]}
+            onPress={onDeleteAccount}
+            disabled={delBusy || confirmText.trim() !== 'ELIMINAR'}
+          >
+            <Text style={s.dangerTxt}>{delBusy ? 'Eliminando…' : 'Eliminar mi cuenta'}</Text>
+          </Pressable>
+          {delMsg ? <Text style={s.remSub}>{delMsg}</Text> : null}
         </Card>
         <Pressable
           style={s.out}

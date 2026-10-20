@@ -37,6 +37,17 @@ export default function Register() {
         <Pressable style={s.btn} onPress={onRegister}>
           <Text style={s.btnTxt}>Registrarme</Text>
         </Pressable>
+        <Text style={s.legal}>
+          Al crear tu cuenta aceptas los{' '}
+          <Text style={s.link} onPress={() => router.push('/terminos')}>
+            términos de uso
+          </Text>{' '}
+          y la{' '}
+          <Text style={s.link} onPress={() => router.push('/privacidad')}>
+            política de privacidad
+          </Text>
+          .
+        </Text>
       </View>
     </SafeAreaView>
   );
@@ -50,5 +61,7 @@ function createStyles(colors: ThemeColors) {
   error: { color: colors.danger, marginBottom: 10 },
   btn: { backgroundColor: colors.primary, borderRadius: 14, padding: 15, alignItems: 'center' },
   btnTxt: { color: '#fff', fontWeight: '800' },
+  legal: { marginTop: 16, fontSize: 12, lineHeight: 18, color: colors.muted, textAlign: 'center' },
+  link: { color: colors.text, fontWeight: '800', textDecorationLine: 'underline' },
 });
 }
