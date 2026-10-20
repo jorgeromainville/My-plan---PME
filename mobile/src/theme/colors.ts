@@ -4,7 +4,7 @@ import { usePrefs } from '../store/usePrefs';
 
 // Paletas de la app. Tres estilos + automático:
 // - Claro: fondos cálidos crema, tarjetas blancas.
-// - Oscuro: negro cálido de telar, texto crema y acentos terracota/oro.
+// - Oscuro: grafito frío casi negro, texto blanco y acento azul acero.
 // - Típico (andino): inspirado en textiles andinos — terracota, ocre, turquesa
 //   y verde oliva sobre pergamino; texto marrón oscuro.
 const light = {
@@ -34,28 +34,28 @@ const light = {
 } as const;
 
 const dark = {
-  bg: '#17110D', // negro cálido, como la madera del telar
-  bgSoft: '#211812',
-  card: '#251C16',
-  text: '#F4E7CE', // crema
-  muted: '#B9A58A',
-  line: '#3D2E23',
-  primary: '#B54A24', // terracota profunda (5.3:1 con texto blanco)
-  onAccent: '#17110D', // los acentos son claros: texto oscuro encima
-  link: '#E0A458', // dorado
-  accent: '#E0A458',
-  green: '#8FAE6A', // oliva claro
-  greenBg: '#262A18',
-  blue: '#5CC8D7', // turquesa
-  blueBg: '#16303A',
-  yellow: '#E4B84C', // oro
-  yellowBg: '#33280F',
-  coral: '#E07A5F',
-  coralBg: '#3A211A',
-  purple: '#D06A9A', // magenta
-  purpleBg: '#331A26',
-  success: '#8FAE6A',
-  danger: '#E07A5F',
+  bg: '#0E1114', // grafito casi negro, con un deje frío
+  bgSoft: '#14181C',
+  card: '#1A1F24',
+  text: '#E9EEF2', // blanco frío
+  muted: '#A0ACB5',
+  line: '#2B333A',
+  primary: '#3D6FA6', // azul acero (5.2:1 con texto blanco)
+  onAccent: '#0E1114', // los acentos son claros: texto oscuro encima
+  link: '#8CC2EE', // azul claro
+  accent: '#6FB3D9',
+  green: '#7FC8A9', // menta
+  greenBg: '#182B25',
+  blue: '#7FB4E8',
+  blueBg: '#172A3A',
+  yellow: '#E3C06A', // oro suave
+  yellowBg: '#2C271A',
+  coral: '#E8907A', // salmón (solo datos: gastos)
+  coralBg: '#33211D',
+  purple: '#C39BE0', // lavanda
+  purpleBg: '#271F31',
+  success: '#7FC8A9',
+  danger: '#F08A7A',
   white: '#FFFFFF',
 } as const;
 
