@@ -3,6 +3,7 @@ import { create } from 'zustand';
 
 // Ajustes de agenda y formato. Persisten en el teléfono.
 export type HourFormat = '24h' | '12h';
+export type WeekStart = 'monday' | 'sunday';
 
 interface Prefs {
   hourFormat: HourFormat;
@@ -10,11 +11,12 @@ interface Prefs {
   dayEnd: number; // 1-24
   lastCategory: string;
   holidayCountry: string; // '' = auto por dispositivo (ej. PE, US)
+  weekStartsOn: WeekStart; // lunes (por defecto) o domingo
   reminders: boolean; // avisos locales de eventos/tareas/seguimientos/metas
   demoCleared: boolean; // el usuario pidió ocultar los datos de ejemplo
   loaded: boolean;
   load: () => Promise<void>;
-  set: (p: Partial<Pick<Prefs, 'hourFormat' | 'dayStart' | 'dayEnd' | 'lastCategory' | 'holidayCountry' | 'reminders' | 'demoCleared'>>) => Promise<void>;
+  set: (p: Partial<Pick<Prefs, 'hourFormat' | 'dayStart' | 'dayEnd' | 'lastCategory' | 'holidayCountry' | 'weekStartsOn' | 'reminders' | 'demoCleared'>>) => Promise<void>;
 }
 
 const KEY = '@planner/prefs';
@@ -25,6 +27,7 @@ export const usePrefs = create<Prefs>((set, get) => ({
   dayEnd: 24,
   lastCategory: 'Otros',
   holidayCountry: '',
+  weekStartsOn: 'monday',
   reminders: true,
   demoCleared: false,
   loaded: false,
@@ -40,8 +43,8 @@ export const usePrefs = create<Prefs>((set, get) => ({
   set: async (p) => {
     set(p);
     try {
-      const { hourFormat, dayStart, dayEnd, lastCategory, holidayCountry, reminders, demoCleared } = { ...get(), ...p };
-      await AsyncStorage.setItem(KEY, JSON.stringify({ hourFormat, dayStart, dayEnd, lastCategory, holidayCountry, reminders, demoCleared }));
+      const { hourFormat, dayStart, dayEnd, lastCategory, holidayCountry, weekStartsOn, reminders, demoCleared } = { ...get(), ...p };
+      await AsyncStorage.setItem(KEY, JSON.stringify({ hourFormat, dayStart, dayEnd, lastCategory, holidayCountry, weekStartsOn, reminders, demoCleared }));
     } catch {
       // sin persistencia, sigue en memoria
     }

@@ -1,33 +1,106 @@
 import { useFocusEffect, useRouter } from 'expo-router';
-import React, { useCallback, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { Alert, Pressable, ScrollView, StyleSheet, Switch, Text, TextInput, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Card } from '../src/components/Card';
-import { API_BASE, flushPending } from '../src/services/api';
+import { API_BASE, errorMessage, flushPending } from '../src/services/api';
+import { updateMe } from '../src/services/auth';
 import { clearOps, loadOps } from '../src/services/sync';
+import { storage } from '../src/services/storage';
 import { cancelReminders, remindersGranted, remindersNativeMissing, rescheduleReminders, sendTestReminder } from '../src/services/reminders';
 import { useAppStore } from '../src/store/useAppStore';
 import { usePrefs } from '../src/store/usePrefs';
 import { useSession } from '../src/store/useSession';
+import type { WeekStart } from '../src/store/usePrefs';
 import { colors } from '../src/theme/colors';
+
+// Monedas rápidas; cualquier otra se escribe con código + símbolo.
+const PRESETS = [
+  { code: 'PEN', symbol: 'S/' },
+  { code: 'USD', symbol: '$' },
+  { code: 'EUR', symbol: '€' },
+];
 
 export default function Perfil() {
   const router = useRouter();
   const { userName, setUserName } = useAppStore();
   const signOut = useSession((s) => s.signOut);
   const sessionName = useSession((s) => s.userName);
+  const user = useSession((s) => s.user);
+  const updateSessionUser = useSession((s) => s.updateUser);
   const prefs = usePrefs();
-  const [name, setName] = useState(sessionName || userName);
-  const [currency, setCurrency] = useState('PEN');
+  const [name, setName] = useState(user?.name ?? sessionName ?? userName);
+  const [currency, setCurrency] = useState(user?.currency ?? 'PEN');
+  const [symbol, setSymbol] = useState(user?.currencySymbol ?? 'S/');
+  const [customOpen, setCustomOpen] = useState(
+    () => !!user && !PRESETS.some((p) => p.code === user.currency),
+  );
+  const [saveMsg, setSaveMsg] = useState('');
+  const [saving, setSaving] = useState(false);
   const [remMsg, setRemMsg] = useState('');
   const [pending, setPending] = useState(0);
   const [syncMsg, setSyncMsg] = useState('');
+
+  // Si la sesión carga después de abrir Perfil, refleja los datos del servidor.
+  useEffect(() => {
+    if (!user) return;
+    setName(user.name);
+    setCurrency(user.currency);
+    setSymbol(user.currencySymbol);
+    setCustomOpen(!PRESETS.some((p) => p.code === user.currency));
+  }, [user?.id, user?.name, user?.currency, user?.currencySymbol]);
 
   useFocusEffect(
     useCallback(() => {
       loadOps().then((o) => setPending(o.length));
     }, []),
   );
+
+  async function onSave() {
+    setSaveMsg('');
+    const code = currency.trim().toUpperCase();
+    if (!/^[A-Z0-9]{2,6}$/.test(code)) {
+      setSaveMsg('Código de moneda: 2 a 6 letras o números (ej. COP).');
+      return;
+    }
+    const sym = symbol.trim();
+    if (!sym || sym.length > 6) {
+      setSaveMsg('Símbolo: entre 1 y 6 caracteres (ej. $, S/, €).');
+      return;
+    }
+    setSaving(true);
+    try {
+      const r = await updateMe({
+        name: name.trim() || 'Usuario',
+        currency: code,
+        currencySymbol: sym,
+        weekStartsOn: prefs.weekStartsOn,
+      });
+      await updateSessionUser(r.user);
+      await storage.clearCache();
+      setUserName(r.user.name);
+      setCurrency(code);
+      setSymbol(sym);
+      setSaveMsg('Guardado.');
+    } catch (e) {
+      setSaveMsg(errorMessage(e));
+    } finally {
+      setSaving(false);
+    }
+  }
+
+  // La semana cambia al momento (afecta resúmenes del servidor).
+  async function pickWeek(w: WeekStart) {
+    await prefs.set({ weekStartsOn: w });
+    setSaveMsg('Inicio de semana guardado.');
+    try {
+      const r = await updateMe({ weekStartsOn: w });
+      await updateSessionUser(r.user);
+      await storage.clearCache();
+    } catch (e) {
+      setSaveMsg(errorMessage(e));
+    }
+  }
 
   async function toggleReminders(v: boolean) {
     await prefs.set({ reminders: v });
@@ -64,22 +137,71 @@ export default function Perfil() {
         <Card>
           <Text style={s.label}>Nombre</Text>
           <TextInput value={name} onChangeText={setName} style={s.input} placeholder="Tu nombre" />
-          <Text style={s.label}>Moneda (PEN por defecto)</Text>
+          <Text style={s.label}>Moneda de la cuenta</Text>
           <View style={s.row}>
-            {['PEN', 'USD', 'EUR'].map((m) => (
-              <Pressable key={m} onPress={() => setCurrency(m)} style={[s.chip, currency === m && s.chipOn]}>
-                <Text style={currency === m ? s.chipTxtOn : s.chipTxt}>{m}</Text>
+            {PRESETS.map((m) => (
+              <Pressable
+                key={m.code}
+                onPress={() => {
+                  setCurrency(m.code);
+                  setSymbol(m.symbol);
+                  setCustomOpen(false);
+                }}
+                style={[s.chip, currency === m.code && !customOpen && s.chipOn]}
+              >
+                <Text style={currency === m.code && !customOpen ? s.chipTxtOn : s.chipTxt}>
+                  {m.code} {m.symbol}
+                </Text>
+              </Pressable>
+            ))}
+            <Pressable onPress={() => setCustomOpen((v) => !v)} style={[s.chip, customOpen && s.chipOn]}>
+              <Text style={customOpen ? s.chipTxtOn : s.chipTxt}>Otra…</Text>
+            </Pressable>
+          </View>
+          {customOpen ? (
+            <View style={s.curRow}>
+              <View style={{ flex: 1 }}>
+                <Text style={s.label}>Código</Text>
+                <TextInput
+                  value={currency}
+                  onChangeText={(v) => setCurrency(v.toUpperCase())}
+                  style={s.input}
+                  placeholder="COP"
+                  autoCapitalize="characters"
+                  autoCorrect={false}
+                  maxLength={6}
+                />
+              </View>
+              <View style={{ flex: 1 }}>
+                <Text style={s.label}>Símbolo</Text>
+                <TextInput value={symbol} onChangeText={setSymbol} style={s.input} placeholder="$" maxLength={6} />
+              </View>
+            </View>
+          ) : null}
+          <Text style={s.remSub}>
+            Cambiar de moneda no convierte los importes guardados: solo cambia cómo se muestran.
+          </Text>
+          <Text style={s.label}>Inicio de semana</Text>
+          <View style={s.row}>
+            {(['monday', 'sunday'] as const).map((w) => (
+              <Pressable
+                key={w}
+                onPress={() => pickWeek(w)}
+                style={[s.chip, prefs.weekStartsOn === w && s.chipOn]}
+              >
+                <Text style={prefs.weekStartsOn === w ? s.chipTxtOn : s.chipTxt}>
+                  {w === 'monday' ? 'Lunes' : 'Domingo'}
+                </Text>
               </Pressable>
             ))}
           </View>
-          <Pressable style={s.btn} onPress={() => setUserName(name.trim() || 'Usuario')}>
-            <Text style={s.btnTxt}>Guardar</Text>
+          <Pressable style={[s.btn, saving && { opacity: 0.6 }]} onPress={onSave} disabled={saving}>
+            <Text style={s.btnTxt}>{saving ? 'Guardando…' : 'Guardar'}</Text>
           </Pressable>
+          {saveMsg ? <Text style={s.remSub}>{saveMsg}</Text> : null}
           <Text style={s.remSub}>Servidor: {API_BASE}</Text>
         </Card>
         <Card>
-          <Text style={s.label}>Tema: Claro / Oscuro / Automático (Fase 8)</Text>
-          <Text style={s.label}>Inicio de semana: Lunes (configurable Fase 8)</Text>
           <View style={s.remRow}>
             <View style={{ flex: 1 }}>
               <Text style={s.remTitle}>Recordatorios</Text>
@@ -233,7 +355,8 @@ const s = StyleSheet.create({
   sub: { color: colors.muted, marginBottom: 6 },
   label: { fontSize: 13, color: colors.text, marginTop: 10, marginBottom: 6, fontWeight: '600' },
   input: { borderWidth: 1, borderColor: colors.line, borderRadius: 12, padding: 12, backgroundColor: '#fff' },
-  row: { flexDirection: 'row', gap: 8 },
+  row: { flexDirection: 'row', gap: 8, flexWrap: 'wrap' },
+  curRow: { flexDirection: 'row', gap: 10 },
   chip: { borderWidth: 1, borderColor: colors.line, borderRadius: 99, paddingHorizontal: 16, paddingVertical: 8 },
   chipOn: { backgroundColor: colors.primary, borderColor: colors.primary },
   chipTxt: { color: colors.text, fontWeight: '700' },

@@ -18,7 +18,7 @@ export default function Register() {
     setError('');
     try {
       const r = await register(name.trim(), email.trim(), pass);
-      await signIn(r.access, r.user.name);
+      await signIn(r.access, r.user);
       router.replace('/(tabs)');
     } catch {
       setError('No se pudo crear la cuenta (¿correo ya usado o clave menor a 8?).');

@@ -3,12 +3,13 @@ import { prisma } from '../config/db';
 import type { AuthedRequest } from '../middleware/auth';
 import { calcProductivity } from '../services/productivity.service';
 
-function rangeOf(period: string, ref: Date): { from: Date; to: Date } {
+function rangeOf(period: string, ref: Date, weekStartsOn: string): { from: Date; to: Date } {
   const from = new Date(ref);
   const to = new Date(ref);
   if (period === 'week') {
-    const day = from.getDay();
-    from.setDate(from.getDate() + (day === 0 ? -6 : 1 - day));
+    const first = weekStartsOn === 'sunday' ? 0 : 1;
+    const diff = (from.getDay() - first + 7) % 7;
+    from.setDate(from.getDate() - diff);
     from.setHours(0, 0, 0, 0);
     to.setDate(from.getDate() + 6);
     to.setHours(23, 59, 59, 999);
@@ -24,11 +25,20 @@ function rangeOf(period: string, ref: Date): { from: Date; to: Date } {
   return { from, to };
 }
 
+// Inicio de semana del usuario (lunes por defecto).
+async function weekStartOf(userId: string): Promise<string> {
+  const u = await prisma.user.findUnique({
+    where: { id: userId },
+    select: { weekStartsOn: true },
+  });
+  return u?.weekStartsOn === 'sunday' ? 'sunday' : 'monday';
+}
+
 // GET /api/stats/overview?period=day|week|month&date=ISO
 export async function statsOverview(req: AuthedRequest, res: Response) {
   const period = (req.query.period as string) || 'day';
   const ref = req.query.date ? new Date(req.query.date as string) : new Date();
-  const { from, to } = rangeOf(period, ref);
+  const { from, to } = rangeOf(period, ref, await weekStartOf(req.userId!));
   const uid = req.userId!;
   const inRange = { gte: from, lte: to };
 
@@ -92,7 +102,7 @@ export async function statsOverview(req: AuthedRequest, res: Response) {
 export async function expensesByCategory(req: AuthedRequest, res: Response) {
   const period = (req.query.period as string) || 'day';
   const ref = req.query.date ? new Date(req.query.date as string) : new Date();
-  const { from, to } = rangeOf(period, ref);
+  const { from, to } = rangeOf(period, ref, await weekStartOf(req.userId!));
   const rows = await prisma.expense.groupBy({
     by: ['category'],
     where: { userId: req.userId!, date: { gte: from, lte: to } },

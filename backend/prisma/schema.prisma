@@ -17,6 +17,7 @@ model User {
   passwordHash String
   phone        String?
   currency     String   @default("PEN")
+  currencySymbol String @default("S/")
   theme        String   @default("auto")
   weekStartsOn String   @default("monday")
   createdAt    DateTime @default(now())

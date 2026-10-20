@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { login, me, refresh, register } from '../controllers/auth.controller';
+import { login, me, refresh, register, updateMe } from '../controllers/auth.controller';
 import { asyncHandler } from '../middleware/asyncHandler';
 import { requireAuth } from '../middleware/auth';
 
@@ -8,3 +8,4 @@ authRoutes.post('/register', asyncHandler(register));
 authRoutes.post('/login', asyncHandler(login));
 authRoutes.post('/refresh', asyncHandler(refresh));
 authRoutes.get('/me', requireAuth, asyncHandler(me));
+authRoutes.patch('/me', requireAuth, asyncHandler(updateMe));

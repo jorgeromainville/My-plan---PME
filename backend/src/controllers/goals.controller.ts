@@ -24,15 +24,20 @@ const goalSchema = z.object({
 
 const goalPatch = goalSchema.partial();
 
-export function periodRange(period: 'day' | 'week' | 'month', ref: Date): { from: Date; to: Date } {
+export function periodRange(
+  period: 'day' | 'week' | 'month',
+  ref: Date,
+  weekStartsOn = 'monday',
+): { from: Date; to: Date } {
   const from = new Date(ref);
   const to = new Date(ref);
   if (period === 'day') {
     from.setHours(0, 0, 0, 0);
     to.setHours(23, 59, 59, 999);
   } else if (period === 'week') {
-    const day = from.getDay();
-    from.setDate(from.getDate() + (day === 0 ? -6 : 1 - day));
+    const first = weekStartsOn === 'sunday' ? 0 : 1;
+    const diff = (from.getDay() - first + 7) % 7;
+    from.setDate(from.getDate() - diff);
     from.setHours(0, 0, 0, 0);
     to.setDate(from.getDate() + 6);
     to.setHours(23, 59, 59, 999);
@@ -157,13 +162,18 @@ export async function listGoals(req: AuthedRequest, res: Response) {
 export async function goalsProgress(req: AuthedRequest, res: Response) {
   const ref = req.query.date ? new Date(req.query.date as string) : new Date();
   const status = (req.query.status as string) || 'activa';
+  const userRow = await prisma.user.findUnique({
+    where: { id: req.userId! },
+    select: { weekStartsOn: true },
+  });
+  const ws = userRow?.weekStartsOn === 'sunday' ? 'sunday' : 'monday';
   const goals = await prisma.goal.findMany({
     where: { userId: req.userId!, ...(status === 'all' ? {} : { status }) },
     take: 200,
   });
   const out = await Promise.all(
     goals.map(async (g) => {
-      const { from, to } = periodRange(g.period as 'day' | 'week' | 'month', ref);
+      const { from, to } = periodRange(g.period as 'day' | 'week' | 'month', ref, ws);
       const logs = await prisma.goalLog.aggregate({
         where: { goalId: g.id, userId: req.userId!, date: { gte: from, lte: to } },
         _sum: { amount: true },

@@ -19,7 +19,7 @@ export default function Login() {
     setBusy(true);
     try {
       const r = await login(email.trim(), pass);
-      await signIn(r.access, r.user.name);
+      await signIn(r.access, r.user);
       router.replace('/(tabs)');
     } catch {
       setError('No se pudo entrar. Revisa correo, clave y que la API esté corriendo.');

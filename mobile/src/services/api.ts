@@ -148,7 +148,9 @@ export async function api<T>(
     throw new ApiError(0, 'Sin conexión con el servidor. Revisa el Wi-Fi y que la API esté corriendo.');
   }
 
-  if (res.status === 401 && retry && !path.startsWith('/api/auth/')) {
+  const noRefresh =
+    path === '/api/auth/login' || path === '/api/auth/register' || path === '/api/auth/refresh';
+  if (res.status === 401 && retry && !noRefresh) {
     // Intenta renovar una vez con el refresh token.
     try {
       const refresh = await storage.getRefresh();

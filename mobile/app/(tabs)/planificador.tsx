@@ -22,10 +22,11 @@ type ViewMode = 'day' | 'week' | 'month';
 const DIAS = ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'];
 const MESES = ['enero','febrero','marzo','abril','mayo','junio','julio','agosto','septiembre','octubre','noviembre','diciembre'];
 
-function startOfWeek(d: Date): Date {
+function startOfWeek(d: Date, weekStartsOn: 'monday' | 'sunday' = 'monday'): Date {
   const c = new Date(d);
-  const day = c.getDay();
-  c.setDate(c.getDate() + (day === 0 ? -6 : 1 - day));
+  const first = weekStartsOn === 'sunday' ? 0 : 1;
+  const diff = (c.getDay() - first + 7) % 7;
+  c.setDate(c.getDate() - diff);
   c.setHours(0, 0, 0, 0);
   return c;
 }
@@ -74,12 +75,12 @@ export default function Planificador() {
       from = new Date(r.from);
       to = new Date(r.to);
     } else if (view === 'week') {
-      from = startOfWeek(selectedDate);
+      from = startOfWeek(selectedDate, prefs.weekStartsOn);
       to = addDays(from, 6);
       to.setHours(23, 59, 59, 999);
     } else {
       const first = new Date(monthCursor.getFullYear(), monthCursor.getMonth(), 1);
-      from = startOfWeek(first);
+      from = startOfWeek(first, prefs.weekStartsOn);
       to = addDays(from, 41);
       to.setHours(23, 59, 59, 999);
     }
@@ -99,7 +100,7 @@ export default function Planificador() {
       setTasks([]);
       setEvents([]);
     }
-  }, [view, selectedDate, monthCursor]);
+  }, [view, selectedDate, monthCursor, prefs.weekStartsOn]);
 
   useFocusEffect(useCallback(() => {
     load();
@@ -180,7 +181,7 @@ export default function Planificador() {
   }
 
   // ---------- vistas ----------
-  const weekStart = startOfWeek(selectedDate);
+  const weekStart = startOfWeek(selectedDate, prefs.weekStartsOn);
   const weekDays = Array.from({ length: 7 }, (_, i) => addDays(weekStart, i));
 
   function dayData(d: Date) {
@@ -517,6 +518,7 @@ export default function Planificador() {
           }}
           detail={dayData(selectedDate)}
           onOpen={openDetail}
+          weekStartsOn={prefs.weekStartsOn}
         />
       )}
 
@@ -850,7 +852,7 @@ function WeekGrid({ days, dayData, onOpen, onPickDay, colW, selecting, picked, t
 }
 
 // ---------- vista mes ----------
-function MonthGrid({ cursor, setCursor, selected, holidays, onPick, counts, detail, onOpen }: {
+function MonthGrid({ cursor, setCursor, selected, holidays, onPick, counts, detail, onOpen, weekStartsOn }: {
   cursor: Date;
   setCursor: (d: Date) => void;
   selected: Date;
@@ -859,9 +861,10 @@ function MonthGrid({ cursor, setCursor, selected, holidays, onPick, counts, deta
   counts: (d: Date) => number;
   detail: ReturnType<typeof layoutDay>;
   onOpen: (b: PlacedBlock) => void;
+  weekStartsOn: 'monday' | 'sunday';
 }) {
   const first = new Date(cursor.getFullYear(), cursor.getMonth(), 1);
-  const start = startOfWeek(first);
+  const start = startOfWeek(first, weekStartsOn);
   const cells = Array.from({ length: 42 }, (_, i) => addDays(start, i));
   return (
     <ScrollView contentContainerStyle={s.body} showsVerticalScrollIndicator={false}>
@@ -875,7 +878,7 @@ function MonthGrid({ cursor, setCursor, selected, holidays, onPick, counts, deta
         </Pressable>
       </View>
       <View style={s.mGrid}>
-        {['L', 'M', 'M', 'J', 'V', 'S', 'D'].map((d, i) => (
+        {(weekStartsOn === 'sunday' ? ['D', 'L', 'M', 'M', 'J', 'V', 'S'] : ['L', 'M', 'M', 'J', 'V', 'S', 'D']).map((d, i) => (
           <Text key={i} style={s.mDow}>{d}</Text>
         ))}
         {cells.map((d, i) => {
