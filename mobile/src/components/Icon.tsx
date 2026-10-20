@@ -83,7 +83,7 @@ import Wallet from 'lucide-react-native/icons/wallet';
 import WandSparkles from 'lucide-react-native/icons/wand-sparkles';
 import X from 'lucide-react-native/icons/x';
 import React from 'react';
-import type { ColorValue } from 'react-native';
+import type { ColorValue, StyleProp, ViewStyle } from 'react-native';
 import { useThemeColors } from '../theme/colors';
 
 // Un solo set (Lucide) para toda la app: mismo trazo, mismo tamaño óptico.
@@ -176,97 +176,102 @@ const ICONS = {
 
 export type IconName = keyof typeof ICONS;
 
+// Emojis guardados en versiones anteriores (se normalizan al pintar, sin migración).
+const LEGACY_ICONS: Record<string, IconName> = {
+  '💰': 'money',
+  '🏪': 'money',
+  '👥': 'users',
+  '👤': 'user',
+  '✅': 'checkSquare',
+  '✓': 'check',
+  '✔️': 'check',
+  '⏱️': 'timer',
+  '🕐': 'clock',
+  '🔁': 'repeat',
+  '🔄': 'repeat',
+  '🎯': 'target',
+  '📅': 'calendar',
+  '🗓️': 'calendar',
+  '🔍': 'search',
+  '🔔': 'bell',
+  '☀️': 'sun',
+  '📍': 'mapPin',
+  '🧾': 'receipt',
+  '📷': 'camera',
+  '📝': 'fileText',
+  '🤖': 'brain',
+  '💡': 'lightbulb',
+  '🧭': 'compass',
+  '📞': 'phone',
+  '💬': 'whatsapp',
+  '✉️': 'mail',
+  '🎉': 'party',
+  '🛟': 'lifeBuoy',
+  '💼': 'briefcase',
+  '🏠': 'home',
+  '⭐': 'star',
+  '★': 'star',
+  '📦': 'package',
+  '🤝': 'handshake',
+  '🍽️': 'utensils',
+  '🍳': 'utensils',
+  '🛍️': 'shoppingBag',
+  '🏋️': 'dumbbell',
+  '📚': 'book',
+  '✈️': 'plane',
+  '❤️': 'heart',
+  '♡': 'heart',
+  '📌': 'mapPin',
+  '⬜': 'square',
+  '⏳': 'hourglass',
+  '●': 'circle',
+};
+
+const CONTACT_ICONS: Record<string, IconName> = {
+  Amigos: 'star',
+  Clientes: 'briefcase',
+  Proveedores: 'package',
+  Familia: 'home',
+  Compañeros: 'users',
+  Otros: 'mapPin',
+};
+
+const PLACE_ICONS: Record<string, IconName> = {
+  Casa: 'home',
+  Trabajo: 'briefcase',
+  Cliente: 'handshake',
+  Restaurante: 'utensils',
+  Compras: 'shoppingBag',
+  Gimnasio: 'dumbbell',
+  Estudio: 'book',
+  Amigos: 'users',
+};
+
+const GOAL_ICONS: Record<string, IconName> = {
+  ingresos: 'money',
+  contactos: 'users',
+  tareas: 'checkSquare',
+  horas: 'timer',
+  veces: 'repeat',
+};
+
 // Acepta un nombre semántico o un emoji heredado (datos ya guardados).
 export function normalizeIconName(value: string | undefined, fallback: IconName = 'mapPin'): IconName {
   if (!value) return fallback;
   if (Object.prototype.hasOwnProperty.call(ICONS, value)) return value as IconName;
-  const legacy: Record<string, IconName> = {
-    '💰': 'money',
-    '🏪': 'money',
-    '👥': 'users',
-    '👤': 'user',
-    '✅': 'checkSquare',
-    '✓': 'check',
-    '✔️': 'check',
-    '⏱️': 'timer',
-    '🕐': 'clock',
-    '🔁': 'repeat',
-    '🔄': 'repeat',
-    '🎯': 'target',
-    '📅': 'calendar',
-    '🗓️': 'calendar',
-    '🔍': 'search',
-    '🔔': 'bell',
-    '☀️': 'sun',
-    '📍': 'mapPin',
-    '🧾': 'receipt',
-    '📷': 'camera',
-    '📝': 'fileText',
-    '🤖': 'brain',
-    '💡': 'lightbulb',
-    '🧭': 'compass',
-    '📞': 'phone',
-    '💬': 'whatsapp',
-    '✉️': 'mail',
-    '🎉': 'party',
-    '🛟': 'lifeBuoy',
-    '💼': 'briefcase',
-    '🏠': 'home',
-    '⭐': 'star',
-    '★': 'star',
-    '📦': 'package',
-    '🤝': 'handshake',
-    '🍽️': 'utensils',
-    '🍳': 'utensils',
-    '🛍️': 'shoppingBag',
-    '🏋️': 'dumbbell',
-    '📚': 'book',
-    '✈️': 'plane',
-    '❤️': 'heart',
-    '♡': 'heart',
-    '📌': 'mapPin',
-    '⬜': 'square',
-    '⏳': 'hourglass',
-    '●': 'circle',
-  };
-  return legacy[value] ?? fallback;
+  return LEGACY_ICONS[value] ?? fallback;
 }
 
 export function contactIconName(category: string): IconName {
-  const map: Record<string, IconName> = {
-    Amigos: 'star',
-    Clientes: 'briefcase',
-    Proveedores: 'package',
-    Familia: 'home',
-    Compañeros: 'users',
-    Otros: 'mapPin',
-  };
-  return map[category] ?? 'mapPin';
+  return CONTACT_ICONS[category] ?? 'mapPin';
 }
 
 export function placeIconName(category: string): IconName {
-  const map: Record<string, IconName> = {
-    Casa: 'home',
-    Trabajo: 'briefcase',
-    Cliente: 'handshake',
-    Restaurante: 'utensils',
-    Compras: 'shoppingBag',
-    Gimnasio: 'dumbbell',
-    Estudio: 'book',
-    Amigos: 'users',
-  };
-  return map[category] ?? 'mapPin';
+  return PLACE_ICONS[category] ?? 'mapPin';
 }
 
 export function goalIconName(value: string): IconName {
-  const map: Record<string, IconName> = {
-    ingresos: 'money',
-    contactos: 'users',
-    tareas: 'checkSquare',
-    horas: 'timer',
-    veces: 'repeat',
-  };
-  return map[value] ?? normalizeIconName(value, 'target');
+  return GOAL_ICONS[value] ?? normalizeIconName(value, 'target');
 }
 
 export function eventIconName(type: string): IconName {
@@ -292,7 +297,7 @@ export function Icon({
   size?: number;
   color?: ColorValue;
   strokeWidth?: number;
-  style?: any;
+  style?: StyleProp<ViewStyle>;
 }) {
   const colors = useThemeColors();
   const Cmp = ICONS[normalizeIconName(name)];
