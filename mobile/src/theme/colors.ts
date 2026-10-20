@@ -4,7 +4,7 @@ import { usePrefs } from '../store/usePrefs';
 
 // Paletas de la app. Tres estilos + automático:
 // - Claro: fondos cálidos crema, tarjetas blancas.
-// - Oscuro: grafito frío casi negro, texto blanco y acento azul acero.
+// - Oscuro: negro neutro casi puro, texto blanco, coral vivo y turquesa.
 // - Típico (andino): inspirado en textiles andinos — terracota, ocre, turquesa
 //   y verde oliva sobre pergamino; texto marrón oscuro.
 const light = {
@@ -15,6 +15,7 @@ const light = {
   muted: '#656A65',
   line: '#EDE6D6',
   primary: '#22271F', // botón + y tab activo
+  onPrimary: '#FFFFFF', // texto sobre el botón principal
   onAccent: '#22271F', // texto sobre acentos claros (verde, coral, ocre…)
   link: '#2F6B4F', // enlaces y acciones secundarias
   accent: '#E07A5F', // coral / terracota suave
@@ -34,28 +35,29 @@ const light = {
 } as const;
 
 const dark = {
-  bg: '#0E1114', // grafito casi negro, con un deje frío
-  bgSoft: '#14181C',
-  card: '#1A1F24',
-  text: '#E9EEF2', // blanco frío
-  muted: '#A0ACB5',
-  line: '#2B333A',
-  primary: '#3D6FA6', // azul acero (5.2:1 con texto blanco)
-  onAccent: '#0E1114', // los acentos son claros: texto oscuro encima
-  link: '#8CC2EE', // azul claro
-  accent: '#6FB3D9',
-  green: '#7FC8A9', // menta
-  greenBg: '#182B25',
-  blue: '#7FB4E8',
-  blueBg: '#172A3A',
-  yellow: '#E3C06A', // oro suave
-  yellowBg: '#2C271A',
-  coral: '#E8907A', // salmón (solo datos: gastos)
-  coralBg: '#33211D',
-  purple: '#C39BE0', // lavanda
-  purpleBg: '#271F31',
-  success: '#7FC8A9',
-  danger: '#F08A7A',
+  bg: '#08090B', // negro neutro, como las referencias
+  bgSoft: '#101114',
+  card: '#16171B',
+  text: '#F5F6F8', // blanco frío
+  muted: '#8C939C',
+  line: '#262930',
+  primary: '#FF6B57', // coral vivo (7:1 con tinta oscura)
+  onPrimary: '#0B0B0D',
+  onAccent: '#0B0B0D', // los acentos son claros: texto oscuro encima
+  link: '#FF8A72', // coral claro para enlaces
+  accent: '#FF6B57',
+  green: '#4ED8B0', // turquesa/menta
+  greenBg: '#0F2A24',
+  blue: '#5EC8E5',
+  blueBg: '#0F2830',
+  yellow: '#F2C55C',
+  yellowBg: '#2A2416',
+  coral: '#FF7A66', // salmón (solo datos: gastos)
+  coralBg: '#2E1713',
+  purple: '#B994F5', // lavanda
+  purpleBg: '#241B33',
+  success: '#4ED8B0',
+  danger: '#FF7A66',
   white: '#FFFFFF',
 } as const;
 
@@ -67,6 +69,7 @@ const andean = {
   muted: '#6B4E2E',
   line: '#D8BD92',
   primary: '#A63E1E', // terracota del telar
+  onPrimary: '#FFFFFF',
   onAccent: '#FFF8E7',
   link: '#8F3518',
   accent: '#CE5A2C',

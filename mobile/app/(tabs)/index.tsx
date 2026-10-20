@@ -371,7 +371,7 @@ function createStyles(colors: ThemeColors) {
   resT: { fontWeight: '700', color: colors.text, marginBottom: 10 },
   resRow: { flexDirection: 'row', gap: 10 },
   resBtn: { flex: 1, backgroundColor: colors.primary, borderRadius: 12, padding: 12, alignItems: 'center' },
-  resBtnTxt: { color: '#fff', fontWeight: '800' },
+  resBtnTxt: { color: colors.onPrimary, fontWeight: '800' },
   chev: { fontSize: 24, color: colors.muted },
   grid: { flexDirection: 'row', gap: 10 },
   goal: { flex: 1, borderRadius: radius.md, padding: 12 },
@@ -404,6 +404,6 @@ function createStyles(colors: ThemeColors) {
   emptyTitle: { fontWeight: '800', color: colors.text },
   emptySub: { fontSize: 12, color: colors.muted, marginTop: 4, marginBottom: 10 },
   emptyBtn: { alignSelf: 'flex-start', backgroundColor: colors.primary, borderRadius: 10, paddingHorizontal: 14, paddingVertical: 8 },
-  emptyBtnTxt: { color: '#fff', fontWeight: '800', fontSize: 12 },
+  emptyBtnTxt: { color: colors.onPrimary, fontWeight: '800', fontSize: 12 },
 });
 }

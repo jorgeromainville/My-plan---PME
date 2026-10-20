@@ -43,7 +43,7 @@ export default function TabsLayout() {
                 </View>
               )
             : undefined,
-        tabBarActiveTintColor: colors.text,
+        tabBarActiveTintColor: colors.primary,
         tabBarInactiveTintColor: colors.muted,
         tabBarLabelStyle: { fontSize: 11, fontWeight: '700' },
       }}
@@ -81,12 +81,13 @@ function createStyles(colors: ThemeColors) {
     alignItems: 'center',
     justifyContent: 'center',
     marginTop: -28,
-    shadowColor: '#000',
-    shadowOpacity: 0.2,
-    shadowRadius: 10,
-    elevation: 4,
+    shadowColor: colors.primary,
+    shadowOpacity: 0.45,
+    shadowRadius: 14,
+    shadowOffset: { width: 0, height: 0 },
+    elevation: 8,
   },
-  plusTxt: { color: '#fff', fontSize: 34, lineHeight: 34, fontWeight: '400' },
+  plusTxt: { color: colors.onPrimary, fontSize: 34, lineHeight: 34, fontWeight: '400' },
   tabIcon: { fontSize: 20 },
 });
 }

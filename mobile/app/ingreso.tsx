@@ -227,7 +227,7 @@ function createStyles(colors: ThemeColors) {
   chip: { borderWidth: 1, borderColor: colors.line, borderRadius: 99, paddingHorizontal: 14, paddingVertical: 8, backgroundColor: colors.card },
   chipOn: { backgroundColor: colors.primary, borderColor: colors.primary },
   chipTxt: { color: colors.text, fontWeight: '700', fontSize: 12 },
-  chipTxtOn: { color: '#fff', fontWeight: '700', fontSize: 12 },
+  chipTxtOn: { color: colors.onPrimary, fontWeight: '700', fontSize: 12 },
   error: { color: colors.danger, marginTop: 12 },
   btn: { marginTop: 18, backgroundColor: colors.green, borderRadius: 14, padding: 15, alignItems: 'center' },
   btnTxt: { color: colors.onAccent, fontWeight: '800' },
@@ -236,7 +236,7 @@ function createStyles(colors: ThemeColors) {
   confirm: { backgroundColor: colors.card, borderRadius: 14, borderWidth: 1, borderColor: colors.line, padding: 14, marginTop: 10 },
   confirmT: { fontWeight: '800', color: colors.text, marginBottom: 10 },
   keep: { flex: 1, backgroundColor: colors.primary, borderRadius: 12, padding: 12, alignItems: 'center' },
-  keepTxt: { color: '#fff', fontWeight: '800' },
+  keepTxt: { color: colors.onPrimary, fontWeight: '800' },
   drop: { flex: 1, padding: 12, alignItems: 'center' },
   dropTxt: { color: colors.danger, fontWeight: '800' },
 });

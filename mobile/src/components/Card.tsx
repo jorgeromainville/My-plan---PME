@@ -1,3 +1,4 @@
+import { LinearGradient } from 'expo-linear-gradient';
 import React from 'react';
 import { StyleSheet, View, ViewProps } from 'react-native';
 import { usePrefs } from '../store/usePrefs';
@@ -14,6 +15,15 @@ export function Card({ children, style, ...rest }: ViewProps) {
         <View pointerEvents="none" style={styles.pattern}>
           <AndeanCardPattern />
         </View>
+      ) : null}
+      {theme === 'dark' ? (
+        <LinearGradient
+          pointerEvents="none"
+          colors={['rgba(255,255,255,0.055)', 'rgba(255,255,255,0)']}
+          start={{ x: 0.1, y: 0 }}
+          end={{ x: 0.9, y: 1 }}
+          style={styles.pattern}
+        />
       ) : null}
       {children}
     </View>

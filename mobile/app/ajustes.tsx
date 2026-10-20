@@ -199,7 +199,7 @@ function createStyles(colors: ThemeColors) {
   dotSm: { width: 24, height: 24, borderRadius: 12, borderWidth: 2, borderColor: 'transparent' },
   dotOn: { borderColor: colors.primary },
   btn: { backgroundColor: colors.primary, borderRadius: 14, padding: 14, alignItems: 'center', marginTop: 4 },
-  btnTxt: { color: '#fff', fontWeight: '800' },
+  btnTxt: { color: colors.onPrimary, fontWeight: '800' },
   kRow: { flexDirection: 'row', alignItems: 'center', gap: 8, marginBottom: 10, flexWrap: 'wrap' },
   kColors: { flexDirection: 'row', gap: 6 },
   del: { fontSize: 16, color: colors.danger, padding: 8 },
@@ -212,7 +212,7 @@ function createStyles(colors: ThemeColors) {
   chip: { borderWidth: 1, borderColor: colors.line, borderRadius: 99, paddingHorizontal: 14, paddingVertical: 8, backgroundColor: colors.card },
   chipOn: { backgroundColor: colors.primary, borderColor: colors.primary },
   chipTxt: { color: colors.text, fontWeight: '700', fontSize: 12 },
-  chipTxtOn: { color: '#fff', fontWeight: '700', fontSize: 12 },
+  chipTxtOn: { color: colors.onPrimary, fontWeight: '700', fontSize: 12 },
   reset: { padding: 14, alignItems: 'center' },
   resetTxt: { color: colors.muted, fontWeight: '700' },
 });

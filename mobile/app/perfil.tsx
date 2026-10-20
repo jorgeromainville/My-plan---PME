@@ -283,7 +283,7 @@ export default function Perfil() {
                 {t.v === 'andean' ? (
                   <Chakana
                     size={12}
-                    color={prefs.theme === t.v ? colors.white : colors.primary}
+                    color={prefs.theme === t.v ? colors.onPrimary : colors.primary}
                     style={s.chipMark}
                   />
                 ) : null}
@@ -522,9 +522,9 @@ function createStyles(colors: ThemeColors) {
   chipMark: { marginRight: 5 },
   chipOn: { backgroundColor: colors.primary, borderColor: colors.primary },
   chipTxt: { color: colors.text, fontWeight: '700' },
-  chipTxtOn: { color: '#fff', fontWeight: '700' },
+  chipTxtOn: { color: colors.onPrimary, fontWeight: '700' },
   btn: { marginTop: 16, backgroundColor: colors.primary, borderRadius: 14, padding: 14, alignItems: 'center' },
-  btnTxt: { color: '#fff', fontWeight: '800' },
+  btnTxt: { color: colors.onPrimary, fontWeight: '800' },
   ghost: { marginTop: 10, borderWidth: 1, borderColor: colors.line, borderRadius: 12, padding: 12, alignItems: 'center' },
   ghostTxt: { fontWeight: '700', color: colors.muted },
   danger: { marginTop: 10, borderWidth: 1, borderColor: colors.danger, borderRadius: 12, padding: 12, alignItems: 'center' },

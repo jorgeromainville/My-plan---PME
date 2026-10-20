@@ -60,7 +60,7 @@ function createStyles(colors: ThemeColors) {
   input: { backgroundColor: colors.card, borderRadius: 12, borderWidth: 1, borderColor: colors.line, padding: 14, marginBottom: 10, color: colors.text },
   error: { color: colors.danger, marginBottom: 10 },
   btn: { backgroundColor: colors.primary, borderRadius: 14, padding: 15, alignItems: 'center' },
-  btnTxt: { color: '#fff', fontWeight: '800' },
+  btnTxt: { color: colors.onPrimary, fontWeight: '800' },
   legal: { marginTop: 16, fontSize: 12, lineHeight: 18, color: colors.muted, textAlign: 'center' },
   link: { color: colors.text, fontWeight: '800', textDecorationLine: 'underline' },
 });

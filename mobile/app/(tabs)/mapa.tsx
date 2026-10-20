@@ -338,7 +338,7 @@ function createStyles(colors: ThemeColors) {
   chip: { borderWidth: 1, borderColor: colors.line, borderRadius: 99, paddingHorizontal: 14, paddingVertical: 7, backgroundColor: colors.card, marginRight: 8, justifyContent: 'center', elevation: 2 },
   chipOn: { backgroundColor: colors.primary, borderColor: colors.primary },
   chipTxt: { color: colors.text, fontWeight: '700', fontSize: 12 },
-  chipTxtOn: { color: '#fff', fontWeight: '700', fontSize: 12 },
+  chipTxtOn: { color: colors.onPrimary, fontWeight: '700', fontSize: 12 },
   error: { color: colors.danger, marginHorizontal: 16, marginTop: 6, backgroundColor: colors.card, borderRadius: 8, padding: 6 },
   mine: { position: 'absolute', right: 12, top: 186, width: 44, height: 44, borderRadius: 22, backgroundColor: colors.card, alignItems: 'center', justifyContent: 'center', elevation: 3 },
   mineTxt: { fontSize: 20 },

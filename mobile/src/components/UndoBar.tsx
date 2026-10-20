@@ -49,7 +49,7 @@ function createStyles(colors: ThemeColors) {
     shadowRadius: 10,
     elevation: 6,
   },
-  msg: { color: '#fff', flex: 1, fontWeight: '600' },
-  undo: { color: '#fff', textDecorationLine: 'underline', fontWeight: '800' },
+  msg: { color: colors.onPrimary, flex: 1, fontWeight: '600' },
+  undo: { color: colors.onPrimary, textDecorationLine: 'underline', fontWeight: '800' },
 });
 }

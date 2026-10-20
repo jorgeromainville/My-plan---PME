@@ -57,7 +57,7 @@ function createStyles(colors: ThemeColors) {
   error: { color: colors.danger, marginBottom: 10 },
   btn: { backgroundColor: colors.primary, borderRadius: 14, padding: 15, alignItems: 'center', marginTop: 6 },
   btnOff: { opacity: 0.6 },
-  btnTxt: { color: '#fff', fontWeight: '800' },
+  btnTxt: { color: colors.onPrimary, fontWeight: '800' },
   link: { textAlign: 'center', marginTop: 14, fontWeight: '700', color: colors.text },
 });
 }
