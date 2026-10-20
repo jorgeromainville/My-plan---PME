@@ -22,7 +22,7 @@ export async function register(req: Request, res: Response) {
   const passwordHash = await hashPassword(data.password);
   const user = await prisma.user.create({
     data: { name: data.name, email: data.email, passwordHash },
-    select: { id: true, name: true, email: true, currency: true, currencySymbol: true },
+    select: { id: true, name: true, email: true, currency: true, currencySymbol: true, theme: true, weekStartsOn: true },
   });
   res.status(201).json({ user, access: signAccess(user.id), refresh: signRefresh(user.id) });
 }
@@ -85,6 +85,38 @@ export async function updateMe(req: Request & { userId?: string }, res: Response
     },
   });
   res.json({ user });
+}
+
+const passwordSchema = z.object({
+  currentPassword: z.string().min(1),
+  newPassword: z.string().min(8).max(72),
+});
+
+// PATCH /api/auth/password — cambia la clave verificando la actual.
+export async function changePassword(req: Request & { userId?: string }, res: Response) {
+  const { currentPassword, newPassword } = passwordSchema.parse(req.body);
+  if (currentPassword === newPassword) {
+    return res.status(400).json({ error: 'La nueva contraseña debe ser distinta de la actual.' });
+  }
+  const user = await prisma.user.findUnique({ where: { id: req.userId! } });
+  if (!user) return res.status(404).json({ error: 'Usuario no encontrado' });
+  const ok = await verifyPassword(currentPassword, user.passwordHash);
+  if (!ok) return res.status(400).json({ error: 'La contraseña actual no es correcta.' });
+  await prisma.user.update({
+    where: { id: user.id },
+    data: { passwordHash: await hashPassword(newPassword) },
+  });
+  res.json({ ok: true });
+}
+
+const deleteAccountSchema = z.object({ confirm: z.literal('ELIMINAR') });
+
+// DELETE /api/auth/account — borra la cuenta y todo lo suyo (cascada).
+// Play Store exige que el usuario pueda eliminar su cuenta desde la app.
+export async function deleteAccount(req: Request & { userId?: string }, res: Response) {
+  deleteAccountSchema.parse(req.body);
+  await prisma.user.delete({ where: { id: req.userId! } });
+  res.json({ ok: true });
 }
 
 

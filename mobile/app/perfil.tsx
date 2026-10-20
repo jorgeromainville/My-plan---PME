@@ -4,7 +4,7 @@ import { Alert, Pressable, ScrollView, StyleSheet, Switch, Text, TextInput, View
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Card } from '../src/components/Card';
 import { API_BASE, errorMessage, flushPending } from '../src/services/api';
-import { updateMe } from '../src/services/auth';
+import { changePassword, deleteAccount, updateMe } from '../src/services/auth';
 import { clearOps, loadOps } from '../src/services/sync';
 import { storage } from '../src/services/storage';
 import { cancelReminders, remindersGranted, remindersNativeMissing, rescheduleReminders, sendTestReminder } from '../src/services/reminders';
@@ -48,6 +48,13 @@ export default function Perfil() {
   const [remMsg, setRemMsg] = useState('');
   const [pending, setPending] = useState(0);
   const [syncMsg, setSyncMsg] = useState('');
+  const [curPass, setCurPass] = useState('');
+  const [newPass, setNewPass] = useState('');
+  const [passMsg, setPassMsg] = useState('');
+  const [passBusy, setPassBusy] = useState(false);
+  const [confirmText, setConfirmText] = useState('');
+  const [delMsg, setDelMsg] = useState('');
+  const [delBusy, setDelBusy] = useState(false);
 
   // Si la sesión carga después de abrir Perfil, refleja los datos del servidor.
   useEffect(() => {
@@ -119,6 +126,55 @@ export default function Perfil() {
     } catch (e) {
       setSaveMsg(errorMessage(e));
     }
+  }
+
+  async function onChangePassword() {
+    setPassMsg('');
+    if (newPass.length < 8) {
+      setPassMsg('La nueva contraseña debe tener al menos 8 caracteres.');
+      return;
+    }
+    setPassBusy(true);
+    try {
+      await changePassword(curPass, newPass);
+      setCurPass('');
+      setNewPass('');
+      setPassMsg('Contraseña actualizada.');
+    } catch (e) {
+      setPassMsg(errorMessage(e));
+    } finally {
+      setPassBusy(false);
+    }
+  }
+
+  function onDeleteAccount() {
+    setDelMsg('');
+    if (confirmText.trim() !== 'ELIMINAR') {
+      setDelMsg('Escribe ELIMINAR (en mayúsculas) para confirmar.');
+      return;
+    }
+    Alert.alert(
+      'Eliminar mi cuenta',
+      'Se borrarán tu cuenta y todos tus datos: ingresos, gastos, tareas, eventos, metas, lugares y contactos. No se puede deshacer.',
+      [
+        { text: 'Cancelar', style: 'cancel' },
+        {
+          text: 'Eliminar',
+          style: 'destructive',
+          onPress: async () => {
+            setDelBusy(true);
+            try {
+              await deleteAccount();
+              await signOut();
+              router.replace('/(auth)/login');
+            } catch (e) {
+              setDelMsg(errorMessage(e));
+              setDelBusy(false);
+            }
+          },
+        },
+      ],
+    );
   }
 
   async function toggleReminders(v: boolean) {
@@ -261,6 +317,57 @@ export default function Perfil() {
           <Pressable style={s.btn} onPress={() => router.push('/ajustes')}>
             <Text style={s.btnTxt}>Tipos y plantillas</Text>
           </Pressable>
+        </Card>
+        <Card>
+          <Text style={s.title2}>Seguridad</Text>
+          <Text style={s.label}>Contraseña actual</Text>
+          <TextInput
+            value={curPass}
+            onChangeText={setCurPass}
+            style={s.input}
+            secureTextEntry
+            placeholder="Tu contraseña"
+          />
+          <Text style={s.label}>Nueva contraseña (mínimo 8 caracteres)</Text>
+          <TextInput
+            value={newPass}
+            onChangeText={setNewPass}
+            style={s.input}
+            secureTextEntry
+            placeholder="Nueva contraseña"
+          />
+          <Pressable
+            style={[s.btn, passBusy && { opacity: 0.6 }]}
+            onPress={onChangePassword}
+            disabled={passBusy}
+          >
+            <Text style={s.btnTxt}>{passBusy ? 'Guardando…' : 'Cambiar contraseña'}</Text>
+          </Pressable>
+          {passMsg ? <Text style={s.remSub}>{passMsg}</Text> : null}
+        </Card>
+        <Card>
+          <Text style={s.title2}>Eliminar cuenta</Text>
+          <Text style={s.remSub}>
+            Borra tu perfil y todos tus datos (ingresos, gastos, tareas, eventos, metas, lugares y
+            contactos). No se puede deshacer.
+          </Text>
+          <Text style={s.label}>Escribe ELIMINAR para confirmar</Text>
+          <TextInput
+            value={confirmText}
+            onChangeText={setConfirmText}
+            style={s.input}
+            placeholder="ELIMINAR"
+            autoCapitalize="characters"
+            autoCorrect={false}
+          />
+          <Pressable
+            style={[s.danger, (delBusy || confirmText.trim() !== 'ELIMINAR') && { opacity: 0.5 }]}
+            onPress={onDeleteAccount}
+            disabled={delBusy || confirmText.trim() !== 'ELIMINAR'}
+          >
+            <Text style={s.dangerTxt}>{delBusy ? 'Eliminando…' : 'Eliminar mi cuenta'}</Text>
+          </Pressable>
+          {delMsg ? <Text style={s.remSub}>{delMsg}</Text> : null}
         </Card>
         <Card>
           <Text style={s.title2}>Agenda</Text>

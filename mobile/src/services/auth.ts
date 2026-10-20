@@ -39,6 +39,25 @@ export async function updateMe(
   );
 }
 
+export async function changePassword(currentPassword: string, newPassword: string) {
+  const token = await storage.getToken();
+  return api<{ ok: true }>(
+    '/api/auth/password',
+    { method: 'PATCH', body: JSON.stringify({ currentPassword, newPassword }) },
+    token,
+  );
+}
+
+// Borra la cuenta y todo lo suyo (el servidor elimina en cascada).
+export async function deleteAccount() {
+  const token = await storage.getToken();
+  return api<{ ok: true }>(
+    '/api/auth/account',
+    { method: 'DELETE', body: JSON.stringify({ confirm: 'ELIMINAR' }) },
+    token,
+  );
+}
+
 export async function logout() {
   await clearOps();
   await storage.clear();

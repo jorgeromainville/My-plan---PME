@@ -22,8 +22,24 @@ import { tasksRoutes } from './routes/tasks.routes';
 
 export function buildApp() {
   const app = express();
+  app.disable('x-powered-by');
   app.use(helmet());
-  app.use(cors());
+  // La app nativa no manda Origin; solo se permiten navegadores de desarrollo
+  // locales y los orígenes declarados en CORS_ORIGINS (coma-separados).
+  const allowedOrigins = (process.env.CORS_ORIGINS ?? '')
+    .split(',')
+    .map((s) => s.trim())
+    .filter(Boolean);
+  app.use(
+    cors({
+      origin(origin, cb) {
+        if (!origin) return cb(null, true);
+        const local = /^https?:\/\/(localhost|127\.0\.0\.1|\[::1\])(:\d+)?$/.test(origin);
+        if (local || allowedOrigins.includes(origin)) return cb(null, true);
+        return cb(null, false);
+      },
+    }),
+  );
   app.use(express.json({ limit: '1mb' }));
   app.use(morgan('dev'));
 
