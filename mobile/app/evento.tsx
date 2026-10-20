@@ -9,7 +9,7 @@ import { DurationChips, shift } from '../src/components/TimeWheel';
 import { useCatalog } from '../src/store/useCatalog';
 import { listContacts, type ContactRef } from '../src/services/contacts';
 import { useAppStore } from '../src/store/useAppStore';
-import { colors } from '../src/theme/colors';
+import { colors, useThemedStyles, type ThemeColors } from '../src/theme/colors';
 import { addDays, parseLocalDay } from '../src/utils/dates';
 
 const NOTIFY = [0, 15, 30, 60];
@@ -45,6 +45,7 @@ function nowRounded(): string {
 }
 
 export default function EventoForm() {
+  const s = useThemedStyles(createStyles);
   const router = useRouter();
   const { id, date: dateParam, time: timeParam, end: endParam } = useLocalSearchParams<{ id?: string; date?: string; time?: string; end?: string }>();
   const selectedDate = useAppStore((s) => s.selectedDate);
@@ -360,12 +361,13 @@ export default function EventoForm() {
   );
 }
 
-const s = StyleSheet.create({
+function createStyles(colors: ThemeColors) {
+  return StyleSheet.create({
   safe: { flex: 1, backgroundColor: colors.bg },
   body: { padding: 18 },
   title: { fontSize: 22, fontWeight: '900', color: colors.text, marginBottom: 8 },
   label: { fontSize: 13, fontWeight: '700', color: colors.text, marginTop: 12, marginBottom: 6 },
-  input: { backgroundColor: '#fff', borderRadius: 12, borderWidth: 1, borderColor: colors.line, padding: 13 },
+  input: { backgroundColor: colors.card, borderRadius: 12, borderWidth: 1, borderColor: colors.line, padding: 13 },
   area: { minHeight: 80, textAlignVertical: 'top' },
   row: { flexDirection: 'row', gap: 8, alignItems: 'center' },
   top: { flexDirection: 'row', alignItems: 'center', marginBottom: 4 },
@@ -379,14 +381,14 @@ const s = StyleSheet.create({
   drop: { flex: 1, padding: 12, alignItems: 'center' },
   dropTxt: { color: colors.danger, fontWeight: '800' },
   backup: { backgroundColor: colors.bgSoft, borderRadius: 14, padding: 12, marginTop: 8 },
-  now: { alignSelf: 'flex-start', borderWidth: 1, borderColor: colors.line, borderRadius: 99, paddingHorizontal: 14, paddingVertical: 8, backgroundColor: '#fff', marginBottom: 8 },
+  now: { alignSelf: 'flex-start', borderWidth: 1, borderColor: colors.line, borderRadius: 99, paddingHorizontal: 14, paddingVertical: 8, backgroundColor: colors.card, marginBottom: 8 },
   nowTxt: { fontWeight: '800', color: colors.blue, fontSize: 13 },
   mini: { fontSize: 12, color: colors.muted, marginTop: 8 },
   wrap: { flexDirection: 'row', gap: 8, alignItems: 'center', flexWrap: 'wrap' },
   dot: { width: 36, height: 36, borderRadius: 18, borderWidth: 3, borderColor: 'transparent' },
   dotOn: { borderColor: colors.primary },
   tentRow: { flexDirection: 'row', alignItems: 'center', gap: 10, marginTop: 14 },
-  box: { width: 26, height: 26, borderRadius: 8, borderWidth: 2, borderColor: colors.muted, alignItems: 'center', justifyContent: 'center', backgroundColor: '#fff' },
+  box: { width: 26, height: 26, borderRadius: 8, borderWidth: 2, borderColor: colors.muted, alignItems: 'center', justifyContent: 'center', backgroundColor: colors.card },
   boxOn: { backgroundColor: colors.yellowBg, borderColor: colors.yellow },
   boxTxt: { fontWeight: '900', color: colors.text },
   tentTxt: { fontWeight: '600', color: colors.text, fontSize: 13 },
@@ -395,7 +397,7 @@ const s = StyleSheet.create({
   nav: { paddingHorizontal: 16, paddingVertical: 8 },
   navTxt: { fontSize: 24, color: colors.muted },
   date: { fontWeight: '800', color: colors.text, flex: 1, textAlign: 'center' },
-  chip: { borderWidth: 1, borderColor: colors.line, borderRadius: 99, paddingHorizontal: 14, paddingVertical: 8, backgroundColor: '#fff' },
+  chip: { borderWidth: 1, borderColor: colors.line, borderRadius: 99, paddingHorizontal: 14, paddingVertical: 8, backgroundColor: colors.card },
   chipOn: { backgroundColor: colors.primary, borderColor: colors.primary },
   chipTxt: { color: colors.text, fontWeight: '700', fontSize: 12 },
   chipTxtOn: { color: '#fff', fontWeight: '700', fontSize: 12 },
@@ -405,3 +407,4 @@ const s = StyleSheet.create({
   del: { marginTop: 10, padding: 14, alignItems: 'center' },
   delTxt: { color: colors.danger, fontWeight: '700' },
 });
+}

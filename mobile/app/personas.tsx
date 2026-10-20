@@ -6,10 +6,11 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { Card } from '../src/components/Card';
 import { errorMessage } from '../src/services/api';
 import { categoryIcon, listContactCategories, listContacts, type Contact, type ContactCategory } from '../src/services/contacts';
-import { colors } from '../src/theme/colors';
+import { colors, useThemedStyles, type ThemeColors } from '../src/theme/colors';
 
 // Personas: buscador + categorías + "Contactar hoy" primero.
 export default function Personas() {
+  const s = useThemedStyles(createStyles);
   const router = useRouter();
   const [q, setQ] = useState('');
   const [cat, setCat] = useState('Todos');
@@ -89,6 +90,7 @@ export default function Personas() {
 }
 
 export function ContactRow({ c, hot, onOpen, color }: { c: Contact; hot?: boolean; onOpen: () => void; color?: string | null }) {
+  const s = useThemedStyles(createStyles);
   const name = `${c.firstName}${c.lastName ? ` ${c.lastName}` : ''}`;
   return (
     <Pressable onPress={onOpen} style={[s.row, hot && s.hot]}>
@@ -107,7 +109,8 @@ export function ContactRow({ c, hot, onOpen, color }: { c: Contact; hot?: boolea
   );
 }
 
-const s = StyleSheet.create({
+function createStyles(colors: ThemeColors) {
+  return StyleSheet.create({
   safe: { flex: 1, backgroundColor: colors.bg },
   header: { flexDirection: 'row', alignItems: 'center', padding: 16, gap: 8 },
   back: { width: 40, paddingVertical: 6 },
@@ -116,7 +119,7 @@ const s = StyleSheet.create({
   add: { width: 44, height: 44, borderRadius: 22, backgroundColor: colors.primary, alignItems: 'center', justifyContent: 'center' },
   addTxt: { color: '#fff', fontSize: 26 },
   body: { padding: 16, paddingTop: 0 },
-  search: { backgroundColor: '#fff', borderRadius: 12, borderWidth: 1, borderColor: colors.line, padding: 13, marginBottom: 10 },
+  search: { backgroundColor: colors.card, borderRadius: 12, borderWidth: 1, borderColor: colors.line, padding: 13, marginBottom: 10 },
   cats: { gap: 8, paddingBottom: 4, height: 44 },
   chip: { flexDirection: 'row', alignItems: 'center', borderWidth: 1, borderColor: colors.line, borderRadius: 99, paddingHorizontal: 14, paddingVertical: 7, backgroundColor: colors.card, marginRight: 8, justifyContent: 'center' },
   dot: { width: 12, height: 12, borderRadius: 6, marginRight: 6 },
@@ -134,3 +137,4 @@ const s = StyleSheet.create({
   sub: { fontSize: 12, color: colors.muted },
   chev: { fontSize: 20, color: colors.muted },
 });
+}

@@ -2,7 +2,7 @@ import DateTimePicker from '@react-native-community/datetimepicker';
 import React, { useState } from 'react';
 import { Pressable, StyleSheet, Text } from 'react-native';
 import { usePrefs } from '../store/usePrefs';
-import { colors } from '../theme/colors';
+import { colors, useThemedStyles, type ThemeColors } from '../theme/colors';
 import { parseLocalDay, formatShortEs } from '../utils/dates';
 
 // Selector de hora nativo del sistema (cero bugs, respeta 12/24h).
@@ -11,6 +11,7 @@ export function NativeTime({ value, onChange, label }: {
   onChange: (v: string) => void;
   label: string;
 }) {
+  const s = useThemedStyles(createStyles);
   const [open, setOpen] = useState(false);
   const prefs = usePrefs();
   const [h, m] = value.split(':').map(Number);
@@ -40,10 +41,12 @@ export function NativeTime({ value, onChange, label }: {
   );
 }
 
-const s = StyleSheet.create({
-  btn: { backgroundColor: '#fff', borderRadius: 12, borderWidth: 1, borderColor: colors.line, padding: 14 },
+function createStyles(colors: ThemeColors) {
+  return StyleSheet.create({
+  btn: { backgroundColor: colors.card, borderRadius: 12, borderWidth: 1, borderColor: colors.line, padding: 14 },
   txt: { fontWeight: '800', color: colors.text, fontSize: 16 },
 });
+}
 
 // Selector de fecha nativo (para "repetir hasta").
 export function NativeDate({ value, onChange, label, placeholder = 'Elegir fecha' }: {
@@ -52,6 +55,7 @@ export function NativeDate({ value, onChange, label, placeholder = 'Elegir fecha
   label: string;
   placeholder?: string;
 }) {
+  const s = useThemedStyles(createStyles);
   const [open, setOpen] = useState(false);
   const d = parseLocalDay(value) ?? new Date();
 

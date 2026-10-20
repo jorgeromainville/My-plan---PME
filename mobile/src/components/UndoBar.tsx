@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
-import { colors } from '../theme/colors';
+import { colors, useThemedStyles, type ThemeColors } from '../theme/colors';
 
 // Barra "Deshacer" 8s como la referencia: revierte el último movimiento.
 export function UndoBar({ message, onUndo, onDone }: {
@@ -8,6 +8,7 @@ export function UndoBar({ message, onUndo, onDone }: {
   onUndo: () => void;
   onDone: () => void;
 }) {
+  const s = useThemedStyles(createStyles);
   const [left, setLeft] = useState(8);
 
   useEffect(() => {
@@ -31,7 +32,8 @@ export function UndoBar({ message, onUndo, onDone }: {
   );
 }
 
-const s = StyleSheet.create({
+function createStyles(colors: ThemeColors) {
+  return StyleSheet.create({
   bar: {
     position: 'absolute',
     left: 16,
@@ -50,3 +52,4 @@ const s = StyleSheet.create({
   msg: { color: '#fff', flex: 1, fontWeight: '600' },
   undo: { color: '#9BD3F5', fontWeight: '800' },
 });
+}

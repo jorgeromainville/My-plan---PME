@@ -7,7 +7,7 @@ import { Card } from '../src/components/Card';
 import { ProgressBar } from '../src/components/ProgressBar';
 import { errorMessage } from '../src/services/api';
 import { goalsProgress, updateGoal, type Goal, type GoalPeriod } from '../src/services/goals';
-import { colors } from '../src/theme/colors';
+import { colors, useThemedStyles, type ThemeColors } from '../src/theme/colors';
 import { formatMoney } from '../src/utils/format';
 
 const PERIODS: { v: GoalPeriod | 'all'; label: string }[] = [
@@ -24,6 +24,7 @@ function money(kind: string, v: number, unit: string): string {
 
 // Metas: progreso automático desde datos reales + historial.
 export default function Metas() {
+  const s = useThemedStyles(createStyles);
   const router = useRouter();
   const [period, setPeriod] = useState<GoalPeriod | 'all'>('all');
   const [tab, setTab] = useState<'active' | 'done'>('active');
@@ -123,7 +124,8 @@ export default function Metas() {
   );
 }
 
-const s = StyleSheet.create({
+function createStyles(colors: ThemeColors) {
+  return StyleSheet.create({
   safe: { flex: 1, backgroundColor: colors.bg },
   header: { flexDirection: 'row', alignItems: 'center', padding: 16, gap: 8 },
   back: { width: 40, paddingVertical: 6 },
@@ -146,8 +148,9 @@ const s = StyleSheet.create({
   nums: { marginTop: 8, fontWeight: '700', color: colors.text, fontSize: 13 },
   src: { marginTop: 4, fontSize: 12, color: colors.muted },
   rowBtns: { flexDirection: 'row', gap: 8, marginTop: 10 },
-  mini: { borderWidth: 1, borderColor: colors.line, borderRadius: 99, paddingHorizontal: 14, paddingVertical: 7, backgroundColor: '#fff' },
+  mini: { borderWidth: 1, borderColor: colors.line, borderRadius: 99, paddingHorizontal: 14, paddingVertical: 7, backgroundColor: colors.card },
   done: { backgroundColor: colors.greenBg, borderColor: colors.green },
   miniTxt: { fontWeight: '700', fontSize: 12, color: colors.text },
   empty: { color: colors.muted, textAlign: 'center', marginTop: 16 },
 });
+}

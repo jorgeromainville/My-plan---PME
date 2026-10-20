@@ -5,7 +5,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { Card } from '../../src/components/Card';
 import { errorMessage } from '../../src/services/api';
 import { expensesByCategory, statsOverview, type ExpenseSlice, type Overview, type StatPeriod } from '../../src/services/stats';
-import { colors } from '../../src/theme/colors';
+import { colors, useThemedStyles, type ThemeColors } from '../../src/theme/colors';
 import { toLocalKey } from '../../src/utils/dates';
 import { formatMoney } from '../../src/utils/format';
 
@@ -19,6 +19,7 @@ const SLICE_COLORS = ['#D98162', '#C9A44A', '#6B9ECF', '#6FA287', '#8B7BC7', '#E
 
 // Estadísticas reales: resumen + ingresos vs gastos + dona por categoría + productividad.
 export default function Estadisticas() {
+  const s = useThemedStyles(createStyles);
   const [period, setPeriod] = useState<StatPeriod>('day');
   const [ov, setOv] = useState<Overview | null>(null);
   const [cats, setCats] = useState<ExpenseSlice[]>([]);
@@ -117,6 +118,7 @@ export default function Estadisticas() {
 }
 
 function Mini({ label, value, color }: { label: string; value: string; color?: string }) {
+  const s = useThemedStyles(createStyles);
   return (
     <View style={s.mini}>
       <Text style={s.miniLabel}>{label}</Text>
@@ -126,6 +128,7 @@ function Mini({ label, value, color }: { label: string; value: string; color?: s
 }
 
 function Bar({ label, value, max, color, money }: { label: string; value: number; max: number; color: string; money?: boolean }) {
+  const s = useThemedStyles(createStyles);
   return (
     <View style={s.barRow}>
       <Text style={s.barLabel}>{label}</Text>
@@ -139,6 +142,7 @@ function Bar({ label, value, max, color, money }: { label: string; value: number
 
 // Dona con Views: anillo por rebanadas proporcionales (sin librerías).
 function Donut({ slices }: { slices: ExpenseSlice[] }) {
+  const s = useThemedStyles(createStyles);
   const total = slices.reduce((s, x) => s + x.pct, 0) || 1;
   let acc = 0;
   const segs = slices.map((sl, i) => {
@@ -158,7 +162,8 @@ function Donut({ slices }: { slices: ExpenseSlice[] }) {
   );
 }
 
-const s = StyleSheet.create({
+function createStyles(colors: ThemeColors) {
+  return StyleSheet.create({
   safe: { flex: 1, backgroundColor: colors.bg },
   body: { padding: 16 },
   title: { fontSize: 24, fontWeight: '900', color: colors.text, marginBottom: 12 },
@@ -192,3 +197,4 @@ const s = StyleSheet.create({
   explain: { color: colors.muted, marginTop: 4, fontSize: 13 },
   dates: { color: colors.muted, fontSize: 11, marginTop: 4 },
 });
+}

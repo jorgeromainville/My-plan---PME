@@ -1,6 +1,6 @@
 import React, { useEffect, useRef } from 'react';
 import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
-import { colors } from '../theme/colors';
+import { colors, useThemedStyles, type ThemeColors } from '../theme/colors';
 
 const ROW_H = 44;
 
@@ -9,6 +9,7 @@ function Wheel({ items, selected, onPick }: {
   selected: string;
   onPick: (v: string) => void;
 }) {
+  const s = useThemedStyles(createStyles);
   const ref = useRef<ScrollView>(null);
   const idx = Math.max(0, items.indexOf(selected));
   useEffect(() => {
@@ -52,6 +53,7 @@ function split(v: string): [string, string] {
 
 // Rueda HH:MM sin teclado. Toca o desliza para elegir.
 export function TimeWheel({ value, onChange }: { value: string; onChange: (v: string) => void }) {
+  const s = useThemedStyles(createStyles);
   const [h, m] = split(value);
   return (
     <View style={s.box}>
@@ -72,6 +74,7 @@ export function TimeWheel({ value, onChange }: { value: string; onChange: (v: st
 
 // Chips de duración: calculan el fin desde el inicio.
 export function DurationChips({ start, onPick }: { start: string; onPick: (end: string) => void }) {
+  const s = useThemedStyles(createStyles);
   const opts = [
     { label: '30m', mins: 30 },
     { label: '1h', mins: 60 },
@@ -95,8 +98,9 @@ export function shift(hhmm: string, mins: number): string {
   return `${String(Math.floor(t / 60)).padStart(2, '0')}:${String(t % 60).padStart(2, '0')}`;
 }
 
-const s = StyleSheet.create({
-  box: { flexDirection: 'row', alignItems: 'center', backgroundColor: '#fff', borderRadius: 14, borderWidth: 1, borderColor: colors.line, paddingHorizontal: 12 },
+function createStyles(colors: ThemeColors) {
+  return StyleSheet.create({
+  box: { flexDirection: 'row', alignItems: 'center', backgroundColor: colors.card, borderRadius: 14, borderWidth: 1, borderColor: colors.line, paddingHorizontal: 12 },
   wheel: { height: ROW_H * 3, width: 64 },
   row: { height: ROW_H, alignItems: 'center', justifyContent: 'center' },
   txt: { fontSize: 17, color: colors.muted, fontWeight: '600' },
@@ -106,6 +110,7 @@ const s = StyleSheet.create({
   step: { borderWidth: 1, borderColor: colors.line, borderRadius: 99, paddingHorizontal: 12, paddingVertical: 6 },
   stepTxt: { fontWeight: '800', color: colors.text, fontSize: 12 },
   chips: { flexDirection: 'row', gap: 8, marginTop: 8 },
-  chip: { borderWidth: 1, borderColor: colors.line, borderRadius: 99, paddingHorizontal: 14, paddingVertical: 8, backgroundColor: '#fff' },
+  chip: { borderWidth: 1, borderColor: colors.line, borderRadius: 99, paddingHorizontal: 14, paddingVertical: 8, backgroundColor: colors.card },
   chipTxt: { fontWeight: '700', color: colors.text, fontSize: 12 },
 });
+}

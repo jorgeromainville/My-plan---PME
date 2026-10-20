@@ -2,7 +2,7 @@ import { useRouter } from 'expo-router';
 import React from 'react';
 import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { colors, radius } from '../src/theme/colors';
+import { colors, radius, useThemedStyles, type ThemeColors } from '../src/theme/colors';
 
 const OPTIONS = [
   { key: 'persona', icon: '👤', bg: colors.blueBg, title: 'Persona', sub: 'Añadir contacto' },
@@ -16,6 +16,7 @@ const OPTIONS = [
 ];
 
 export default function NuevoRegistro() {
+  const s = useThemedStyles(createStyles);
   const router = useRouter();
 
   function go(key: string) {
@@ -63,9 +64,10 @@ export default function NuevoRegistro() {
   );
 }
 
-const s = StyleSheet.create({
-  safe: { flex: 1, backgroundColor: '#F6F3EE' },
-  header: { flexDirection: 'row', alignItems: 'center', padding: 16, gap: 12, backgroundColor: '#fff' },
+function createStyles(colors: ThemeColors) {
+  return StyleSheet.create({
+  safe: { flex: 1, backgroundColor: colors.bg },
+  header: { flexDirection: 'row', alignItems: 'center', padding: 16, gap: 12, backgroundColor: colors.card },
   back: { fontSize: 22 },
   title: { fontSize: 18, fontWeight: '800', flex: 1, color: colors.text },
   avatar: { width: 34, height: 34, borderRadius: 17, backgroundColor: '#0F5B6B', alignItems: 'center', justifyContent: 'center' },
@@ -75,9 +77,10 @@ const s = StyleSheet.create({
   x: { fontSize: 20, color: colors.text },
   sub: { color: colors.muted, marginBottom: 14 },
   grid: { flexDirection: 'row', flexWrap: 'wrap', gap: 12 },
-  card: { width: '48%', backgroundColor: '#fff', borderRadius: radius.lg, padding: 18, alignItems: 'center' },
+  card: { width: '48%', backgroundColor: colors.card, borderRadius: radius.lg, padding: 18, alignItems: 'center' },
   circle: { width: 64, height: 64, borderRadius: 32, alignItems: 'center', justifyContent: 'center', marginBottom: 10 },
   icon: { fontSize: 26 },
   cardTitle: { fontSize: 17, fontWeight: '800', color: colors.text },
   cardSub: { fontSize: 12, color: colors.muted, marginTop: 2 },
 });
+}

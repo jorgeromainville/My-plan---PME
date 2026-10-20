@@ -8,7 +8,7 @@ import { NativeDate } from '../src/components/NativeTime';
 import { randomFact } from '../src/data/funFacts';
 import { defaultSemesterEnd, parseScheduleText, WEEKDAY_SHORT, type ScheduleCandidate } from '../src/services/scheduleParser';
 import { aiStatus, createScannedEvents, parseScheduleWithAi, uploadScan } from '../src/services/scanner';
-import { colors } from '../src/theme/colors';
+import { colors, useThemedStyles, type ThemeColors } from '../src/theme/colors';
 import { parseLocalDay, toLocalKey } from '../src/utils/dates';
 
 interface Row extends ScheduleCandidate {
@@ -37,6 +37,7 @@ function discardPhoto(uri: string | null) {
 // Escáner de horarios: foto → OCR → clases editables → eventos semanales.
 // También acepta texto pegado (por si la foto sale mal).
 export default function Escaner() {
+  const s = useThemedStyles(createStyles);
   const router = useRouter();
   const cam = useRef<CameraView>(null);
   const [perm, requestPerm] = useCameraPermissions();
@@ -399,7 +400,8 @@ export default function Escaner() {
   );
 }
 
-const s = StyleSheet.create({
+function createStyles(colors: ThemeColors) {
+  return StyleSheet.create({
   safe: { flex: 1, backgroundColor: colors.bg },
   body: { padding: 16 },
   top: { flexDirection: 'row', alignItems: 'center' },
@@ -426,7 +428,7 @@ const s = StyleSheet.create({
   aiBarOn: { backgroundColor: colors.greenBg },
   aiBarOff: { backgroundColor: colors.bgSoft },
   aiTxt: { fontSize: 12, color: colors.text, lineHeight: 17 },
-  input: { backgroundColor: '#fff', borderRadius: 12, borderWidth: 1, borderColor: colors.line, padding: 13, marginBottom: 8 },
+  input: { backgroundColor: colors.card, borderRadius: 12, borderWidth: 1, borderColor: colors.line, padding: 13, marginBottom: 8 },
   area: { minHeight: 110, textAlignVertical: 'top' },
   row: { flexDirection: 'row', gap: 8, alignItems: 'center' },
   mini: { flex: 1, backgroundColor: colors.primary, borderRadius: 12, padding: 12, alignItems: 'center' },
@@ -443,7 +445,7 @@ const s = StyleSheet.create({
   del: { padding: 8 },
   delTxt: { color: colors.danger, fontWeight: '800' },
   days: { flexDirection: 'row', gap: 4 },
-  day: { flex: 1, borderWidth: 1, borderColor: colors.line, borderRadius: 8, paddingVertical: 6, alignItems: 'center', backgroundColor: '#fff' },
+  day: { flex: 1, borderWidth: 1, borderColor: colors.line, borderRadius: 8, paddingVertical: 6, alignItems: 'center', backgroundColor: colors.card },
   dayOn: { backgroundColor: colors.primary, borderColor: colors.primary },
   dayTxt: { fontSize: 11, fontWeight: '700', color: colors.muted },
   dayTxtOn: { fontSize: 11, fontWeight: '700', color: '#fff' },
@@ -451,9 +453,10 @@ const s = StyleSheet.create({
   to: { fontWeight: '800', color: colors.muted },
   label: { fontSize: 13, fontWeight: '700', color: colors.text, marginTop: 12, marginBottom: 6 },
   chips: { flexDirection: 'row', flexWrap: 'wrap', gap: 6, marginBottom: 8 },
-  chip: { borderWidth: 1, borderColor: colors.line, backgroundColor: '#fff', borderRadius: 99, paddingVertical: 7, paddingHorizontal: 12 },
+  chip: { borderWidth: 1, borderColor: colors.line, backgroundColor: colors.card, borderRadius: 99, paddingVertical: 7, paddingHorizontal: 12 },
   chipTxt: { fontSize: 12, fontWeight: '700', color: colors.muted },
   error: { color: colors.danger, marginTop: 12 },
-  ok: { backgroundColor: '#E4F2E4', borderRadius: 14, padding: 14, marginTop: 16, gap: 10 },
-  okT: { fontWeight: '800', color: '#2E6B34' },
+  ok: { backgroundColor: colors.greenBg, borderRadius: 14, padding: 14, marginTop: 16, gap: 10 },
+  okT: { fontWeight: '800', color: colors.green },
 });
+}

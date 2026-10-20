@@ -6,13 +6,14 @@ import { createTask, deleteTask, getTask, updateTask, type Priority, type TaskSt
 import { errorMessage } from '../src/services/api';
 import { NativeTime } from '../src/components/NativeTime';
 import { useAppStore } from '../src/store/useAppStore';
-import { colors } from '../src/theme/colors';
+import { colors, useThemedStyles, type ThemeColors } from '../src/theme/colors';
 import { addDays } from '../src/utils/dates';
 
 const PRIORITIES: Priority[] = ['baja', 'media', 'alta'];
 const STATUSES: TaskStatus[] = ['pendiente', 'en_progreso', 'completada'];
 
 export default function TareaForm() {
+  const s = useThemedStyles(createStyles);
   const router = useRouter();
   const { id, date: dateParam, time: timeParam } = useLocalSearchParams<{ id?: string; date?: string; time?: string }>();
   const selectedDate = useAppStore((s) => s.selectedDate);
@@ -195,7 +196,8 @@ export default function TareaForm() {
   );
 }
 
-const s = StyleSheet.create({
+function createStyles(colors: ThemeColors) {
+  return StyleSheet.create({
   safe: { flex: 1, backgroundColor: colors.bg },
   body: { padding: 18 },
   top: { flexDirection: 'row', alignItems: 'center', marginBottom: 4 },
@@ -209,13 +211,13 @@ const s = StyleSheet.create({
   dropTxt: { color: colors.danger, fontWeight: '800' },
   title: { fontSize: 22, fontWeight: '900', color: colors.text, marginBottom: 8 },
   label: { fontSize: 13, fontWeight: '700', color: colors.text, marginTop: 12, marginBottom: 6 },
-  input: { backgroundColor: '#fff', borderRadius: 12, borderWidth: 1, borderColor: colors.line, padding: 13 },
+  input: { backgroundColor: colors.card, borderRadius: 12, borderWidth: 1, borderColor: colors.line, padding: 13 },
   area: { minHeight: 80, textAlignVertical: 'top' },
   row: { flexDirection: 'row', gap: 8, alignItems: 'center' },
   nav: { paddingHorizontal: 16, paddingVertical: 8 },
   navTxt: { fontSize: 24, color: colors.muted },
   date: { fontWeight: '800', color: colors.text, flex: 1, textAlign: 'center' },
-  chip: { borderWidth: 1, borderColor: colors.line, borderRadius: 99, paddingHorizontal: 14, paddingVertical: 8, backgroundColor: '#fff' },
+  chip: { borderWidth: 1, borderColor: colors.line, borderRadius: 99, paddingHorizontal: 14, paddingVertical: 8, backgroundColor: colors.card },
   chipOn: { backgroundColor: colors.primary, borderColor: colors.primary },
   chipTxt: { color: colors.text, fontWeight: '700', fontSize: 12 },
   chipTxtOn: { color: '#fff', fontWeight: '700', fontSize: 12 },
@@ -228,3 +230,4 @@ const s = StyleSheet.create({
   del: { marginTop: 10, padding: 14, alignItems: 'center' },
   delTxt: { color: colors.danger, fontWeight: '700' },
 });
+}

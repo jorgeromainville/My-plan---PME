@@ -4,9 +4,10 @@ import { Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { login } from '../../src/services/auth';
 import { useSession } from '../../src/store/useSession';
-import { colors } from '../../src/theme/colors';
+import { colors, useThemedStyles, type ThemeColors } from '../../src/theme/colors';
 
 export default function Login() {
+  const s = useThemedStyles(createStyles);
   const router = useRouter();
   const signIn = useSession((s) => s.signIn);
   const [email, setEmail] = useState('');
@@ -46,15 +47,17 @@ export default function Login() {
     </SafeAreaView>
   );
 }
-const s = StyleSheet.create({
+function createStyles(colors: ThemeColors) {
+  return StyleSheet.create({
   safe: { flex: 1, backgroundColor: colors.bg },
   body: { flex: 1, padding: 22, justifyContent: 'center' },
   title: { fontSize: 28, fontWeight: '900', color: colors.text },
   sub: { color: colors.muted, marginBottom: 16 },
-  input: { backgroundColor: '#fff', borderRadius: 12, borderWidth: 1, borderColor: colors.line, padding: 14, marginBottom: 10 },
+  input: { backgroundColor: colors.card, borderRadius: 12, borderWidth: 1, borderColor: colors.line, padding: 14, marginBottom: 10 },
   error: { color: colors.danger, marginBottom: 10 },
   btn: { backgroundColor: colors.primary, borderRadius: 14, padding: 15, alignItems: 'center', marginTop: 6 },
   btnOff: { opacity: 0.6 },
   btnTxt: { color: '#fff', fontWeight: '800' },
   link: { textAlign: 'center', marginTop: 14, fontWeight: '700', color: colors.text },
 });
+}

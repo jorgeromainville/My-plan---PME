@@ -10,7 +10,7 @@ import { buildMainHtml, type MapPin } from '../../src/components/mapHtml';
 import { errorMessage } from '../../src/services/api';
 import { listContactCategories } from '../../src/services/contacts';
 import { mapItems, placeIcon, type MapItem } from '../../src/services/places';
-import { colors } from '../../src/theme/colors';
+import { colors, useThemedStyles, type ThemeColors } from '../../src/theme/colors';
 
 // Mapa con MapLibre + OpenFreeMap (gratis y con uso comercial permitido).
 // Nota en src/components/mapHtml.ts.
@@ -22,6 +22,7 @@ const PERU = { lat: -9.19, lng: -75.0152 };
 // Mapa a sangre completa (WebView absoluto + controles flotando encima):
 // buscador + filtros + pines por tipo + tarjeta + mi ubicación + crear con mantener presionado.
 export default function Mapa() {
+  const s = useThemedStyles(createStyles);
   const router = useRouter();
   const web = useRef<WebView>(null);
   const ready = useRef(false);
@@ -319,7 +320,8 @@ export default function Mapa() {
   );
 }
 
-const s = StyleSheet.create({
+function createStyles(colors: ThemeColors) {
+  return StyleSheet.create({
   safe: { flex: 1, backgroundColor: colors.bg },
   fill: { flex: 1, position: 'relative' },
   mapAbs: { position: 'absolute', top: 0, left: 0, right: 0, bottom: 0 },
@@ -331,17 +333,17 @@ const s = StyleSheet.create({
   },
   add: { width: 44, height: 44, borderRadius: 22, backgroundColor: colors.purple, alignItems: 'center', justifyContent: 'center', elevation: 3 },
   addTxt: { color: '#fff', fontSize: 26 },
-  search: { backgroundColor: '#fff', borderRadius: 12, borderWidth: 1, borderColor: colors.line, padding: 12, marginHorizontal: 16, marginBottom: 8, elevation: 2 },
+  search: { backgroundColor: colors.card, borderRadius: 12, borderWidth: 1, borderColor: colors.line, padding: 12, marginHorizontal: 16, marginBottom: 8, elevation: 2 },
   filters: { paddingHorizontal: 16, gap: 8, height: 40 },
   chip: { borderWidth: 1, borderColor: colors.line, borderRadius: 99, paddingHorizontal: 14, paddingVertical: 7, backgroundColor: colors.card, marginRight: 8, justifyContent: 'center', elevation: 2 },
   chipOn: { backgroundColor: colors.primary, borderColor: colors.primary },
   chipTxt: { color: colors.text, fontWeight: '700', fontSize: 12 },
   chipTxtOn: { color: '#fff', fontWeight: '700', fontSize: 12 },
-  error: { color: colors.danger, marginHorizontal: 16, marginTop: 6, backgroundColor: '#fff', borderRadius: 8, padding: 6 },
-  mine: { position: 'absolute', right: 12, top: 186, width: 44, height: 44, borderRadius: 22, backgroundColor: '#fff', alignItems: 'center', justifyContent: 'center', elevation: 3 },
+  error: { color: colors.danger, marginHorizontal: 16, marginTop: 6, backgroundColor: colors.card, borderRadius: 8, padding: 6 },
+  mine: { position: 'absolute', right: 12, top: 186, width: 44, height: 44, borderRadius: 22, backgroundColor: colors.card, alignItems: 'center', justifyContent: 'center', elevation: 3 },
   mineTxt: { fontSize: 20 },
   zoom: { position: 'absolute', right: 12, top: 238, gap: 8 },
-  zBtn: { width: 44, height: 44, borderRadius: 22, backgroundColor: '#fff', alignItems: 'center', justifyContent: 'center', elevation: 3 },
+  zBtn: { width: 44, height: 44, borderRadius: 22, backgroundColor: colors.card, alignItems: 'center', justifyContent: 'center', elevation: 3 },
   zTxt: { fontSize: 22, fontWeight: '800', color: colors.text },
   card: { position: 'absolute', left: 16, right: 16, bottom: 16, backgroundColor: colors.card, borderRadius: 18, padding: 14, borderWidth: 1, borderColor: colors.line, elevation: 4 },
   cardTop: { flexDirection: 'row', gap: 8 },
@@ -354,3 +356,4 @@ const s = StyleSheet.create({
   visit: { flex: 1, borderWidth: 1, borderColor: colors.line, borderRadius: 12, padding: 12, alignItems: 'center', backgroundColor: colors.bg },
   visitTxt: { fontWeight: '800', color: colors.text },
 });
+}

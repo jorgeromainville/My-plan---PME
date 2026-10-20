@@ -1,6 +1,6 @@
 import React from 'react';
 import { StyleSheet, Text, View } from 'react-native';
-import { colors, radius } from '../theme/colors';
+import { colors, radius, useThemedStyles, type ThemeColors } from '../theme/colors';
 
 export function SectionHeader({
   title,
@@ -11,6 +11,7 @@ export function SectionHeader({
   subtitle?: string;
   action?: React.ReactNode;
 }) {
+  const styles = useThemedStyles(createStyles);
   return (
     <View style={styles.row}>
       <View style={{ flex: 1 }}>
@@ -24,8 +25,10 @@ export function SectionHeader({
   );
 }
 
-const styles = StyleSheet.create({
+function createStyles(colors: ThemeColors) {
+  return StyleSheet.create({
   row: { flexDirection: 'row', alignItems: 'center', marginBottom: 10 },
   title: { fontSize: 20, fontWeight: '800', color: colors.text },
   sub: { fontSize: 13, color: colors.muted, marginTop: 2 },
 });
+}

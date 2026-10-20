@@ -11,8 +11,8 @@ import { cancelReminders, remindersGranted, remindersNativeMissing, rescheduleRe
 import { useAppStore } from '../src/store/useAppStore';
 import { usePrefs } from '../src/store/usePrefs';
 import { useSession } from '../src/store/useSession';
-import type { WeekStart } from '../src/store/usePrefs';
-import { colors } from '../src/theme/colors';
+import type { ThemeMode, WeekStart } from '../src/store/usePrefs';
+import { colors, useThemedStyles, type ThemeColors } from '../src/theme/colors';
 
 // Monedas rápidas; cualquier otra se escribe con código + símbolo.
 const PRESETS = [
@@ -21,7 +21,15 @@ const PRESETS = [
   { code: 'EUR', symbol: '€' },
 ];
 
+const THEMES: { v: ThemeMode; label: string }[] = [
+  { v: 'light', label: 'Claro' },
+  { v: 'dark', label: 'Oscuro' },
+  { v: 'andean', label: 'Típico' },
+  { v: 'auto', label: 'Automático' },
+];
+
 export default function Perfil() {
+  const s = useThemedStyles(createStyles);
   const router = useRouter();
   const { userName, setUserName } = useAppStore();
   const signOut = useSession((s) => s.signOut);
@@ -97,6 +105,17 @@ export default function Perfil() {
       const r = await updateMe({ weekStartsOn: w });
       await updateSessionUser(r.user);
       await storage.clearCache();
+    } catch (e) {
+      setSaveMsg(errorMessage(e));
+    }
+  }
+
+  async function pickTheme(t: ThemeMode) {
+    await prefs.set({ theme: t });
+    setSaveMsg('Tema guardado.');
+    try {
+      const r = await updateMe({ theme: t });
+      await updateSessionUser(r.user);
     } catch (e) {
       setSaveMsg(errorMessage(e));
     }
@@ -195,6 +214,21 @@ export default function Perfil() {
               </Pressable>
             ))}
           </View>
+          <Text style={s.label}>Tema</Text>
+          <View style={s.row}>
+            {THEMES.map((t) => (
+              <Pressable
+                key={t.v}
+                onPress={() => pickTheme(t.v)}
+                style={[s.chip, prefs.theme === t.v && s.chipOn]}
+              >
+                <Text style={prefs.theme === t.v ? s.chipTxtOn : s.chipTxt}>{t.label}</Text>
+              </Pressable>
+            ))}
+          </View>
+          <Text style={s.remSub}>
+            Típico: terracota, ocre y turquesa inspirados en los textiles andinos.
+          </Text>
           <Pressable style={[s.btn, saving && { opacity: 0.6 }]} onPress={onSave} disabled={saving}>
             <Text style={s.btnTxt}>{saving ? 'Guardando…' : 'Guardar'}</Text>
           </Pressable>
@@ -345,16 +379,17 @@ export default function Perfil() {
   );
 }
 
-const s = StyleSheet.create({
+function createStyles(colors: ThemeColors) {
+  return StyleSheet.create({
   safe: { flex: 1, backgroundColor: colors.bg },
   body: { padding: 16, gap: 12 },
   title: { fontSize: 26, fontWeight: '900', color: colors.text },
   title2: { fontSize: 17, fontWeight: '800', color: colors.text },
-  step: { borderWidth: 1, borderColor: colors.line, borderRadius: 99, paddingHorizontal: 16, paddingVertical: 8, backgroundColor: '#fff' },
+  step: { borderWidth: 1, borderColor: colors.line, borderRadius: 99, paddingHorizontal: 16, paddingVertical: 8, backgroundColor: colors.card },
   stepTxt: { fontWeight: '800', color: colors.text },
   sub: { color: colors.muted, marginBottom: 6 },
   label: { fontSize: 13, color: colors.text, marginTop: 10, marginBottom: 6, fontWeight: '600' },
-  input: { borderWidth: 1, borderColor: colors.line, borderRadius: 12, padding: 12, backgroundColor: '#fff' },
+  input: { borderWidth: 1, borderColor: colors.line, borderRadius: 12, padding: 12, backgroundColor: colors.card },
   row: { flexDirection: 'row', gap: 8, flexWrap: 'wrap' },
   curRow: { flexDirection: 'row', gap: 10 },
   chip: { borderWidth: 1, borderColor: colors.line, borderRadius: 99, paddingHorizontal: 16, paddingVertical: 8 },
@@ -373,3 +408,4 @@ const s = StyleSheet.create({
   out: { marginTop: 4, borderWidth: 1, borderColor: colors.danger, borderRadius: 14, padding: 14, alignItems: 'center' },
   outTxt: { color: colors.danger, fontWeight: '800' },
 });
+}

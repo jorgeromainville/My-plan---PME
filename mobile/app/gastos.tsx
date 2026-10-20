@@ -8,11 +8,12 @@ import { errorMessage } from '../src/services/api';
 import { listExpenses, type Expense } from '../src/services/expenses';
 import { dayRange } from '../src/services/tasks';
 import { useAppStore } from '../src/store/useAppStore';
-import { colors } from '../src/theme/colors';
+import { colors, useThemedStyles, type ThemeColors } from '../src/theme/colors';
 import { formatMoney } from '../src/utils/format';
 
 // Gastos: lista del día + total.
 export default function Gastos() {
+  const s = useThemedStyles(createStyles);
   const router = useRouter();
   const selectedDate = useAppStore((s) => s.selectedDate);
   const [items, setItems] = useState<Expense[]>([]);
@@ -72,7 +73,8 @@ export default function Gastos() {
   );
 }
 
-const s = StyleSheet.create({
+function createStyles(colors: ThemeColors) {
+  return StyleSheet.create({
   safe: { flex: 1, backgroundColor: colors.bg },
   header: { flexDirection: 'row', alignItems: 'center', padding: 16, gap: 8 },
   back: { width: 40, paddingVertical: 6 },
@@ -92,3 +94,4 @@ const s = StyleSheet.create({
   amount: { fontWeight: '900', color: colors.coral, fontSize: 15 },
   empty: { color: colors.muted, textAlign: 'center', marginTop: 16 },
 });
+}

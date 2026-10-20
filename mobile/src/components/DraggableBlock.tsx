@@ -1,6 +1,6 @@
 import React, { useRef, useState } from 'react';
 import { Animated, PanResponder, Pressable, StyleSheet, Text, View } from 'react-native';
-import { colors } from '../theme/colors';
+import { colors, useThemedStyles, type ThemeColors } from '../theme/colors';
 import { HOUR_H, type PlacedBlock } from './DayAgenda';
 
 export interface DropResult {
@@ -27,6 +27,7 @@ export function DraggableBlock({
   disabled?: boolean;
   zoom?: number;
 }) {
+  const s = useThemedStyles(createStyles);
   const pan = useRef(new Animated.ValueXY()).current;
   const [lifting, setLifting] = useState(false);
   const active = useRef(false);
@@ -155,7 +156,8 @@ export function DraggableBlock({
   );
 }
 
-const s = StyleSheet.create({
+function createStyles(colors: ThemeColors) {
+  return StyleSheet.create({
   wrap: { position: 'absolute', paddingRight: 4 },
   block: {
     flex: 1,
@@ -187,8 +189,9 @@ const s = StyleSheet.create({
   sub: { fontSize: 11, color: colors.muted },
   check: {
     width: 26, height: 26, borderRadius: 13, borderWidth: 2,
-    borderColor: colors.muted, alignItems: 'center', justifyContent: 'center', backgroundColor: '#fff',
+    borderColor: colors.muted, alignItems: 'center', justifyContent: 'center', backgroundColor: colors.card,
   },
   checkTxt: { color: colors.green, fontWeight: '900', fontSize: 12 },
   hint: { fontSize: 10, color: colors.muted, marginTop: 2 },
 });
+}

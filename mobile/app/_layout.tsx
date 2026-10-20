@@ -6,12 +6,14 @@ import { flushPending, setOnSessionExpired } from '../src/services/api';
 import { useCatalog } from '../src/store/useCatalog';
 import { usePrefs } from '../src/store/usePrefs';
 import { useSession } from '../src/store/useSession';
+import { useIsDark } from '../src/theme/colors';
 
 // Layout raíz: carga sesión y manda a login si no hay token.
 export default function RootLayout() {
   const { loaded, token, load, signOut } = useSession();
   const segments = useSegments();
   const router = useRouter();
+  const isDark = useIsDark();
 
   useEffect(() => {
     load();
@@ -42,7 +44,7 @@ export default function RootLayout() {
 
   return (
     <>
-      <StatusBar style="dark" />
+      <StatusBar style={isDark ? 'light' : 'dark'} />
       <Stack screenOptions={{ headerShown: false }}>
         <Stack.Screen name="(tabs)" />
         <Stack.Screen name="(auth)" />

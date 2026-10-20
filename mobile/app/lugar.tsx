@@ -7,12 +7,13 @@ import { WebView, type WebViewMessageEvent } from 'react-native-webview';
 import { buildPickerHtml } from '../src/components/mapHtml';
 import { errorMessage } from '../src/services/api';
 import { createPlace, deletePlace, getPlace, updatePlace, DEFAULT_PLACE_CATS } from '../src/services/places';
-import { colors } from '../src/theme/colors';
+import { colors, useThemedStyles, type ThemeColors } from '../src/theme/colors';
 
 // Formulario de lugar: punto arrastrable (MapLibre + OpenFreeMap) + categorías con color.
 const PERU = { lat: -9.19, lng: -75.0152 };
 
 export default function LugarForm() {
+  const s = useThemedStyles(createStyles);
   const router = useRouter();
   const pickWeb = useRef<WebView>(null);
   const [mapKey, setMapKey] = useState(0);
@@ -224,7 +225,8 @@ export default function LugarForm() {
   );
 }
 
-const s = StyleSheet.create({
+function createStyles(colors: ThemeColors) {
+  return StyleSheet.create({
   safe: { flex: 1, backgroundColor: colors.bg },
   body: { padding: 18 },
   top: { flexDirection: 'row', alignItems: 'center', marginBottom: 4 },
@@ -232,10 +234,10 @@ const s = StyleSheet.create({
   xTxt: { fontSize: 28, color: colors.text },
   title: { flex: 1, textAlign: 'center', fontSize: 18, fontWeight: '800', color: colors.text },
   label: { fontSize: 13, fontWeight: '700', color: colors.text, marginTop: 12, marginBottom: 6 },
-  input: { backgroundColor: '#fff', borderRadius: 12, borderWidth: 1, borderColor: colors.line, padding: 13, marginBottom: 4 },
+  input: { backgroundColor: colors.card, borderRadius: 12, borderWidth: 1, borderColor: colors.line, padding: 13, marginBottom: 4 },
   row: { flexDirection: 'row', gap: 8, alignItems: 'center' },
   wrap: { flexDirection: 'row', gap: 8, flexWrap: 'wrap' },
-  chip: { flexDirection: 'row', alignItems: 'center', borderWidth: 1, borderColor: colors.line, borderRadius: 99, paddingHorizontal: 14, paddingVertical: 8, backgroundColor: '#fff' },
+  chip: { flexDirection: 'row', alignItems: 'center', borderWidth: 1, borderColor: colors.line, borderRadius: 99, paddingHorizontal: 14, paddingVertical: 8, backgroundColor: colors.card },
   chipOn: { backgroundColor: colors.primary, borderColor: colors.primary },
   chipTxt: { color: colors.text, fontWeight: '700', fontSize: 12 },
   chipTxtOn: { color: '#fff', fontWeight: '700', fontSize: 12 },
@@ -259,3 +261,4 @@ const s = StyleSheet.create({
   drop: { flex: 1, padding: 12, alignItems: 'center' },
   dropTxt: { color: colors.danger, fontWeight: '800' },
 });
+}

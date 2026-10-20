@@ -9,7 +9,7 @@ import { createEvent, listEvents, updateEvent, type CalEvent } from '../src/serv
 import { NativeTime } from '../src/components/NativeTime';
 import { listContacts, type Contact } from '../src/services/contacts';
 import { listContactCategories } from '../src/services/contacts';
-import { colors } from '../src/theme/colors';
+import { colors, useThemedStyles, type ThemeColors } from '../src/theme/colors';
 
 const KINDS: { v: GoalKind; label: string; hint: string; unit: string }[] = [
   { v: 'ingresos', label: 'Ingresos', hint: 'Suma sola de tus ingresos', unit: 'S/' },
@@ -43,6 +43,7 @@ function num(v: string): number {
 
 // Formulario de meta: crear/editar/eliminar + cuota por hora opcional.
 export default function MetaForm() {
+  const s = useThemedStyles(createStyles);
   const router = useRouter();
   const { id } = useLocalSearchParams<{ id?: string }>();
   const [title, setTitle] = useState('');
@@ -428,7 +429,8 @@ export default function MetaForm() {
   );
 }
 
-const s = StyleSheet.create({
+function createStyles(colors: ThemeColors) {
+  return StyleSheet.create({
   safe: { flex: 1, backgroundColor: colors.bg },
   body: { padding: 18 },
   top: { flexDirection: 'row', alignItems: 'center', marginBottom: 4 },
@@ -438,18 +440,18 @@ const s = StyleSheet.create({
   label: { fontSize: 13, fontWeight: '700', color: colors.text, marginTop: 12, marginBottom: 6 },
   hint: { fontSize: 12, color: colors.muted, marginTop: 4 },
   lab: { fontSize: 12, fontWeight: '700', color: colors.text, marginBottom: 6, marginTop: 6 },
-  input: { backgroundColor: '#fff', borderRadius: 12, borderWidth: 1, borderColor: colors.line, padding: 13 },
+  input: { backgroundColor: colors.card, borderRadius: 12, borderWidth: 1, borderColor: colors.line, padding: 13 },
   wrap: { flexDirection: 'row', gap: 8, flexWrap: 'wrap' },
   row: { flexDirection: 'row', gap: 8, alignItems: 'center' },
   row2: { flexDirection: 'row', gap: 8, alignItems: 'center' },
   pickedRow: { borderColor: colors.green, borderWidth: 2 },
-  box: { width: 26, height: 26, borderRadius: 8, borderWidth: 2, borderColor: colors.muted, alignItems: 'center', justifyContent: 'center', backgroundColor: '#fff' },
+  box: { width: 26, height: 26, borderRadius: 8, borderWidth: 2, borderColor: colors.muted, alignItems: 'center', justifyContent: 'center', backgroundColor: colors.card },
   boxOn: { backgroundColor: colors.greenBg, borderColor: colors.green },
   logRow: { flexDirection: 'row', alignItems: 'center', backgroundColor: colors.card, borderRadius: 12, padding: 12, marginTop: 8, borderWidth: 1, borderColor: colors.line },
   logTxt: { flex: 1, color: colors.text, fontWeight: '600', fontSize: 13 },
   calc: { width: 48, height: 48, borderRadius: 24, backgroundColor: colors.primary, alignItems: 'center', justifyContent: 'center' },
   calcTxt: { color: '#fff', fontSize: 20, fontWeight: '900' },
-  chip: { borderWidth: 1, borderColor: colors.line, borderRadius: 99, paddingHorizontal: 14, paddingVertical: 8, backgroundColor: '#fff' },
+  chip: { borderWidth: 1, borderColor: colors.line, borderRadius: 99, paddingHorizontal: 14, paddingVertical: 8, backgroundColor: colors.card },
   chipOn: { backgroundColor: colors.primary, borderColor: colors.primary },
   chipTxt: { color: colors.text, fontWeight: '700', fontSize: 12 },
   chipTxtOn: { color: '#fff', fontWeight: '700', fontSize: 12 },
@@ -465,3 +467,4 @@ const s = StyleSheet.create({
   drop: { flex: 1, padding: 12, alignItems: 'center' },
   dropTxt: { color: colors.danger, fontWeight: '800' },
 });
+}

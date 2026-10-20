@@ -3,9 +3,10 @@ import { useFocusEffect } from 'expo-router';
 import React, { useCallback } from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { rescheduleReminders } from '../../src/services/reminders';
-import { colors } from '../../src/theme/colors';
+import { colors, useThemedStyles, type ThemeColors } from '../../src/theme/colors';
 
 function CenterButton() {
+  const styles = useThemedStyles(createStyles);
   const router = useRouter();
   return (
     <Pressable
@@ -20,6 +21,7 @@ function CenterButton() {
 }
 
 export default function TabsLayout() {
+  const styles = useThemedStyles(createStyles);
   // Reprograma avisos al volver a la app (con throttle interno de 15 min).
   useFocusEffect(useCallback(() => {
     rescheduleReminders().catch(() => {});
@@ -50,9 +52,10 @@ export default function TabsLayout() {
   );
 }
 
-const styles = StyleSheet.create({
+function createStyles(colors: ThemeColors) {
+  return StyleSheet.create({
   bar: {
-    backgroundColor: '#FFFDF8',
+    backgroundColor: colors.card,
     borderTopWidth: 1,
     borderTopColor: colors.line,
     height: 78,
@@ -75,3 +78,4 @@ const styles = StyleSheet.create({
   plusTxt: { color: '#fff', fontSize: 34, lineHeight: 34, fontWeight: '400' },
   tabIcon: { fontSize: 20 },
 });
+}

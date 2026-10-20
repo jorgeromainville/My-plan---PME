@@ -22,7 +22,7 @@ import {
   type ContactCategory,
 } from '../src/services/contacts';
 import { usePrefs } from '../src/store/usePrefs';
-import { colors } from '../src/theme/colors';
+import { colors, useThemedStyles, type ThemeColors } from '../src/theme/colors';
 import { parseLocalDay } from '../src/utils/dates';
 
 const PALETTE = ['#C9A44A', '#6B9ECF', '#D98162', '#6FA287', '#8B7BC7', '#E07A5F'];
@@ -98,6 +98,7 @@ function PersonaView({ contact, color, onEdit, onBack, onTouched, onError, error
   onError: (m: string) => void;
   error: string;
 }) {
+  const s = useThemedStyles(createStyles);
   const name = `${contact.firstName}${contact.lastName ? ` ${contact.lastName}` : ''}`;
   const tel = (contact.phone ?? '').trim();
   const wa = (contact.whatsapp ?? tel).replace(/[^0-9+]/g, '');
@@ -194,6 +195,7 @@ function PersonaView({ contact, color, onEdit, onBack, onTouched, onError, error
 }
 
 function Info({ k, v }: { k: string; v?: string | null }) {
+  const s = useThemedStyles(createStyles);
   if (!v) return null;
   return (
     <View style={s.rowLine}>
@@ -212,6 +214,7 @@ function PersonaForm({ id, initial, presetLat, presetLng, onBack, onSaved }: {
   onBack: () => void;
   onSaved: () => void;
 }) {
+  const s = useThemedStyles(createStyles);
   const lastCategory = usePrefs((p) => p.lastCategory);
   const setPrefs = usePrefs((p) => p.set);
   const [firstName, setFirstName] = useState(initial?.firstName ?? '');
@@ -472,7 +475,8 @@ function PersonaForm({ id, initial, presetLat, presetLng, onBack, onSaved }: {
   );
 }
 
-const s = StyleSheet.create({
+function createStyles(colors: ThemeColors) {
+  return StyleSheet.create({
   safe: { flex: 1, backgroundColor: colors.bg },
   body: { padding: 16, gap: 12 },
   top: { flexDirection: 'row', alignItems: 'center', marginBottom: 4 },
@@ -491,14 +495,14 @@ const s = StyleSheet.create({
   act: { flex: 1, backgroundColor: colors.green, borderRadius: 14, padding: 13, alignItems: 'center' },
   actTxt: { color: '#fff', fontWeight: '800' },
   label: { fontSize: 13, fontWeight: '700', color: colors.text, marginTop: 10, marginBottom: 6 },
-  input: { backgroundColor: '#fff', borderRadius: 12, borderWidth: 1, borderColor: colors.line, padding: 13, marginBottom: 4 },
+  input: { backgroundColor: colors.card, borderRadius: 12, borderWidth: 1, borderColor: colors.line, padding: 13, marginBottom: 4 },
   area: { minHeight: 70, textAlignVertical: 'top' },
   rowLine: { flexDirection: 'row', paddingVertical: 6, gap: 10 },
   k: { width: 110, color: colors.muted, fontWeight: '700', fontSize: 13 },
   v: { flex: 1, color: colors.text, fontWeight: '600', fontSize: 13 },
   row: { flexDirection: 'row', gap: 8, alignItems: 'center' },
   wrap: { flexDirection: 'row', gap: 8, flexWrap: 'wrap' },
-  chip: { flexDirection: 'row', alignItems: 'center', borderWidth: 1, borderColor: colors.line, borderRadius: 99, paddingHorizontal: 14, paddingVertical: 8, backgroundColor: '#fff' },
+  chip: { flexDirection: 'row', alignItems: 'center', borderWidth: 1, borderColor: colors.line, borderRadius: 99, paddingHorizontal: 14, paddingVertical: 8, backgroundColor: colors.card },
   chipOn: { backgroundColor: colors.primary, borderColor: colors.primary },
   chipTxt: { color: colors.text, fontWeight: '700', fontSize: 12 },
   chipTxtOn: { color: '#fff', fontWeight: '700', fontSize: 12 },
@@ -514,7 +518,7 @@ const s = StyleSheet.create({
   miniGhostTxt: { color: colors.muted, fontWeight: '700' },
   hint: { color: colors.muted, fontSize: 12, marginTop: 6 },
   check: { flexDirection: 'row', alignItems: 'center', gap: 10, marginTop: 12 },
-  box: { width: 26, height: 26, borderRadius: 8, borderWidth: 2, borderColor: colors.muted, alignItems: 'center', justifyContent: 'center', backgroundColor: '#fff' },
+  box: { width: 26, height: 26, borderRadius: 8, borderWidth: 2, borderColor: colors.muted, alignItems: 'center', justifyContent: 'center', backgroundColor: colors.card },
   boxOn: { backgroundColor: colors.greenBg, borderColor: colors.green },
   checkTxt: { fontWeight: '600', color: colors.text },
   touched: { marginTop: 4, borderWidth: 1, borderColor: colors.green, borderRadius: 12, padding: 12, alignItems: 'center' },
@@ -531,3 +535,4 @@ const s = StyleSheet.create({
   drop: { flex: 1, padding: 12, alignItems: 'center' },
   dropTxt: { color: colors.danger, fontWeight: '800' },
 });
+}

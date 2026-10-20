@@ -1,6 +1,6 @@
 import React from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
-import { colors, radius } from '../theme/colors';
+import { colors, radius, useThemedStyles, type ThemeColors } from '../theme/colors';
 import { addDays, formatLongEs } from '../utils/dates';
 
 export function DateSelector({
@@ -10,6 +10,7 @@ export function DateSelector({
   date: Date;
   onChange: (d: Date) => void;
 }) {
+  const styles = useThemedStyles(createStyles);
   return (
     <View style={styles.box}>
       <Text style={styles.icon}>📅</Text>
@@ -33,7 +34,8 @@ export function DateSelector({
   );
 }
 
-const styles = StyleSheet.create({
+function createStyles(colors: ThemeColors) {
+  return StyleSheet.create({
   box: {
     backgroundColor: colors.card,
     borderRadius: radius.lg,
@@ -49,3 +51,4 @@ const styles = StyleSheet.create({
   arrow: { paddingHorizontal: 12, paddingVertical: 4 },
   arrowTxt: { fontSize: 22, color: colors.muted, fontWeight: '700' },
 });
+}

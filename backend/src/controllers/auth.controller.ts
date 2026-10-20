@@ -64,7 +64,7 @@ const updateMeSchema = z
     name: z.string().trim().min(1).max(80).optional(),
     currency: z.string().trim().toUpperCase().regex(/^[A-Z0-9]{2,6}$/).optional(),
     currencySymbol: z.string().trim().min(1).max(6).optional(),
-    theme: z.enum(['light', 'dark', 'auto']).optional(),
+    theme: z.enum(['light', 'dark', 'andean', 'auto']).optional(),
     weekStartsOn: z.enum(['monday', 'sunday']).optional(),
   })
   .strict();

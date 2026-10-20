@@ -4,6 +4,7 @@ import { create } from 'zustand';
 // Ajustes de agenda y formato. Persisten en el teléfono.
 export type HourFormat = '24h' | '12h';
 export type WeekStart = 'monday' | 'sunday';
+export type ThemeMode = 'light' | 'dark' | 'andean' | 'auto';
 
 interface Prefs {
   hourFormat: HourFormat;
@@ -12,11 +13,12 @@ interface Prefs {
   lastCategory: string;
   holidayCountry: string; // '' = auto por dispositivo (ej. PE, US)
   weekStartsOn: WeekStart; // lunes (por defecto) o domingo
+  theme: ThemeMode; // claro, oscuro, típico (andino) o automático
   reminders: boolean; // avisos locales de eventos/tareas/seguimientos/metas
   demoCleared: boolean; // el usuario pidió ocultar los datos de ejemplo
   loaded: boolean;
   load: () => Promise<void>;
-  set: (p: Partial<Pick<Prefs, 'hourFormat' | 'dayStart' | 'dayEnd' | 'lastCategory' | 'holidayCountry' | 'weekStartsOn' | 'reminders' | 'demoCleared'>>) => Promise<void>;
+  set: (p: Partial<Pick<Prefs, 'hourFormat' | 'dayStart' | 'dayEnd' | 'lastCategory' | 'holidayCountry' | 'weekStartsOn' | 'theme' | 'reminders' | 'demoCleared'>>) => Promise<void>;
 }
 
 const KEY = '@planner/prefs';
@@ -28,6 +30,7 @@ export const usePrefs = create<Prefs>((set, get) => ({
   lastCategory: 'Otros',
   holidayCountry: '',
   weekStartsOn: 'monday',
+  theme: 'auto',
   reminders: true,
   demoCleared: false,
   loaded: false,
@@ -43,8 +46,8 @@ export const usePrefs = create<Prefs>((set, get) => ({
   set: async (p) => {
     set(p);
     try {
-      const { hourFormat, dayStart, dayEnd, lastCategory, holidayCountry, weekStartsOn, reminders, demoCleared } = { ...get(), ...p };
-      await AsyncStorage.setItem(KEY, JSON.stringify({ hourFormat, dayStart, dayEnd, lastCategory, holidayCountry, weekStartsOn, reminders, demoCleared }));
+      const { hourFormat, dayStart, dayEnd, lastCategory, holidayCountry, weekStartsOn, theme, reminders, demoCleared } = { ...get(), ...p };
+      await AsyncStorage.setItem(KEY, JSON.stringify({ hourFormat, dayStart, dayEnd, lastCategory, holidayCountry, weekStartsOn, theme, reminders, demoCleared }));
     } catch {
       // sin persistencia, sigue en memoria
     }

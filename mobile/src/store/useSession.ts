@@ -1,6 +1,7 @@
 import { create } from 'zustand';
 import { api } from '../services/api';
 import { storage } from '../services/storage';
+import { usePrefs } from './usePrefs';
 
 // Sesión: token + usuario (nombre, moneda, tema y semana) con copia local para
 // arrancar sin red. El servidor es la fuente de verdad; `load` la refresca.
@@ -10,7 +11,7 @@ export interface SessionUser {
   email: string;
   currency: string;
   currencySymbol: string;
-  theme: 'light' | 'dark' | 'auto';
+  theme: 'light' | 'dark' | 'andean' | 'auto';
   weekStartsOn: 'monday' | 'sunday';
 }
 
@@ -39,6 +40,7 @@ export const useSession = create<SessionState>((set, get) => ({
       const r = await api<{ user: SessionUser }>('/api/auth/me', {}, token);
       await storage.setUser(r.user);
       set({ user: r.user, userName: r.user.name });
+      void usePrefs.getState().set({ theme: r.user.theme });
     } catch {
       // sin red: seguimos con el usuario guardado
     }
@@ -46,6 +48,7 @@ export const useSession = create<SessionState>((set, get) => ({
   signIn: async (token, user) => {
     await storage.setUser(user);
     set({ token, user, userName: user.name });
+    void usePrefs.getState().set({ theme: user.theme });
   },
   updateUser: async (patch) => {
     const current = get().user;
@@ -53,6 +56,7 @@ export const useSession = create<SessionState>((set, get) => ({
     const next = { ...current, ...patch };
     await storage.setUser(next);
     set({ user: next, userName: next.name });
+    if (patch.theme) void usePrefs.getState().set({ theme: patch.theme });
   },
   signOut: async () => {
     const { logout } = await import('../services/auth');

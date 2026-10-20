@@ -16,7 +16,7 @@ import { useNet } from '../../src/store/useNet';
 import { usePrefs } from '../../src/store/usePrefs';
 import { useSession } from '../../src/store/useSession';
 import { formatMoney } from '../../src/utils/format';
-import { colors, radius } from '../../src/theme/colors';
+import { colors, radius, useThemedStyles, type ThemeColors } from '../../src/theme/colors';
 import { pct } from '../../src/utils/format';
 
 const bgByColor: Record<string, string> = {
@@ -49,6 +49,7 @@ function goalVal(kind: string, v: number): string {
 }
 
 export default function Inicio() {
+  const styles = useThemedStyles(createStyles);
   const router = useRouter();
   const { userName, selectedDate, setSelectedDate, dailyGoals, weeklyMain, weeklyGoals, contacts: demoPeople } =
     useAppStore();
@@ -340,7 +341,8 @@ export default function Inicio() {
   );
 }
 
-const styles = StyleSheet.create({
+function createStyles(colors: ThemeColors) {
+  return StyleSheet.create({
   safe: { flex: 1, backgroundColor: colors.bg },
   body: { padding: 16, backgroundColor: colors.bg },
   header: { flexDirection: 'row', alignItems: 'center', marginBottom: 14, gap: 10 },
@@ -379,12 +381,12 @@ const styles = StyleSheet.create({
   miniCheck: { fontSize: 12, backgroundColor: colors.greenBg, borderRadius: 99, paddingHorizontal: 6, paddingVertical: 2 },
   miniName: { fontSize: 11, textAlign: 'center', marginTop: 6, color: colors.text },
   miniNum: { fontWeight: '800', marginTop: 4 },
-  verMas: { color: '#8A5A3B', fontWeight: '700' },
+  verMas: { color: colors.accent, fontWeight: '700' },
   peopleRow: { flexDirection: 'row', gap: 12 },
   person: { alignItems: 'center', width: 64 },
-  face: { width: 60, height: 60, borderRadius: 30, backgroundColor: '#E8E2D5', alignItems: 'center', justifyContent: 'center' },
+  face: { width: 60, height: 60, borderRadius: 30, backgroundColor: colors.bgSoft, alignItems: 'center', justifyContent: 'center' },
   addFace: { backgroundColor: colors.card, borderWidth: 1, borderColor: colors.line, borderStyle: 'dashed' },
-  badge: { position: 'absolute', right: 0, bottom: 0, backgroundColor: '#F5D98B', borderRadius: 99, width: 20, height: 20, alignItems: 'center', justifyContent: 'center' },
+  badge: { position: 'absolute', right: 0, bottom: 0, backgroundColor: colors.yellowBg, borderRadius: 99, width: 20, height: 20, alignItems: 'center', justifyContent: 'center' },
   pName: { marginTop: 6, fontSize: 12, fontWeight: '600', color: colors.text },
   peopleEmpty: { fontSize: 12, color: colors.muted, marginTop: 8 },
   offline: { fontSize: 12, color: colors.danger, fontWeight: '700', marginBottom: 8 },
@@ -394,3 +396,4 @@ const styles = StyleSheet.create({
   emptyBtn: { alignSelf: 'flex-start', backgroundColor: colors.primary, borderRadius: 10, paddingHorizontal: 14, paddingVertical: 8 },
   emptyBtnTxt: { color: '#fff', fontWeight: '800', fontSize: 12 },
 });
+}

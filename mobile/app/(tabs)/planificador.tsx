@@ -13,7 +13,7 @@ import { deviceCountry, getHolidays, holidayMap, type Holiday } from '../../src/
 import { useAppStore } from '../../src/store/useAppStore';
 import { fmtHour, usePrefs } from '../../src/store/usePrefs';
 import { useCatalog } from '../../src/store/useCatalog';
-import { colors } from '../../src/theme/colors';
+import { colors, useThemedStyles, type ThemeColors } from '../../src/theme/colors';
 import { addDays, toLocalKey } from '../../src/utils/dates';
 import { expandEvents, type Occurrence } from '../../src/utils/recurrence';
 
@@ -42,6 +42,7 @@ function clampDay(d: Date): Date {
 }
 
 export default function Planificador() {
+  const s = useThemedStyles(createStyles);
   const router = useRouter();
   const { selectedDate, setSelectedDate } = useAppStore();
   const [view, setView] = useState<ViewMode>('day');
@@ -618,6 +619,7 @@ function DayGrid({ data, date, dragging, setDragging, onDrop, onToggle, onOpen, 
   gutterW: number;
   holidays: Map<string, Holiday>;
 }) {
+  const s = useThemedStyles(createStyles);
   const scroll = React.useRef<ScrollView>(null);
   const isToday = toLocalKey(date) === toLocalKey(new Date());
   const [now, setNow] = React.useState(() => new Date());
@@ -808,6 +810,7 @@ function WeekGrid({ days, dayData, onOpen, onPickDay, colW, selecting, picked, t
   rangeH: number;
   hourFormat: '24h' | '12h';
 }) {
+  const s = useThemedStyles(createStyles);
   return (
     <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={s.weekBody}>
       <View>
@@ -863,6 +866,7 @@ function MonthGrid({ cursor, setCursor, selected, holidays, onPick, counts, deta
   onOpen: (b: PlacedBlock) => void;
   weekStartsOn: 'monday' | 'sunday';
 }) {
+  const s = useThemedStyles(createStyles);
   const first = new Date(cursor.getFullYear(), cursor.getMonth(), 1);
   const start = startOfWeek(first, weekStartsOn);
   const cells = Array.from({ length: 42 }, (_, i) => addDays(start, i));
@@ -909,13 +913,14 @@ function MonthGrid({ cursor, setCursor, selected, holidays, onPick, counts, deta
   );
 }
 
-const s = StyleSheet.create({
+function createStyles(colors: ThemeColors) {
+  return StyleSheet.create({
   safe: { flex: 1, backgroundColor: colors.bg },
   header: { flexDirection: 'row', alignItems: 'center', padding: 16, gap: 8 },
   title: { fontSize: 24, fontWeight: '900', color: colors.text },
   sub: { fontSize: 13, color: colors.muted },
-  allday: { backgroundColor: '#FDE8E8', borderRadius: 12, padding: 10, marginBottom: 8, borderWidth: 1, borderColor: '#F3C1C1' },
-  alldayTxt: { fontWeight: '800', color: '#B44444', fontSize: 13 },
+  allday: { backgroundColor: colors.coralBg, borderRadius: 12, padding: 10, marginBottom: 8, borderWidth: 1, borderColor: colors.coral },
+  alldayTxt: { fontWeight: '800', color: colors.coral, fontSize: 13 },
   today: { borderWidth: 1, borderColor: colors.line, borderRadius: 99, paddingHorizontal: 14, paddingVertical: 8, backgroundColor: colors.card },
   todayTxt: { fontWeight: '800', color: colors.text, fontSize: 12 },
   sheetBg: { position: 'absolute', top: 0, bottom: 0, left: 0, right: 0, backgroundColor: 'rgba(0,0,0,0.35)', justifyContent: 'flex-end', zIndex: 50 },
@@ -988,8 +993,8 @@ const s = StyleSheet.create({
   lineTxt: { fontSize: 11, color: colors.muted, fontWeight: '700', width: 40 },
   blocks: { position: 'relative' },
   now: { position: 'absolute', left: 0, right: 0, flexDirection: 'row', alignItems: 'center', zIndex: 5, opacity: 0.85 },
-  nowDot: { width: 8, height: 8, borderRadius: 4, backgroundColor: '#E5484D', marginLeft: 38 },
-  nowLine: { flex: 1, height: 1.5, backgroundColor: '#E5484D' },
+  nowDot: { width: 8, height: 8, borderRadius: 4, backgroundColor: colors.danger, marginLeft: 38 },
+  nowLine: { flex: 1, height: 1.5, backgroundColor: colors.danger },
   swipeHint: { textAlign: 'center', color: colors.muted, fontSize: 11, marginTop: 10 },
   zoomRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'flex-end', gap: 8, marginBottom: 6 },
   zoomBtn: { width: 34, height: 34, borderRadius: 17, backgroundColor: colors.card, borderWidth: 1, borderColor: colors.line, alignItems: 'center', justifyContent: 'center' },
@@ -1013,9 +1018,10 @@ const s = StyleSheet.create({
   mNum: { fontWeight: '700', color: colors.text },
   mOut: { color: colors.line },
   dot: { width: 6, height: 6, borderRadius: 3, backgroundColor: colors.accent, marginTop: 2 },
-  holDot: { backgroundColor: '#E5484D' },
+  holDot: { backgroundColor: colors.danger },
   detailTitle: { fontWeight: '800', color: colors.text, marginTop: 14, marginBottom: 8, textTransform: 'capitalize' },
   mItem: { borderRadius: 12, padding: 12, marginBottom: 8 },
   mItemTitle: { fontWeight: '800', color: colors.text },
   mItemSub: { fontSize: 12, color: colors.muted },
 });
+}

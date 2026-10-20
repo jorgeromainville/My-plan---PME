@@ -1,9 +1,10 @@
 import React from 'react';
 import { StyleSheet, View, ViewProps } from 'react-native';
-import { colors, radius } from '../theme/colors';
+import { colors, radius, useThemedStyles, type ThemeColors } from '../theme/colors';
 
 // Tarjeta blanca reutilizable: fondo, bordes redondeados, sombra suave.
 export function Card({ children, style, ...rest }: ViewProps) {
+  const styles = useThemedStyles(createStyles);
   return (
     <View style={[styles.card, style]} {...rest}>
       {children}
@@ -11,7 +12,8 @@ export function Card({ children, style, ...rest }: ViewProps) {
   );
 }
 
-const styles = StyleSheet.create({
+function createStyles(colors: ThemeColors) {
+  return StyleSheet.create({
   card: {
     backgroundColor: colors.card,
     borderRadius: radius.lg,
@@ -25,3 +27,4 @@ const styles = StyleSheet.create({
     borderColor: colors.line,
   },
 });
+}

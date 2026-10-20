@@ -142,7 +142,8 @@ Estado general: **Fase 1 terminada y verificada**. Fases 2–8 pendientes, en or
 - [x] Datos curiosos mientras el escáner procesa (`src/data/funFacts.ts`): rota cada 5,5 s, ~8 % son guiños.
 - [x] Multi-moneda sin conversión (2026-10-19): `User.currency` + `currencySymbol` (migración `20261019000001_user_currency_symbol`). Perfil: chips PEN/USD/EUR y **"Otra…"** (código 2–6 + símbolo, ej. COP/ARS/PCO), aviso de que no convierte importes. `formatMoney` toma el símbolo de `useSession`, así que los 18 usos cambian solos. `PATCH /api/auth/me` (nombre, moneda, tema, semana) y el usuario se cachea en `@planner/user` para arrancar sin red; al guardar se limpia `@planner/cache:*`.
 - [x] Inicio de semana Lun/Dom (2026-10-19): `prefs.weekStartsOn` (persistido) + `User.weekStartsOn`; Planificador (vista semana, rejilla mensual y cabecera) y los rangos de `stats.controller`/`goals.controller` respetan la elección. Se guarda al tocar el chip (no espera a "Guardar").
-- [ ] Seguridad/endurecimiento, tema claro/oscuro/auto
+- [x] Tema claro / oscuro / típico / automático (2026-10-19): `usePrefs.theme` + `User.theme`; `useThemedStyles(createStyles)` recrea los estilos por paleta (30 pantallas/componentes) y `colors` es un Proxy que resuelve la paleta activa para los colores sueltos en JSX. Paletas en `src/theme/colors.ts`: claro (crema), oscuro (gris azulado) y **típico andino** (pergamino, terracota, ocre y turquesa inspirado en textiles). `auto` sigue al sistema (`useColorScheme`). Perfil → chips Claro/Oscuro/Típico/Automático; el tema se guarda al tocarlo y se aplica al iniciar sesión. `StatusBar` cambia a claro en oscuro.
+- [ ] Seguridad/endurecimiento
 - [ ] Limpieza: datos demo eliminables desde la app
 - [ ] Preparación producción (builds Android/iOS, variables, logs)
 - [ ] Decidir stack al iniciar: Supabase (todo junto) vs Render + Neon, + Sentry día 1, builds EAS
