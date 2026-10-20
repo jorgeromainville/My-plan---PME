@@ -8,10 +8,10 @@ export const demoUser = {
 };
 
 export const demoDailyGoals: DailyGoal[] = [
-  { id: 'g1', title: 'Ingresos', current: 0, target: 5, color: 'coral', icon: '🏪' },
-  { id: 'g2', title: 'Contactar personas', current: 0, target: 2, color: 'blue', icon: '👥' },
-  { id: 'g3', title: 'Tareas', current: 3, target: 5, color: 'yellow', icon: '✅' },
-  { id: 'g4', title: 'Horas de trabajo', current: 4, target: 8, color: 'green', icon: '💼' },
+  { id: 'g1', title: 'Ingresos', current: 0, target: 5, color: 'coral', icon: 'money' },
+  { id: 'g2', title: 'Contactar personas', current: 0, target: 2, color: 'blue', icon: 'users' },
+  { id: 'g3', title: 'Tareas', current: 3, target: 5, color: 'yellow', icon: 'checkSquare' },
+  { id: 'g4', title: 'Horas de trabajo', current: 4, target: 8, color: 'green', icon: 'briefcase' },
 ];
 
 export const demoWeeklyMain: WeeklyGoal = {

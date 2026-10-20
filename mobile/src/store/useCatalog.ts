@@ -16,7 +16,7 @@ export interface Template {
 }
 
 export const DEFAULT_KINDS: EventKind[] = [
-  { name: 'Evento', color: '#8B7BC7' },
+  { name: 'Evento', color: '#6E7C8A' },
   { name: 'Reunión', color: '#6B9ECF' },
   { name: 'Personal', color: '#6FA287' },
   { name: 'Comida', color: '#C9A44A' },
@@ -25,9 +25,9 @@ export const DEFAULT_KINDS: EventKind[] = [
 ];
 
 export const DEFAULT_TEMPLATES: Template[] = [
-  { title: 'Desayuno', icon: '🍳', start: '07:00', end: '07:30', type: 'Comida' },
-  { title: 'Almuerzo', icon: '🍽️', start: '13:00', end: '14:00', type: 'Comida' },
-  { title: 'Reunión', icon: '👥', start: '10:00', end: '11:00', type: 'Reunión' },
+  { title: 'Desayuno', icon: 'utensils', start: '07:00', end: '07:30', type: 'Comida' },
+  { title: 'Almuerzo', icon: 'utensils', start: '13:00', end: '14:00', type: 'Comida' },
+  { title: 'Reunión', icon: 'users', start: '10:00', end: '11:00', type: 'Reunión' },
 ];
 
 async function readKey<T>(key: string): Promise<T | null> {
@@ -87,5 +87,5 @@ export const useCatalog = create<CatalogState>((set) => ({
 }));
 
 export function colorForKind(kinds: EventKind[], name: string): string {
-  return kinds.find((k) => k.name === name)?.color ?? '#8B7BC7';
+  return kinds.find((k) => k.name === name)?.color ?? '#6E7C8A';
 }

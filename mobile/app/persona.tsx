@@ -10,7 +10,6 @@ import { Card } from '../src/components/Card';
 import { NativeDate, NativeTime } from '../src/components/NativeTime';
 import { errorMessage } from '../src/services/api';
 import {
-  categoryIcon,
   createContact,
   createContactCategory,
   deleteContact,
@@ -24,8 +23,9 @@ import {
 import { usePrefs } from '../src/store/usePrefs';
 import { colors, useThemedStyles, type ThemeColors } from '../src/theme/colors';
 import { parseLocalDay } from '../src/utils/dates';
+import { Icon, contactIconName } from '../src/components/Icon';
 
-const PALETTE = ['#C9A44A', '#6B9ECF', '#D98162', '#6FA287', '#8B7BC7', '#E07A5F'];
+const PALETTE = ['#C9A44A', '#6B9ECF', '#D98162', '#6FA287', '#6E7C8A', '#E07A5F'];
 
 // Persona: con id abre en VISTA (info + llamar); Editar pasa al formulario.
 // Sin id abre directo el formulario.
@@ -108,7 +108,7 @@ function PersonaView({ contact, color, onEdit, onBack, onTouched, onError, error
       <ScrollView contentContainerStyle={s.body}>
         <View style={s.top}>
           <Pressable onPress={onBack} style={s.x} accessibilityLabel="Volver">
-            <Text style={s.xTxt}>‹</Text>
+            <Icon name="chevronLeft" size={24} color={colors.text} />
           </Pressable>
           <Text style={s.title}>Contacto</Text>
           <Pressable onPress={onEdit} style={s.editBtn} accessibilityLabel="Editar">
@@ -118,7 +118,7 @@ function PersonaView({ contact, color, onEdit, onBack, onTouched, onError, error
 
         <Card style={s.center}>
           <View style={[s.bigFace, color ? { borderColor: color } : null]}>
-            <Text style={{ fontSize: 40 }}>{categoryIcon(contact.category)}</Text>
+            <Icon name={contactIconName(contact.category)} size={40} color={colors.text} />
           </View>
           <Text style={s.name}>{name}</Text>
           <View style={s.catRow}>
@@ -132,13 +132,22 @@ function PersonaView({ contact, color, onEdit, onBack, onTouched, onError, error
         {tel ? (
           <View style={s.actions}>
             <Pressable style={s.act} onPress={() => Linking.openURL(`tel:${tel}`)}>
-              <Text style={s.actTxt}>📞 Llamar</Text>
+              <View style={s.actRow}>
+                <Icon name="phone" size={15} color={colors.onAccent} />
+                <Text style={s.actTxt}>Llamar</Text>
+              </View>
             </Pressable>
             <Pressable style={s.act} onPress={() => Linking.openURL(`https://wa.me/${wa}`)}>
-              <Text style={s.actTxt}>💬 WhatsApp</Text>
+              <View style={s.actRow}>
+                <Icon name="whatsapp" size={15} color={colors.onAccent} />
+                <Text style={s.actTxt}>WhatsApp</Text>
+              </View>
             </Pressable>
             <Pressable style={s.act} onPress={() => Linking.openURL(`sms:${tel}`)}>
-              <Text style={s.actTxt}>✉️ SMS</Text>
+              <View style={s.actRow}>
+                <Icon name="message" size={15} color={colors.onAccent} />
+                <Text style={s.actTxt}>SMS</Text>
+              </View>
             </Pressable>
           </View>
         ) : null}
@@ -187,7 +196,10 @@ function PersonaView({ contact, color, onEdit, onBack, onTouched, onError, error
             }
           }}
         >
-          <Text style={s.touchedTxt}>✓ Marcar contactado hoy</Text>
+          <View style={s.actRow}>
+            <Icon name="check" size={15} color={colors.green} strokeWidth={3} />
+            <Text style={s.touchedTxt}>Marcar contactado hoy</Text>
+          </View>
         </Pressable>
       </ScrollView>
     </SafeAreaView>
@@ -354,7 +366,7 @@ function PersonaForm({ id, initial, presetLat, presetLng, onBack, onSaved }: {
       <ScrollView contentContainerStyle={s.body} keyboardShouldPersistTaps="handled">
         <View style={s.top}>
           <Pressable onPress={onBack} style={s.x} accessibilityLabel="Volver">
-            <Text style={s.xTxt}>‹</Text>
+            <Icon name="chevronLeft" size={24} color={colors.text} />
           </Pressable>
           <Text style={s.title}>{id ? 'Editar contacto' : 'Nueva persona'}</Text>
           <View style={{ width: 60 }} />
@@ -396,7 +408,14 @@ function PersonaForm({ id, initial, presetLat, presetLng, onBack, onSaved }: {
           )}
           <View style={s.row}>
             <Pressable onPress={useMyLocation} style={s.mini} disabled={locating}>
-              <Text style={s.miniTxt}>{locating ? '…' : '📍'} Usar mi ubicación</Text>
+              {locating ? (
+                <Text style={s.miniTxt}>…</Text>
+              ) : (
+                <View style={s.actRow}>
+                  <Icon name="locate" size={16} color={colors.onPrimary} />
+                  <Text style={s.miniTxt}>Usar mi ubicación</Text>
+                </View>
+              )}
             </Pressable>
             {lat != null ? (
               <Pressable onPress={() => { setLat(null); setLng(null); }} style={s.miniGhost}>
@@ -404,7 +423,7 @@ function PersonaForm({ id, initial, presetLat, presetLng, onBack, onSaved }: {
               </Pressable>
             ) : null}
           </View>
-          <Text style={s.hint}>Tip: después de "usar mi ubicación" arrastra el 📍 para ajustar.</Text>
+          <Text style={s.hint}>Tip: después de "usar mi ubicación" arrastra el marcador para ajustar.</Text>
         </Card>
 
         <Card>
@@ -413,14 +432,19 @@ function PersonaForm({ id, initial, presetLat, presetLng, onBack, onSaved }: {
             {cats.map((c) => (
               <Pressable key={c.name} onPress={() => setCategory(c.name)} style={[s.chip, category === c.name && s.chipOn]}>
                 {c.color ? <View style={[s.dot, { backgroundColor: c.color }]} /> : null}
-                <Text style={category === c.name ? s.chipTxtOn : s.chipTxt}>{categoryIcon(c.name)} {c.name}</Text>
+                <Icon
+                  name={contactIconName(c.name)}
+                  size={14}
+                  color={category === c.name ? colors.onPrimary : colors.text}
+                />
+                <Text style={category === c.name ? s.chipTxtOn : s.chipTxt}>{c.name}</Text>
               </Pressable>
             ))}
           </View>
           <View style={s.newCat}>
             <TextInput placeholderTextColor={colors.muted} style={[s.input, { flex: 1, marginBottom: 0 }]} value={newCat} onChangeText={setNewCat} placeholder="Nueva categoría" />
             <Pressable onPress={addCategory} style={s.plus}>
-              <Text style={s.plusTxt}>+</Text>
+              <Icon name="plus" size={22} color={colors.onPrimary} />
             </Pressable>
           </View>
           <View style={s.row}>
@@ -434,7 +458,9 @@ function PersonaForm({ id, initial, presetLat, presetLng, onBack, onSaved }: {
           <Text style={s.label}>Notas</Text>
           <TextInput placeholderTextColor={colors.muted} style={[s.input, s.area]} value={notes} onChangeText={setNotes} multiline placeholder="Opcional" />
           <Pressable onPress={() => setHasNext(!hasNext)} style={s.check} accessibilityRole="checkbox">
-            <View style={[s.box, hasNext && s.boxOn]}>{hasNext ? <Text style={{ color: colors.text }}>✓</Text> : null}</View>
+            <View style={[s.box, hasNext && s.boxOn]}>
+              {hasNext ? <Icon name="check" size={14} color={colors.text} strokeWidth={3} /> : null}
+            </View>
             <Text style={s.checkTxt}>Próximo contacto</Text>
           </Pressable>
           {hasNext ? (
@@ -493,6 +519,7 @@ function createStyles(colors: ThemeColors) {
   editTxt: { fontWeight: '800', color: colors.text },
   actions: { flexDirection: 'row', gap: 8 },
   act: { flex: 1, backgroundColor: colors.green, borderRadius: 14, padding: 13, alignItems: 'center' },
+  actRow: { flexDirection: 'row', alignItems: 'center', gap: 6 },
   actTxt: { color: colors.onAccent, fontWeight: '800' },
   label: { fontSize: 13, fontWeight: '700', color: colors.text, marginTop: 10, marginBottom: 6 },
   input: { backgroundColor: colors.card, borderRadius: 12, borderWidth: 1, borderColor: colors.line, padding: 13, marginBottom: 4, color: colors.text },
@@ -502,7 +529,7 @@ function createStyles(colors: ThemeColors) {
   v: { flex: 1, color: colors.text, fontWeight: '600', fontSize: 13 },
   row: { flexDirection: 'row', gap: 8, alignItems: 'center' },
   wrap: { flexDirection: 'row', gap: 8, flexWrap: 'wrap' },
-  chip: { flexDirection: 'row', alignItems: 'center', borderWidth: 1, borderColor: colors.line, borderRadius: 99, paddingHorizontal: 14, paddingVertical: 8, backgroundColor: colors.card },
+  chip: { flexDirection: 'row', alignItems: 'center', gap: 6, borderWidth: 1, borderColor: colors.line, borderRadius: 99, paddingHorizontal: 14, paddingVertical: 8, backgroundColor: colors.card },
   chipOn: { backgroundColor: colors.primary, borderColor: colors.primary },
   chipTxt: { color: colors.text, fontWeight: '700', fontSize: 12 },
   chipTxtOn: { color: colors.onPrimary, fontWeight: '700', fontSize: 12 },

@@ -31,7 +31,7 @@ export interface HourLine {
 
 function colorFor(key: string): string {
   // Se resuelve en cada llamada para que los bloques sigan el tema activo.
-  const palette = [colors.greenBg, colors.blueBg, colors.yellowBg, colors.coralBg, colors.purpleBg];
+  const palette = [colors.greenBg, colors.blueBg, colors.yellowBg, colors.coralBg, colors.slateBg];
   let h = 0;
   for (let i = 0; i < key.length; i++) h = (h * 31 + key.charCodeAt(i)) >>> 0;
   return palette[h % palette.length];
@@ -94,7 +94,7 @@ export function layoutDay(tasks: Task[], occurrences: Occurrence[], start = 0, e
       title: t.title,
       category: t.category,
       status: t.status,
-      icon: t.status === 'completada' ? '✅' : '⬜',
+      icon: t.status === 'completada' ? 'checkSquare' : 'square',
       bg: colorFor(t.category),
       raw: t,
     };
@@ -119,11 +119,23 @@ export function layoutDay(tasks: Task[], occurrences: Occurrence[], start = 0, e
     raw.push({
       key: o.key,
       kind: 'event',
-      title: `${linked ? '🎯 ' : ''}${backup ? 'Plan B · ' : ''}${e.title}`,
-      timeLabel: `${fmtHour(e.startTime, format)} – ${fmtHour(e.endTime, format)}${counted ? ' · ✓' : pending ? ' · ⏳ pendiente' : ''}`,
+      title: `${backup ? 'Plan B · ' : ''}${e.title}`,
+      timeLabel: `${fmtHour(e.startTime, format)} – ${fmtHour(e.endTime, format)}${counted ? ' · hecho' : pending ? ' · pendiente' : ''}`,
       category: e.type,
-      icon: backup ? '🛟' : e.type === 'Reunión' ? '👥' : e.type === 'Personal' ? '🏠' : e.type === 'Trabajo' ? '💼' : '📅',
-      bg: backup ? colors.bgSoft : e.color ? `${e.color}33` : e.type === 'Reunión' ? colors.blueBg : colors.purpleBg,
+      icon: linked
+        ? 'target'
+        : backup
+          ? 'lifeBuoy'
+          : e.type === 'Reunión'
+            ? 'users'
+            : e.type === 'Personal'
+              ? 'home'
+              : e.type === 'Trabajo'
+                ? 'briefcase'
+                : e.type === 'Comida'
+                  ? 'utensils'
+                  : 'calendar',
+      bg: backup ? colors.bgSoft : e.color ? `${e.color}33` : e.type === 'Reunión' ? colors.blueBg : colors.slateBg,
       start,
       end,
       isBackup: backup,

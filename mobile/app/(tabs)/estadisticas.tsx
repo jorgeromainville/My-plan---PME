@@ -16,7 +16,7 @@ const PERIODS: { v: StatPeriod; label: string }[] = [
   { v: 'month', label: 'Mes' },
 ];
 
-const SLICE_COLORS = ['#D98162', '#C9A44A', '#6B9ECF', '#6FA287', '#8B7BC7', '#E07A5F'];
+const SLICE_COLORS = ['#D98162', '#C9A44A', '#6B9ECF', '#6FA287', '#6E7C8A', '#E07A5F'];
 
 // Estadísticas reales: resumen + ingresos vs gastos + dona por categoría + productividad.
 export default function Estadisticas() {

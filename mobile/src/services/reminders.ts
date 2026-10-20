@@ -130,7 +130,7 @@ export async function rescheduleReminders(force = false): Promise<number> {
     if (Number.isNaN(h)) continue;
     d.setHours(h, min ?? 0, 0, 0);
     const at = new Date(d.getTime() - (ev.notifyMins ?? 30) * 60000);
-    plan(jobs, 'event', ev.id, `📅 ${ev.title}`, `${d.toLocaleDateString()} ${ev.startTime}${ev.location ? ` · ${ev.location}` : ''}`, at);
+    plan(jobs, 'event', ev.id, `Evento · ${ev.title}`, `${d.toLocaleDateString()} ${ev.startTime}${ev.location ? ` · ${ev.location}` : ''}`, at);
   }
 
   for (const t of tasks) {
@@ -142,7 +142,7 @@ export async function rescheduleReminders(force = false): Promise<number> {
     } else {
       d.setHours(9, 0, 0, 0);
     }
-    plan(jobs, 'task', t.id, `✓ ${t.title}`, t.time ? `Hoy ${t.time}` : 'Pendiente de hoy', d);
+    plan(jobs, 'task', t.id, `Tarea · ${t.title}`, t.time ? `Hoy ${t.time}` : 'Pendiente de hoy', d);
   }
 
   const seen = new Set<string>();
@@ -153,7 +153,7 @@ export async function rescheduleReminders(force = false): Promise<number> {
     at.setHours(9, 0, 0, 0);
     if (at.getTime() < Date.now()) at.setDate(at.getDate() + 1);
     const name = `${c.firstName}${c.lastName ? ` ${c.lastName}` : ''}`;
-    plan(jobs, 'contact', c.id, `👤 Contactar: ${name}`, c.category, at);
+    plan(jobs, 'contact', c.id, `Contactar · ${name}`, c.category, at);
   }
 
   for (const g of goals) {
@@ -163,7 +163,7 @@ export async function rescheduleReminders(force = false): Promise<number> {
     const at = new Date(dl);
     at.setDate(at.getDate() - 1);
     at.setHours(20, 0, 0, 0);
-    plan(jobs, 'goal', g.id, `🎯 Meta: ${g.title}`, `Vence el ${dl.toLocaleDateString()} (${g.current}/${g.target} ${g.unit})`, at);
+    plan(jobs, 'goal', g.id, `Meta · ${g.title}`, `Vence el ${dl.toLocaleDateString()} (${g.current}/${g.target} ${g.unit})`, at);
   }
 
   await cancelReminders();
@@ -187,7 +187,7 @@ export async function sendTestReminder(): Promise<boolean> {
   try {
     await m.scheduleNotificationAsync({
       identifier: 'planner:test',
-      content: { title: '✓ Avisos funcionando', body: 'Así te llegarán tus recordatorios.' },
+      content: { title: 'Avisos funcionando', body: 'Así te llegarán tus recordatorios.' },
       trigger: { type: m.SchedulableTriggerInputTypes.TIME_INTERVAL, seconds: 5 },
     });
     return true;

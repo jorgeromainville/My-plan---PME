@@ -78,20 +78,6 @@ export async function deleteContact(id: string): Promise<void> {
   await api(`/api/contacts/${id}`, { method: 'DELETE' }, t);
 }
 
-// Símbolo por categoría (sin migración: mapa fijo, personalizadas 📌).
-export const CATEGORY_ICONS: Record<string, string> = {
-  Amigos: '⭐',
-  Clientes: '💼',
-  Proveedores: '📦',
-  Familia: '🏠',
-  Compañeros: '👥',
-  Otros: '📌',
-};
-
-export function categoryIcon(name: string): string {
-  return CATEGORY_ICONS[name] ?? '📌';
-}
-
 // Marca "contactado hoy": pone último contacto en hoy y limpia el próximo.
 export async function touchContact(id: string): Promise<Contact> {
   const t = await storage.getToken();

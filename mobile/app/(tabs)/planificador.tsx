@@ -7,6 +7,7 @@ import { AndeanTopBand } from '../../src/components/AndeanMotifs';
 import { Card } from '../../src/components/Card';
 import { HOUR_H, layoutDay, toHHMM, toMin, type PlacedBlock } from '../../src/components/DayAgenda';
 import { DraggableBlock, type DropResult } from '../../src/components/DraggableBlock';
+import { Icon, templateIconName } from '../../src/components/Icon';
 import { UndoBar } from '../../src/components/UndoBar';
 import { createEvent, deleteEvent, listEvents, updateEvent, type CalEvent } from '../../src/services/events';
 import { dayRange, createTask, deleteTask, listTasks, updateTask, type Task } from '../../src/services/tasks';
@@ -339,13 +340,25 @@ export default function Planificador() {
           <Text style={s.todayTxt}>Hoy</Text>
         </Pressable>
         <Pressable style={[s.today, (typeFilter !== 'Todos' || kindFilter !== 'all') && s.selOn]} onPress={() => setFilterOpen(true)} accessibilityLabel="Filtrar por tipo">
-          <Text style={[s.todayTxt, (typeFilter !== 'Todos' || kindFilter !== 'all') && s.selOnTxt]}>⧩{(typeFilter !== 'Todos' || kindFilter !== 'all') ? ' •' : ''}</Text>
+          <View style={s.iconRow}>
+            <Icon
+              name="filter"
+              size={16}
+              color={(typeFilter !== 'Todos' || kindFilter !== 'all') ? colors.onPrimary : colors.text}
+            />
+            {(typeFilter !== 'Todos' || kindFilter !== 'all') ? (
+              <View style={[s.filterDot, { backgroundColor: colors.onPrimary }]} />
+            ) : null}
+          </View>
         </Pressable>
         <Pressable style={[s.today, selecting && s.selOn]} onPress={() => { setSelecting(!selecting); setPicked(new Set()); }} accessibilityLabel="Selección múltiple">
-          <Text style={[s.todayTxt, selecting && s.selOnTxt]}>✓ {picked.size > 0 ? picked.size : ''}</Text>
+          <View style={s.iconRow}>
+            <Icon name="checkSquare" size={16} color={selecting ? colors.onPrimary : colors.text} />
+            {picked.size > 0 ? <Text style={[s.todayTxt, selecting && s.selOnTxt]}>{picked.size}</Text> : null}
+          </View>
         </Pressable>
         <Pressable style={s.add} onPress={() => setSheetOpen(true)} accessibilityLabel="Crear actividad">
-          <Text style={s.addTxt}>+</Text>
+          <Icon name="plus" size={22} color={colors.onPrimary} />
         </Pressable>
       </View>
 
@@ -357,7 +370,7 @@ export default function Planificador() {
               style={s.sheetOpt}
               onPress={() => { setSheetOpen(false); goForm('tarea', selectedDate); }}
             >
-              <Text style={s.sheetIcon}>✓</Text>
+              <Icon name="checkSquare" size={22} color={colors.text} />
               <View style={{ flex: 1 }}>
                 <Text style={s.sheetTitle}>Tarea</Text>
                 <Text style={s.sheetSub}>Nueva tarea del día</Text>
@@ -367,7 +380,7 @@ export default function Planificador() {
               style={s.sheetOpt}
               onPress={() => { setSheetOpen(false); goForm('evento', selectedDate); }}
             >
-              <Text style={s.sheetIcon}>📅</Text>
+              <Icon name="calendar" size={22} color={colors.text} />
               <View style={{ flex: 1 }}>
                 <Text style={s.sheetTitle}>Evento</Text>
                 <Text style={s.sheetSub}>Nuevo evento con hora</Text>
@@ -376,7 +389,7 @@ export default function Planificador() {
             <Text style={s.sheetT2}>Plantillas (crean al toque)</Text>
             {TEMPLATES.map((t) => (
               <Pressable key={t.title} style={s.sheetOpt} onPress={() => quickCreate(t)}>
-                <Text style={s.sheetIcon}>{t.icon}</Text>
+                <Icon name={templateIconName(t.icon)} size={22} color={colors.text} />
                 <View style={{ flex: 1 }}>
                   <Text style={s.sheetTitle}>{t.title}</Text>
                   <Text style={s.sheetSub}>
@@ -407,8 +420,11 @@ export default function Planificador() {
             <Text style={s.sheetT2}>Por tipo de evento</Text>
             {presentTypes.map((t) => (
               <Pressable key={t} onPress={() => { setTypeFilter(t); setKindFilter('all'); setFilterOpen(false); }} style={[s.sheetOpt, typeFilter === t && s.sheetOn]}>
-                <Text style={[s.sheetTitle, typeFilter === t && s.sheetTitleOn]}>{t === 'Todos' ? 'Todos' : `⬤ ${t}`}</Text>
-                {typeFilter === t ? <Text style={s.sheetTitleOn}> ✓</Text> : null}
+                <View style={s.filterTypeRow}>
+                  {t !== 'Todos' ? <View style={s.typeDot} /> : null}
+                  <Text style={[s.sheetTitle, typeFilter === t && s.sheetTitleOn]}>{t}</Text>
+                </View>
+                {typeFilter === t ? <Icon name="check" size={18} color={colors.link} /> : null}
               </Pressable>
             ))}
           </View>
@@ -435,7 +451,7 @@ export default function Planificador() {
       {view === 'day' && (
         <>
           <View style={s.weekRow}>
-            <Pressable onPress={() => setSelectedDate(addDays(selectedDate, -7))} style={s.nav}><Text style={s.navTxt}>‹</Text></Pressable>
+            <Pressable onPress={() => setSelectedDate(addDays(selectedDate, -7))} style={s.nav}><Icon name="chevronLeft" size={20} color={colors.muted} /></Pressable>
             <View style={s.week}>
               {weekDays.map((d, i) => {
                 const active = sameDay(d, selectedDate);
@@ -447,7 +463,7 @@ export default function Planificador() {
                 );
               })}
             </View>
-            <Pressable onPress={() => setSelectedDate(addDays(selectedDate, 7))} style={s.nav}><Text style={s.navTxt}>›</Text></Pressable>
+            <Pressable onPress={() => setSelectedDate(addDays(selectedDate, 7))} style={s.nav}><Icon name="chevronRight" size={20} color={colors.muted} /></Pressable>
           </View>
           <ScrollView
             ref={pager}
@@ -556,7 +572,7 @@ export default function Planificador() {
                   style={s.dCheck}
                 >
                   <Text style={s.dCheckTxt}>
-                    {(detail.raw as CalEvent).done ? '✓ Realizado (toca para quitar)' : 'Marcar realizado'}
+                    {(detail.raw as CalEvent).done ? 'Realizado (toca para quitar)' : 'Marcar realizado'}
                   </Text>
                 </Pressable>
               </>
@@ -719,23 +735,29 @@ function DayGrid({ data, date, dragging, setDragging, onDrop, onToggle, onOpen, 
         <View style={s.timeless}>
           {data.timeless.map((b) => (
             <Pressable key={b.key} onPress={() => (selecting ? togglePick(b.key) : onOpen(b))} style={s.chipTask}>
-              <Text style={s.chipTxt}>{b.icon} {b.title}</Text>
+              <View style={s.chipTaskRow}>
+                <Icon name={b.icon} size={14} color={colors.text} />
+                <Text style={s.chipTxt}>{b.title}</Text>
+              </View>
             </Pressable>
           ))}
         </View>
       )}
       {holidays.get(toLocalKey(date)) ? (
         <View style={s.allday}>
-          <Text style={s.alldayTxt}>🎉 Todo el día · {holidays.get(toLocalKey(date))!.localName}</Text>
+          <View style={s.alldayRow}>
+            <Icon name="party" size={15} color={colors.text} />
+            <Text style={s.alldayTxt}>Todo el día · {holidays.get(toLocalKey(date))!.localName}</Text>
+          </View>
         </View>
       ) : null}
       <View style={s.zoomRow}>
         <Pressable onPress={() => zoomBy(-1)} style={s.zoomBtn} accessibilityLabel="Achicar agenda">
-          <Text style={s.zoomTxt}>−</Text>
+          <Icon name="minus" size={18} color={colors.text} />
         </Pressable>
         <Text style={s.zoomLabel}>{Math.round(zoom * 100)}%</Text>
         <Pressable onPress={() => zoomBy(1)} style={s.zoomBtn} accessibilityLabel="Agrandar agenda">
-          <Text style={s.zoomTxt}>+</Text>
+          <Icon name="plus" size={18} color={colors.text} />
         </Pressable>
       </View>
       <View style={[s.grid, { paddingLeft: gutterW }]}>
@@ -788,7 +810,11 @@ function DayGrid({ data, date, dragging, setDragging, onDrop, onToggle, onOpen, 
                 onDragStart={() => setDragging(true)}
                 onDragEnd={(r) => { setDragging(false); if (!selecting) onDrop(b, r, date); }}
               />
-              {selecting && picked.has(b.key) && <View style={s.pickedTag}><Text style={s.pickedTxt}>✓</Text></View>}
+              {selecting && picked.has(b.key) && (
+                <View style={s.pickedTag}>
+                  <Icon name="check" size={12} color={colors.onPrimary} strokeWidth={3} />
+                </View>
+              )}
             </View>
           ))}
         </View>
@@ -876,11 +902,11 @@ function MonthGrid({ cursor, setCursor, selected, holidays, onPick, counts, deta
     <ScrollView contentContainerStyle={s.body} showsVerticalScrollIndicator={false}>
       <View style={s.mHead}>
         <Pressable onPress={() => setCursor(new Date(cursor.getFullYear(), cursor.getMonth() - 1, 1))} style={s.nav}>
-          <Text style={s.navTxt}>‹</Text>
+          <Icon name="chevronLeft" size={20} color={colors.muted} />
         </Pressable>
         <Text style={s.mTitle}>{MESES[cursor.getMonth()]} {cursor.getFullYear()}</Text>
         <Pressable onPress={() => setCursor(new Date(cursor.getFullYear(), cursor.getMonth() + 1, 1))} style={s.nav}>
-          <Text style={s.navTxt}>›</Text>
+          <Icon name="chevronRight" size={20} color={colors.muted} />
         </Pressable>
       </View>
       <View style={s.mGrid}>
@@ -922,9 +948,12 @@ function createStyles(colors: ThemeColors) {
   title: { fontSize: 24, fontWeight: '900', color: colors.text },
   sub: { fontSize: 13, color: colors.muted },
   allday: { backgroundColor: colors.coralBg, borderRadius: 12, padding: 10, marginBottom: 8, borderWidth: 1, borderColor: colors.coral },
+  alldayRow: { flexDirection: 'row', alignItems: 'center', gap: 6 },
   alldayTxt: { fontWeight: '800', color: colors.coral, fontSize: 13 },
   today: { borderWidth: 1, borderColor: colors.line, borderRadius: 99, paddingHorizontal: 14, paddingVertical: 8, backgroundColor: colors.card },
   todayTxt: { fontWeight: '800', color: colors.text, fontSize: 12 },
+  iconRow: { flexDirection: 'row', alignItems: 'center', gap: 4 },
+  filterDot: { width: 5, height: 5, borderRadius: 99 },
   sheetBg: { position: 'absolute', top: 0, bottom: 0, left: 0, right: 0, backgroundColor: 'rgba(0,0,0,0.35)', justifyContent: 'flex-end', zIndex: 50 },
   sheet: { backgroundColor: colors.card, borderTopLeftRadius: 24, borderTopRightRadius: 24, padding: 20, gap: 12 },
   sheetT: { fontWeight: '900', fontSize: 18, color: colors.text },
@@ -940,6 +969,8 @@ function createStyles(colors: ThemeColors) {
   sheetTitle: { fontWeight: '800', color: colors.text, fontSize: 16 },
   sheetTitleOn: { color: colors.link },
   sheetSub: { color: colors.muted, fontSize: 12 },
+  filterTypeRow: { flex: 1, flexDirection: 'row', alignItems: 'center', gap: 8 },
+  typeDot: { width: 8, height: 8, borderRadius: 99, backgroundColor: colors.primary },
   selOn: { backgroundColor: colors.primary, borderColor: colors.primary },
   selOnTxt: { color: colors.onPrimary },
   filters: { paddingHorizontal: 16, marginBottom: 8, height: 40 },
@@ -990,6 +1021,7 @@ function createStyles(colors: ThemeColors) {
   body: { padding: 16, paddingTop: 4 },
   timeless: { flexDirection: 'row', flexWrap: 'wrap', gap: 8, marginBottom: 10 },
   chipTask: { backgroundColor: colors.card, borderWidth: 1, borderColor: colors.line, borderRadius: 99, paddingHorizontal: 12, paddingVertical: 8 },
+  chipTaskRow: { flexDirection: 'row', alignItems: 'center', gap: 6 },
   chipTxt: { fontWeight: '700', color: colors.text, fontSize: 12 },
   grid: { position: 'relative', paddingLeft: 44 },
   line: { position: 'absolute', left: 0, right: 0, height: HOUR_H, borderTopWidth: 1, borderTopColor: colors.line, paddingTop: 2 },

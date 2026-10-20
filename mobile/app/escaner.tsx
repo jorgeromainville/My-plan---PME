@@ -10,6 +10,7 @@ import { defaultSemesterEnd, parseScheduleText, WEEKDAY_SHORT, type ScheduleCand
 import { aiStatus, createScannedEvents, parseScheduleWithAi, uploadScan } from '../src/services/scanner';
 import { colors, useThemedStyles, type ThemeColors } from '../src/theme/colors';
 import { parseLocalDay, toLocalKey } from '../src/utils/dates';
+import { Icon } from '../src/components/Icon';
 
 interface Row extends ScheduleCandidate {
   key: string;
@@ -241,7 +242,7 @@ export default function Escaner() {
     <SafeAreaView style={s.safe}>
       <View style={s.top}>
         <Pressable onPress={() => router.back()} style={s.x} accessibilityLabel="Volver">
-          <Text style={s.xTxt}>‹</Text>
+          <Icon name="chevronLeft" size={24} color={colors.text} />
         </Pressable>
         <Text style={s.title}>Escanear horario</Text>
         <View style={{ width: 40 }} />
@@ -250,21 +251,30 @@ export default function Escaner() {
       <ScrollView contentContainerStyle={s.body} keyboardShouldPersistTaps="handled">
         <View style={s.seg}>
           <Pressable onPress={() => setTab('foto')} style={[s.segOpt, tab === 'foto' && s.segOn]}>
-            <Text style={[s.segTxt, tab === 'foto' && s.segTxtOn]}>📷 Foto</Text>
+            <View style={s.segRow}>
+              <Icon name="camera" size={15} color={tab === 'foto' ? colors.onAccent : colors.muted} />
+              <Text style={[s.segTxt, tab === 'foto' && s.segTxtOn]}>Foto</Text>
+            </View>
           </Pressable>
           <Pressable onPress={() => setTab('texto')} style={[s.segOpt, tab === 'texto' && s.segOn]}>
-            <Text style={[s.segTxt, tab === 'texto' && s.segTxtOn]}>📝 Texto</Text>
+            <View style={s.segRow}>
+              <Icon name="fileText" size={15} color={tab === 'texto' ? colors.onAccent : colors.muted} />
+              <Text style={[s.segTxt, tab === 'texto' && s.segTxtOn]}>Texto</Text>
+            </View>
           </Pressable>
         </View>
 
         <View style={[s.aiBar, aiOn ? s.aiBarOn : s.aiBarOff]}>
-          <Text style={s.aiTxt}>
-            {aiOn === null
-              ? 'Comprobando el Modo IA…'
-              : aiOn
-                ? '🤖 Modo IA activo: entiende la foto como una persona (tablas, columnas, fotos giradas).'
-                : 'Modo IA apagado: el OCR lee el texto, pero empareja peor. Se activa gratis con GEMINI_API_KEY en backend/.env (aistudio.google.com/apikey).'}
-          </Text>
+          <View style={s.aiRow}>
+            <Icon name={aiOn ? 'brain' : 'info'} size={16} color={colors.text} style={{ marginTop: 2 }} />
+            <Text style={s.aiTxt}>
+              {aiOn === null
+                ? 'Comprobando el Modo IA…'
+                : aiOn
+                  ? 'Modo IA activo: entiende la foto como una persona (tablas, columnas, fotos giradas).'
+                  : 'Modo IA apagado: el OCR lee el texto, pero empareja peor. Se activa gratis con GEMINI_API_KEY en backend/.env (aistudio.google.com/apikey).'}
+            </Text>
+          </View>
         </View>
 
         {tab === 'foto' ? (
@@ -281,25 +291,41 @@ export default function Escaner() {
                     <Text style={s.miniGhostTxt}>Repetir</Text>
                   </Pressable>
                   <Pressable style={s.miniGhost} onPress={rotatePhoto} disabled={!!busy} accessibilityLabel="Girar 90 grados">
-                    <Text style={s.miniGhostTxt}>🔄 Girar</Text>
+                    <View style={s.btnRow}>
+                      <Icon name="rotate" size={15} color={colors.text} />
+                      <Text style={s.miniGhostTxt}>Girar</Text>
+                    </View>
                   </Pressable>
                   <Pressable style={s.mini} onPress={readPhoto} disabled={!!busy}>
-                    <Text style={s.miniTxt}>{busyTxt || '🔍 Leer horario'}</Text>
+                    {busyTxt ? (
+                      <Text style={s.miniTxt}>{busyTxt}</Text>
+                    ) : (
+                      <View style={s.btnRow}>
+                        <Icon name="search" size={15} color={colors.onPrimary} />
+                        <Text style={s.miniTxt}>Leer horario</Text>
+                      </View>
+                    )}
                   </Pressable>
                 </View>
                 {busy ? <Text style={s.hint}>Con Modo IA puede tardar hasta ~40 s. No cierres la pantalla.</Text> : null}
                 {busy && fact ? (
                   <View style={s.factBox}>
-                    <Text style={s.factTxt}>💡 {fact}</Text>
+                    <View style={s.btnRow}>
+                      <Icon name="lightbulb" size={15} color={colors.yellow} />
+                      <Text style={s.factTxt}>{fact}</Text>
+                    </View>
                   </View>
                 ) : null}
-                {!busy && !raw ? <Text style={s.hint}>Si el horario sale de lado, gíralo con 🔄 antes de leer.</Text> : null}
+                {!busy && !raw ? <Text style={s.hint}>Si el horario sale de lado, usa Girar antes de leer.</Text> : null}
               </>
             ) : (
               <>
                 <CameraView ref={cam} style={s.cam} facing="back" />
                 <Pressable style={s.btn} onPress={takePhoto}>
-                  <Text style={s.btnTxt}>📷 Tomar foto del horario</Text>
+                  <View style={s.btnRow}>
+                    <Icon name="camera" size={18} color={colors.onPrimary} />
+                    <Text style={s.btnTxt}>Tomar foto del horario</Text>
+                  </View>
                 </Pressable>
                 <Text style={s.hint}>Tip: buena luz, hoja derecha y que se lean las horas.</Text>
               </>
@@ -315,7 +341,10 @@ export default function Escaner() {
               placeholder={'Pega aquí el horario, ej.\nLun 8:00-10:00 Matemáticas\nMar y Jue 14:00-16:00 Física'}
             />
             <Pressable style={s.btn} onPress={readPasted}>
-              <Text style={s.btnTxt}>🔍 Detectar clases</Text>
+              <View style={s.btnRow}>
+                <Icon name="search" size={18} color={colors.onPrimary} />
+                <Text style={s.btnTxt}>Detectar clases</Text>
+              </View>
             </Pressable>
           </>
         )}
@@ -335,7 +364,7 @@ export default function Escaner() {
                 <View style={s.row}>
                   <TextInput placeholderTextColor={colors.muted} style={[s.input, { flex: 1, marginBottom: 0 }]} value={r.title} onChangeText={(t) => patch(r.key, { title: t })} placeholder="Materia" />
                   <Pressable onPress={() => setRows((rs) => rs.filter((x) => x.key !== r.key))} style={s.del} accessibilityLabel="Quitar">
-                    <Text style={s.delTxt}>✕</Text>
+                    <Icon name="x" size={18} color={colors.danger} />
                   </Pressable>
                 </View>
                 <View style={s.days}>
@@ -347,7 +376,7 @@ export default function Escaner() {
                 </View>
                 <View style={s.row}>
                   <TextInput placeholderTextColor={colors.muted} style={[s.input, s.time]} value={r.start} onChangeText={(t) => patch(r.key, { start: t })} placeholder="08:00" maxLength={5} />
-                  <Text style={s.to}>→</Text>
+                  <Icon name="arrowRight" size={16} color={colors.muted} />
                   <TextInput placeholderTextColor={colors.muted} style={[s.input, s.time]} value={r.end} onChangeText={(t) => patch(r.key, { end: t })} placeholder="10:00" maxLength={5} />
                 </View>
               </View>
@@ -356,7 +385,10 @@ export default function Escaner() {
               style={s.miniGhost}
               onPress={() => setRows((rs) => [...rs, { key: `${Date.now()}`, title: '', weekday: 1, start: '08:00', end: '10:00' }])}
             >
-              <Text style={s.miniGhostTxt}>+ Añadir clase a mano</Text>
+              <View style={s.btnRow}>
+                <Icon name="plus" size={15} color={colors.text} />
+                <Text style={s.miniGhostTxt}>Añadir clase a mano</Text>
+              </View>
             </Pressable>
 
             <Text style={s.label}>Repetir hasta</Text>
@@ -379,7 +411,14 @@ export default function Escaner() {
             />
 
             <Pressable style={s.btn} onPress={confirm} disabled={!!busy}>
-              <Text style={s.btnTxt}>{busyTxt || `✓ Crear ${rows.length} eventos semanales`}</Text>
+              {busyTxt ? (
+                <Text style={s.btnTxt}>{busyTxt}</Text>
+              ) : (
+                <View style={s.btnRow}>
+                  <Icon name="check" size={18} color={colors.onPrimary} strokeWidth={3} />
+                  <Text style={s.btnTxt}>Crear {rows.length} eventos semanales</Text>
+                </View>
+              )}
             </Pressable>
           </>
         ) : null}
@@ -388,7 +427,10 @@ export default function Escaner() {
 
         {done > 0 ? (
           <View style={s.ok}>
-            <Text style={s.okT}>✓ {done} eventos creados en tu planificador.</Text>
+            <View style={s.btnRow}>
+              <Icon name="checkCircle" size={16} color={colors.green} />
+              <Text style={s.okT}>{done} eventos creados en tu planificador.</Text>
+            </View>
             <Pressable style={s.mini} onPress={() => router.replace('/planificador')}>
               <Text style={s.miniTxt}>Ver planificador</Text>
             </Pressable>
@@ -410,6 +452,7 @@ function createStyles(colors: ThemeColors) {
   title: { flex: 1, textAlign: 'center', fontSize: 18, fontWeight: '800', color: colors.text },
   seg: { flexDirection: 'row', backgroundColor: colors.bgSoft, borderRadius: 99, padding: 4, marginBottom: 12 },
   segOpt: { flex: 1, paddingVertical: 8, alignItems: 'center', borderRadius: 99 },
+  segRow: { flexDirection: 'row', alignItems: 'center', gap: 6 },
   segOn: { backgroundColor: colors.coral, elevation: 2 },
   segTxt: { fontWeight: '700', color: colors.muted, fontSize: 13 },
   segTxtOn: { color: colors.onAccent },
@@ -427,16 +470,18 @@ function createStyles(colors: ThemeColors) {
   aiBar: { borderRadius: 12, padding: 10, marginBottom: 12 },
   aiBarOn: { backgroundColor: colors.greenBg },
   aiBarOff: { backgroundColor: colors.bgSoft },
-  aiTxt: { fontSize: 12, color: colors.text, lineHeight: 17 },
+  aiRow: { flexDirection: 'row', alignItems: 'flex-start', gap: 8 },
+  aiTxt: { flex: 1, fontSize: 12, color: colors.text, lineHeight: 17 },
   input: { backgroundColor: colors.card, borderRadius: 12, borderWidth: 1, borderColor: colors.line, padding: 13, marginBottom: 8, color: colors.text },
   area: { minHeight: 110, textAlignVertical: 'top', color: colors.text },
   row: { flexDirection: 'row', gap: 8, alignItems: 'center' },
+  btnRow: { flexDirection: 'row', alignItems: 'center', gap: 7 },
   mini: { flex: 1, backgroundColor: colors.primary, borderRadius: 12, padding: 12, alignItems: 'center' },
   miniTxt: { color: colors.onPrimary, fontWeight: '800' },
   miniGhost: { borderWidth: 1, borderColor: colors.line, borderRadius: 12, padding: 12, alignItems: 'center', marginBottom: 8 },
   miniGhostTxt: { color: colors.muted, fontWeight: '700' },
-  btn: { marginTop: 12, backgroundColor: colors.purple, borderRadius: 14, padding: 15, alignItems: 'center' },
-  btnTxt: { color: colors.onAccent, fontWeight: '800' },
+  btn: { marginTop: 12, backgroundColor: colors.primary, borderRadius: 14, padding: 15, alignItems: 'center' },
+  btnTxt: { color: colors.onPrimary, fontWeight: '800' },
   rawToggle: { marginTop: 12, alignItems: 'center' },
   rawToggleTxt: { color: colors.link, fontWeight: '700', fontSize: 12 },
   raw: { backgroundColor: colors.bgSoft, borderRadius: 12, padding: 10, marginTop: 8, fontSize: 11, color: colors.muted },

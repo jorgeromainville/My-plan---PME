@@ -6,6 +6,7 @@ import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { Pressable, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { WebView, type WebViewMessageEvent } from 'react-native-webview';
+import { Icon } from '../../src/components/Icon';
 import { buildMainHtml, type MapPin } from '../../src/components/mapHtml';
 import { errorMessage } from '../../src/services/api';
 import { listContactCategories } from '../../src/services/contacts';
@@ -63,7 +64,7 @@ export default function Mapa() {
       kind: i.kind,
       lat: i.latitude,
       lng: i.longitude,
-      color: i.color ?? catColors.current[i.category] ?? (i.kind === 'contact' ? colors.blue : colors.purple),
+      color: i.color ?? catColors.current[i.category] ?? (i.kind === 'contact' ? colors.blue : colors.slate),
       icon: i.kind === 'contact' ? '👤' : placeIcon(i.category),
     }));
     const js = `window.setMarkers('${JSON.stringify(pins).replace(/\\/g, '\\\\').replace(/'/g, "\\'")}', ${fit ? 'true' : 'false'});true;`;
@@ -204,16 +205,21 @@ export default function Mapa() {
           <View style={s.header}>
             <Text style={s.title}>Mapa</Text>
             <Pressable onPress={() => router.push('/lugar')} style={s.add} accessibilityLabel="Añadir lugar">
-              <Text style={s.addTxt}>+</Text>
+              <Icon name="plus" size={24} color={colors.onPrimary} />
             </Pressable>
           </View>
           <TextInput placeholderTextColor={colors.muted} style={s.search} value={q} onChangeText={setQ} placeholder="Buscar lugares o personas…" />
           <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={s.filters}>
             {FILTERS.map((f) => (
               <Pressable key={f} onPress={() => setCat(f)} style={[s.chip, cat === f && s.chipOn]}>
-                <Text style={cat === f ? s.chipTxtOn : s.chipTxt}>
-                  {f === 'Personas' ? '👤 ' : f === 'Lugares' ? '📍 ' : ''}{f}
-                </Text>
+                <View style={s.chipRow}>
+                  {f === 'Personas' ? (
+                    <Icon name="user" size={13} color={cat === f ? colors.onPrimary : colors.text} />
+                  ) : f === 'Lugares' ? (
+                    <Icon name="mapPin" size={13} color={cat === f ? colors.onPrimary : colors.text} />
+                  ) : null}
+                  <Text style={cat === f ? s.chipTxtOn : s.chipTxt}>{f}</Text>
+                </View>
               </Pressable>
             ))}
           </ScrollView>
@@ -221,20 +227,20 @@ export default function Mapa() {
         </View>
 
         <Pressable onPress={goMine} style={s.mine} accessibilityLabel="Mi ubicación">
-          <Text style={s.mineTxt}>{locating ? '…' : '🎯'}</Text>
+          {locating ? <Text style={s.mineTxt}>…</Text> : <Icon name="locate" size={22} color={colors.text} />}
         </Pressable>
         <View style={s.zoom}>
           <Pressable
             onPress={() => web.current?.injectJavaScript('window.zoomBy(1);true;')}
             style={s.zBtn}
           >
-            <Text style={s.zTxt}>+</Text>
+            <Icon name="plus" size={22} color={colors.text} />
           </Pressable>
           <Pressable
             onPress={() => web.current?.injectJavaScript('window.zoomBy(-1);true;')}
             style={s.zBtn}
           >
-            <Text style={s.zTxt}>−</Text>
+            <Icon name="minus" size={22} color={colors.text} />
           </Pressable>
         </View>
 
@@ -243,37 +249,49 @@ export default function Mapa() {
             <View style={s.cardTop}>
               <View style={{ flex: 1 }}>
                 <Text style={s.cardName}>{sel.name}</Text>
-                <Text style={s.cardSub}>
-                  {sel.kind === 'contact' ? '👤' : '📍'} {sel.category}
-                  {sel.address ? ` · ${sel.address}` : ''}
-                </Text>
+                <View style={s.cardSubRow}>
+                  <Icon name={sel.kind === 'contact' ? 'user' : 'mapPin'} size={13} color={colors.muted} />
+                  <Text style={s.cardSub}>
+                    {sel.category}
+                    {sel.address ? ` · ${sel.address}` : ''}
+                  </Text>
+                </View>
                 {sel.phone ? <Text style={s.cardSub}>{sel.phone}</Text> : null}
               </View>
-              <Pressable onPress={() => setSel(null)} accessibilityLabel="Cerrar">
-                <Text style={s.x}>✕</Text>
+              <Pressable onPress={() => setSel(null)} accessibilityLabel="Cerrar" style={s.xBtn}>
+                <Icon name="x" size={18} color={colors.muted} />
               </Pressable>
             </View>
             <View style={s.cardRow}>
               {sel.phone ? (
                 <Pressable style={s.call} onPress={() => Linking.openURL(`tel:${sel.phone}`)}>
-                  <Text style={s.callTxt}>📞 Llamar</Text>
+                  <View style={s.btnRow}>
+                    <Icon name="phone" size={15} color={colors.onAccent} />
+                    <Text style={s.callTxt}>Llamar</Text>
+                  </View>
                 </Pressable>
               ) : null}
               <Pressable
                 style={s.visit}
                 onPress={() => Linking.openURL(`https://www.google.com/maps/dir/?api=1&destination=${sel.latitude},${sel.longitude}`)}
               >
-                <Text style={s.visitTxt}>🧭 Cómo llegar</Text>
+                <View style={s.btnRow}>
+                  <Icon name="navigation" size={15} color={colors.text} />
+                  <Text style={s.visitTxt}>Cómo llegar</Text>
+                </View>
               </Pressable>
-              {sel.kind === 'place' ? (
-                <Pressable style={s.visit} onPress={() => { setSel(null); router.push(`/lugar?id=${sel.refId}`); }}>
-                  <Text style={s.visitTxt}>Editar</Text>
-                </Pressable>
-              ) : (
-                <Pressable style={s.visit} onPress={() => { setSel(null); router.push(`/persona?id=${sel.refId}`); }}>
-                  <Text style={s.visitTxt}>Ver</Text>
-                </Pressable>
-              )}
+              <Pressable
+                style={s.visit}
+                onPress={() => {
+                  setSel(null);
+                  router.push(sel.kind === 'place' ? `/lugar?id=${sel.refId}` : `/persona?id=${sel.refId}`);
+                }}
+              >
+                <View style={s.btnRow}>
+                  <Icon name={sel.kind === 'place' ? 'pencil' : 'user'} size={15} color={colors.text} />
+                  <Text style={s.visitTxt}>{sel.kind === 'place' ? 'Editar' : 'Ver'}</Text>
+                </View>
+              </Pressable>
             </View>
           </View>
         ) : null}
@@ -282,13 +300,16 @@ export default function Mapa() {
           <View style={s.card}>
             <View style={s.cardTop}>
               <View style={{ flex: 1 }}>
-                <Text style={s.cardName}>📍 Punto elegido</Text>
+                <View style={s.cardTitleRow}>
+                  <Icon name="mapPin" size={17} color={colors.text} />
+                  <Text style={s.cardName}>Punto elegido</Text>
+                </View>
                 <Text style={s.cardSub}>
                   {pending.lat.toFixed(5)}, {pending.lng.toFixed(5)}
                 </Text>
               </View>
-              <Pressable onPress={() => setPending(null)} accessibilityLabel="Cerrar">
-                <Text style={s.x}>✕</Text>
+              <Pressable onPress={() => setPending(null)} accessibilityLabel="Cerrar" style={s.xBtn}>
+                <Icon name="x" size={18} color={colors.muted} />
               </Pressable>
             </View>
             <View style={s.cardRow}>
@@ -300,7 +321,10 @@ export default function Mapa() {
                   router.push(`/persona?lat=${p.lat}&lng=${p.lng}`);
                 }}
               >
-                <Text style={s.callTxt}>👤 Persona aquí</Text>
+                <View style={s.btnRow}>
+                  <Icon name="user" size={15} color={colors.onAccent} />
+                  <Text style={s.callTxt}>Persona aquí</Text>
+                </View>
               </Pressable>
               <Pressable
                 style={s.visit}
@@ -310,7 +334,10 @@ export default function Mapa() {
                   router.push(`/lugar?lat=${p.lat}&lng=${p.lng}`);
                 }}
               >
-                <Text style={s.visitTxt}>📌 Lugar aquí</Text>
+                <View style={s.btnRow}>
+                  <Icon name="mapPin" size={15} color={colors.text} />
+                  <Text style={s.visitTxt}>Lugar aquí</Text>
+                </View>
               </Pressable>
             </View>
           </View>
@@ -331,26 +358,28 @@ function createStyles(colors: ThemeColors) {
     flex: 1, fontSize: 24, fontWeight: '900', color: '#22271F',
     textShadowColor: 'rgba(255,255,255,0.9)', textShadowOffset: { width: 0, height: 1 }, textShadowRadius: 6,
   },
-  add: { width: 44, height: 44, borderRadius: 22, backgroundColor: colors.purple, alignItems: 'center', justifyContent: 'center', elevation: 3 },
-  addTxt: { color: colors.onAccent, fontSize: 26 },
+  add: { width: 44, height: 44, borderRadius: 22, backgroundColor: colors.primary, alignItems: 'center', justifyContent: 'center', elevation: 3 },
   search: { backgroundColor: colors.card, borderRadius: 12, borderWidth: 1, borderColor: colors.line, padding: 12, marginHorizontal: 16, marginBottom: 8, elevation: 2, color: colors.text },
   filters: { paddingHorizontal: 16, gap: 8, height: 40 },
   chip: { borderWidth: 1, borderColor: colors.line, borderRadius: 99, paddingHorizontal: 14, paddingVertical: 7, backgroundColor: colors.card, marginRight: 8, justifyContent: 'center', elevation: 2 },
   chipOn: { backgroundColor: colors.primary, borderColor: colors.primary },
+  chipRow: { flexDirection: 'row', alignItems: 'center', gap: 5 },
   chipTxt: { color: colors.text, fontWeight: '700', fontSize: 12 },
   chipTxtOn: { color: colors.onPrimary, fontWeight: '700', fontSize: 12 },
   error: { color: colors.danger, marginHorizontal: 16, marginTop: 6, backgroundColor: colors.card, borderRadius: 8, padding: 6 },
   mine: { position: 'absolute', right: 12, top: 186, width: 44, height: 44, borderRadius: 22, backgroundColor: colors.card, alignItems: 'center', justifyContent: 'center', elevation: 3 },
-  mineTxt: { fontSize: 20 },
+  mineTxt: { fontSize: 20, color: colors.text },
   zoom: { position: 'absolute', right: 12, top: 238, gap: 8 },
   zBtn: { width: 44, height: 44, borderRadius: 22, backgroundColor: colors.card, alignItems: 'center', justifyContent: 'center', elevation: 3 },
-  zTxt: { fontSize: 22, fontWeight: '800', color: colors.text },
   card: { position: 'absolute', left: 16, right: 16, bottom: 16, backgroundColor: colors.card, borderRadius: 18, padding: 14, borderWidth: 1, borderColor: colors.line, elevation: 4 },
   cardTop: { flexDirection: 'row', gap: 8 },
+  cardTitleRow: { flexDirection: 'row', alignItems: 'center', gap: 6 },
   cardName: { fontSize: 17, fontWeight: '900', color: colors.text },
-  cardSub: { fontSize: 12, color: colors.muted, marginTop: 2 },
-  x: { fontSize: 18, color: colors.muted, padding: 6 },
+  cardSubRow: { flexDirection: 'row', alignItems: 'center', gap: 5, marginTop: 2 },
+  cardSub: { fontSize: 12, color: colors.muted },
+  xBtn: { padding: 6 },
   cardRow: { flexDirection: 'row', gap: 8, marginTop: 12 },
+  btnRow: { flexDirection: 'row', alignItems: 'center', gap: 6 },
   call: { flex: 1, backgroundColor: colors.green, borderRadius: 12, padding: 12, alignItems: 'center' },
   callTxt: { color: colors.onAccent, fontWeight: '800' },
   visit: { flex: 1, borderWidth: 1, borderColor: colors.line, borderRadius: 12, padding: 12, alignItems: 'center', backgroundColor: colors.bg },

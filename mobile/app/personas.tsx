@@ -4,8 +4,9 @@ import React, { useCallback, useState } from 'react';
 import { Pressable, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Card } from '../src/components/Card';
+import { Icon, contactIconName } from '../src/components/Icon';
 import { errorMessage } from '../src/services/api';
-import { categoryIcon, listContactCategories, listContacts, type Contact, type ContactCategory } from '../src/services/contacts';
+import { listContactCategories, listContacts, type Contact, type ContactCategory } from '../src/services/contacts';
 import { colors, useThemedStyles, type ThemeColors } from '../src/theme/colors';
 
 // Personas: buscador + categorías + "Contactar hoy" primero.
@@ -49,11 +50,11 @@ export default function Personas() {
     <SafeAreaView style={s.safe} edges={['top']}>
       <View style={s.header}>
         <Pressable onPress={() => router.back()} style={s.back} accessibilityLabel="Volver">
-          <Text style={s.backTxt}>‹</Text>
+          <Icon name="chevronLeft" size={24} color={colors.text} />
         </Pressable>
         <Text style={s.title}>Personas</Text>
         <Pressable onPress={() => router.push('/persona')} style={s.add} accessibilityLabel="Añadir persona">
-          <Text style={s.addTxt}>+</Text>
+          <Icon name="plus" size={24} color={colors.onPrimary} />
         </Pressable>
       </View>
 
@@ -63,6 +64,9 @@ export default function Personas() {
           {[{ name: 'Todos', color: null }, ...cats].map((c) => (
             <Pressable key={c.name} onPress={() => setCat(c.name)} style={[s.chip, cat === c.name && s.chipOn]}>
               {c.color ? <View style={[s.dot, { backgroundColor: c.color }]} /> : null}
+              {c.name !== 'Todos' ? (
+                <Icon name={contactIconName(c.name)} size={13} color={cat === c.name ? colors.onPrimary : colors.text} />
+              ) : null}
               <Text style={cat === c.name ? s.chipTxtOn : s.chipTxt}>{c.name}</Text>
             </Pressable>
           ))}
@@ -95,7 +99,7 @@ export function ContactRow({ c, hot, onOpen, color }: { c: Contact; hot?: boolea
   return (
     <Pressable onPress={onOpen} style={[s.row, hot && s.hot]}>
       <View style={[s.face, color ? { borderColor: color, borderWidth: 2 } : null]}>
-        <Text style={{ fontSize: 20 }}>{categoryIcon(c.category)}</Text>
+        <Icon name={contactIconName(c.category)} size={20} color={colors.text} />
       </View>
       <View style={{ flex: 1 }}>
         <Text style={s.name}>{name}</Text>
@@ -104,7 +108,7 @@ export function ContactRow({ c, hot, onOpen, color }: { c: Contact; hot?: boolea
           {c.nextContactAt ? ` · próx: ${new Date(c.nextContactAt).toLocaleDateString()}` : ''}
         </Text>
       </View>
-      <Text style={s.chev}>›</Text>
+      <Icon name="chevronRight" size={18} color={colors.muted} />
     </Pressable>
   );
 }
@@ -121,7 +125,7 @@ function createStyles(colors: ThemeColors) {
   body: { padding: 16, paddingTop: 0 },
   search: { backgroundColor: colors.card, borderRadius: 12, borderWidth: 1, borderColor: colors.line, padding: 13, marginBottom: 10, color: colors.text },
   cats: { gap: 8, paddingBottom: 4, height: 44 },
-  chip: { flexDirection: 'row', alignItems: 'center', borderWidth: 1, borderColor: colors.line, borderRadius: 99, paddingHorizontal: 14, paddingVertical: 7, backgroundColor: colors.card, marginRight: 8, justifyContent: 'center' },
+  chip: { flexDirection: 'row', alignItems: 'center', gap: 6, borderWidth: 1, borderColor: colors.line, borderRadius: 99, paddingHorizontal: 14, paddingVertical: 7, backgroundColor: colors.card, marginRight: 8, justifyContent: 'center' },
   dot: { width: 12, height: 12, borderRadius: 6, marginRight: 6 },
   chipOn: { backgroundColor: colors.primary, borderColor: colors.primary },
   chipTxt: { color: colors.text, fontWeight: '700', fontSize: 12 },

@@ -42,11 +42,11 @@ export const DEFAULT_PLACE_CATS: { name: string; color: string }[] = [
   { name: 'Restaurante', color: '#D98162' },
   { name: 'Compras', color: '#E07A5F' },
   { name: 'Gimnasio', color: '#4DB6AC' },
-  { name: 'Estudio', color: '#8B7BC7' },
+  { name: 'Estudio', color: '#6E7C8A' },
   { name: 'Amigos', color: '#C9A44A' },
 ];
 
-// Emoji por categoría de lugar (personalizadas usan 📍).
+// Emoji solo para los pines editables del mapa; la UI nativa usa <Icon>.
 export const PLACE_ICONS: Record<string, string> = {
   Casa: '🏠',
   Trabajo: '💼',

@@ -2,6 +2,7 @@ import React from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { colors, radius, useThemedStyles, type ThemeColors } from '../theme/colors';
 import { addDays, formatLongEs } from '../utils/dates';
+import { Icon } from './Icon';
 
 export function DateSelector({
   date,
@@ -13,7 +14,7 @@ export function DateSelector({
   const styles = useThemedStyles(createStyles);
   return (
     <View style={styles.box}>
-      <Text style={styles.icon}>📅</Text>
+      <Icon name="calendar" size={18} color={colors.text} style={styles.icon} />
       <Text style={styles.label}>{formatLongEs(date)}</Text>
       <View style={{ flex: 1 }} />
       <Pressable
@@ -21,14 +22,14 @@ export function DateSelector({
         onPress={() => onChange(addDays(date, -1))}
         style={styles.arrow}
       >
-        <Text style={styles.arrowTxt}>‹</Text>
+        <Icon name="chevronLeft" size={20} color={colors.muted} />
       </Pressable>
       <Pressable
         accessibilityLabel="Día siguiente"
         onPress={() => onChange(addDays(date, 1))}
         style={styles.arrow}
       >
-        <Text style={styles.arrowTxt}>›</Text>
+        <Icon name="chevronRight" size={20} color={colors.muted} />
       </Pressable>
     </View>
   );
@@ -46,9 +47,8 @@ function createStyles(colors: ThemeColors) {
     flexDirection: 'row',
     alignItems: 'center',
   },
-  icon: { fontSize: 18, marginRight: 8, color: colors.text },
+  icon: { marginRight: 8 },
   label: { fontSize: 15, fontWeight: '700', color: colors.text },
   arrow: { paddingHorizontal: 12, paddingVertical: 4 },
-  arrowTxt: { fontSize: 22, color: colors.muted, fontWeight: '700' },
 });
 }

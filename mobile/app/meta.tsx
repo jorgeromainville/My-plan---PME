@@ -10,6 +10,7 @@ import { NativeTime } from '../src/components/NativeTime';
 import { listContacts, type Contact } from '../src/services/contacts';
 import { listContactCategories } from '../src/services/contacts';
 import { colors, useThemedStyles, type ThemeColors } from '../src/theme/colors';
+import { Icon } from '../src/components/Icon';
 
 const KINDS: { v: GoalKind; label: string; hint: string; unit: string }[] = [
   { v: 'ingresos', label: 'Ingresos', hint: 'Suma sola de tus ingresos', unit: 'S/' },
@@ -203,7 +204,7 @@ export default function MetaForm() {
       <ScrollView contentContainerStyle={s.body} keyboardShouldPersistTaps="handled">
         <View style={s.top}>
           <Pressable onPress={() => router.back()} style={s.x} accessibilityLabel="Volver">
-            <Text style={s.xTxt}>‹</Text>
+            <Icon name="chevronLeft" size={24} color={colors.text} />
           </Pressable>
           <Text style={s.title}>{id ? 'Editar meta' : 'Nueva meta'}</Text>
           <View style={{ width: 40 }} />
@@ -288,8 +289,14 @@ export default function MetaForm() {
                   onPress={() => setMembers(on ? members.filter((x) => x !== p.id) : [...members, p.id])}
                   style={[s.logRow, on && s.pickedRow]}
                 >
+                  <Icon
+                    name={on ? (done ? 'checkCircle' : 'circle') : 'plus'}
+                    size={16}
+                    color={on ? colors.green : colors.muted}
+                    style={{ marginRight: 8 }}
+                  />
                   <Text style={s.logTxt}>
-                    {on ? (done ? '✓ ' : '○ ') : '+ '}{p.firstName}{p.lastName ? ` ${p.lastName}` : ''} · {p.category}
+                    {p.firstName}{p.lastName ? ` ${p.lastName}` : ''} · {p.category}
                   </Text>
                 </Pressable>
               );
@@ -306,7 +313,7 @@ export default function MetaForm() {
 
         {id ? (
           <>
-            <Text style={s.label}>+ Registrar avance</Text>
+            <Text style={s.label}>Registrar avance</Text>
             <View style={s.row2}>
               <TextInput placeholderTextColor={colors.muted} style={[s.input, { flex: 1 }]} value={logAmount} onChangeText={setLogAmount} keyboardType="decimal-pad" placeholder="Ej. 1.5" />
               <TextInput placeholderTextColor={colors.muted} style={[s.input, { flex: 2 }]} value={logNote} onChangeText={setLogNote} placeholder="Nota (ej. corrí)" />
@@ -328,7 +335,7 @@ export default function MetaForm() {
                 }}
                 style={s.calc}
               >
-                <Text style={s.calcTxt}>+</Text>
+                <Icon name="plus" size={22} color={colors.onPrimary} />
               </Pressable>
             </View>
             {logs.map((l) => (
@@ -343,7 +350,7 @@ export default function MetaForm() {
                     setLogs(await listGoalLogs(id));
                   }}
                 >
-                  <Text style={s.delTxt}>✕</Text>
+                  <Icon name="x" size={18} color={colors.danger} />
                 </Pressable>
               </View>
             ))}
@@ -365,7 +372,9 @@ export default function MetaForm() {
                     style={[s.box, (e.done || past) && s.boxOn]}
                     accessibilityLabel="Marcar realizado"
                   >
-                    {(e.done || past) ? <Text style={{ color: colors.text }}>✓</Text> : null}
+                    {(e.done || past) ? (
+                      <Icon name="check" size={14} color={colors.text} strokeWidth={3} />
+                    ) : null}
                   </Pressable>
                   <Text style={s.logTxt}>
                     {e.title} · {new Date(e.date).toLocaleDateString()} {e.startTime}–{e.endTime}
@@ -377,7 +386,7 @@ export default function MetaForm() {
                       loadLinked();
                     }}
                   >
-                    <Text style={s.delTxt}>✕</Text>
+                    <Icon name="x" size={18} color={colors.danger} />
                   </Pressable>
                 </View>
               );

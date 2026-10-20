@@ -10,6 +10,7 @@ import { dayRange } from '../src/services/tasks';
 import { useAppStore } from '../src/store/useAppStore';
 import { colors, useThemedStyles, type ThemeColors } from '../src/theme/colors';
 import { formatMoney } from '../src/utils/format';
+import { Icon } from '../src/components/Icon';
 
 export const PAY_METHODS = ['Efectivo', 'Yape', 'Plin', 'Tarjeta', 'Transferencia', 'Otro'] as const;
 
@@ -43,11 +44,11 @@ export default function Ingresos() {
     <SafeAreaView style={s.safe} edges={['top']}>
       <View style={s.header}>
         <Pressable onPress={() => router.back()} style={s.back} accessibilityLabel="Volver">
-          <Text style={s.backTxt}>‹</Text>
+          <Icon name="chevronLeft" size={24} color={colors.text} />
         </Pressable>
         <Text style={s.title}>Ingresos</Text>
         <Pressable onPress={() => router.push('/ingreso')} style={s.add} accessibilityLabel="Registrar ingreso">
-          <Text style={s.addTxt}>+</Text>
+          <Icon name="plus" size={24} color={colors.onAccent} />
         </Pressable>
       </View>
       <ScrollView contentContainerStyle={s.body} showsVerticalScrollIndicator={false}>
@@ -59,7 +60,7 @@ export default function Ingresos() {
         {items.map((i) => (
           <Pressable key={i.id} onPress={() => router.push(`/ingreso?id=${i.id}`)} style={s.row}>
             <View style={s.badge}>
-              <Text style={{ color: colors.text, fontWeight: '800' }}>$</Text>
+              <Icon name="money" size={20} color={colors.green} />
             </View>
             <View style={{ flex: 1 }}>
               <Text style={s.name}>{i.title}</Text>
@@ -71,7 +72,7 @@ export default function Ingresos() {
             <Text style={s.amount}>{formatMoney(i.total)}</Text>
           </Pressable>
         ))}
-        {items.length === 0 && !error ? <Text style={s.empty}>Sin ingresos este día. Toca + para registrar.</Text> : null}
+        {items.length === 0 && !error ? <Text style={s.empty}>Sin ingresos este día. Usa el botón de añadir para registrar.</Text> : null}
         <View style={{ height: 30 }} />
       </ScrollView>
     </SafeAreaView>

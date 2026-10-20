@@ -12,6 +12,7 @@ import { colors, useThemedStyles, type ThemeColors } from '../src/theme/colors';
 import { addDays, parseLocalDay } from '../src/utils/dates';
 import { formatMoney } from '../src/utils/format';
 import { PAY_METHODS } from './ingresos';
+import { Icon } from '../src/components/Icon';
 
 function num(v: string): number {
   const n = Number(v.replace(',', '.'));
@@ -110,7 +111,7 @@ export default function IngresoForm() {
       <ScrollView contentContainerStyle={s.body} keyboardShouldPersistTaps="handled">
         <View style={s.top}>
           <Pressable onPress={() => router.back()} style={s.x} accessibilityLabel="Volver">
-            <Text style={s.xTxt}>‹</Text>
+            <Icon name="chevronLeft" size={24} color={colors.text} />
           </Pressable>
           <Text style={s.title}>{id ? 'Editar ingreso' : 'Nuevo ingreso'}</Text>
           <View style={{ width: 40 }} />
@@ -121,9 +122,9 @@ export default function IngresoForm() {
 
         <Text style={s.label}>Fecha</Text>
         <View style={s.row}>
-          <Pressable onPress={() => setDate(addDays(date, -1))} style={s.nav}><Text style={s.navTxt}>‹</Text></Pressable>
+          <Pressable onPress={() => setDate(addDays(date, -1))} style={s.nav}><Icon name="chevronLeft" size={20} color={colors.muted} /></Pressable>
           <Text style={s.date}>{date.toLocaleDateString()}</Text>
-          <Pressable onPress={() => setDate(addDays(date, 1))} style={s.nav}><Text style={s.navTxt}>›</Text></Pressable>
+          <Pressable onPress={() => setDate(addDays(date, 1))} style={s.nav}><Icon name="chevronRight" size={20} color={colors.muted} /></Pressable>
         </View>
         <NativeDate
           label="Elegir fecha"

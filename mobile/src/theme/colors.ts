@@ -27,8 +27,8 @@ const light = {
   yellowBg: '#FDF2D5',
   coral: '#D98162',
   coralBg: '#FDE7DB',
-  purple: '#8B7BC7',
-  purpleBg: '#ECE8FA',
+  slate: '#6E7C8A', // gris azulado: lugares y eventos neutros
+  slateBg: '#E9EEF3',
   success: '#6FA287',
   danger: '#D98162',
   white: '#FFFFFF',
@@ -54,8 +54,8 @@ const dark = {
   yellowBg: '#2A2416',
   coral: '#FF7A66', // salmón (solo datos: gastos)
   coralBg: '#2E1713',
-  purple: '#B994F5', // lavanda
-  purpleBg: '#241B33',
+  slate: '#9AA9B8', // gris azulado, sin morado
+  slateBg: '#1B222A',
   success: '#4ED8B0',
   danger: '#FF7A66',
   white: '#FFFFFF',
@@ -81,7 +81,9 @@ const andean = {
   yellowBg: '#F7E3AE',
   coral: '#B03A22', // rojo cochinilla
   coralBg: '#F5D5C6',
-  purple: '#A3325F', // magenta del textil
+  slate: '#7A6A55', // lana gris
+  slateBg: '#EFE3CE',
+  purple: '#A3325F', // magenta del textil (solo motivos)
   purpleBg: '#F2D6E0',
   success: '#55702F',
   danger: '#B03A22',

@@ -5,6 +5,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import type { LegalSection } from '../data/legal';
 import { colors, useThemedStyles, type ThemeColors } from '../theme/colors';
 import { Card } from './Card';
+import { Icon } from './Icon';
 
 // Página legal reutilizable: privacidad y términos comparten el mismo diseño.
 export function LegalPage({
@@ -24,7 +25,7 @@ export function LegalPage({
       <ScrollView contentContainerStyle={s.body}>
         <View style={s.top}>
           <Pressable onPress={() => router.back()} style={s.x} accessibilityLabel="Volver">
-            <Text style={s.xTxt}>‹</Text>
+            <Icon name="chevronLeft" size={24} color={colors.text} />
           </Pressable>
           <Text style={s.title} accessibilityRole="header">
             {title}

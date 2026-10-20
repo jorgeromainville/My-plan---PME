@@ -2,6 +2,7 @@ import React, { useRef, useState } from 'react';
 import { Animated, PanResponder, Pressable, StyleSheet, Text, View } from 'react-native';
 import { colors, useThemedStyles, type ThemeColors } from '../theme/colors';
 import { HOUR_H, type PlacedBlock } from './DayAgenda';
+import { Icon } from './Icon';
 
 export interface DropResult {
   dayDelta: number; // -1, 0, +1
@@ -136,7 +137,7 @@ export function DraggableBlock({
           lifting && s.lifting,
         ]}
       >
-        <Text style={s.icon}>{block.icon}</Text>
+        <Icon name={block.icon} size={16} color={colors.text} />
         <View style={{ flex: 1 }}>
           <Text style={s.title} numberOfLines={2}>
             {block.title}
@@ -147,7 +148,9 @@ export function DraggableBlock({
         </View>
         {onToggle ? (
           <Pressable onPress={onToggle} style={s.check} accessibilityLabel="Completar">
-            <Text style={s.checkTxt}>{block.status === 'completada' ? '✓' : ''}</Text>
+            {block.status === 'completada' ? (
+              <Icon name="check" size={13} color={colors.green} strokeWidth={3} />
+            ) : null}
           </Pressable>
         ) : null}
       </Pressable>
@@ -184,14 +187,12 @@ function createStyles(colors: ThemeColors) {
     opacity: 0.62,
     borderStyle: 'dashed',
   },
-  icon: { fontSize: 16, color: colors.text },
   title: { fontWeight: '800', color: colors.text, fontSize: 13 },
   sub: { fontSize: 11, color: colors.muted },
   check: {
     width: 26, height: 26, borderRadius: 13, borderWidth: 2,
     borderColor: colors.muted, alignItems: 'center', justifyContent: 'center', backgroundColor: colors.card,
   },
-  checkTxt: { color: colors.green, fontWeight: '900', fontSize: 12 },
   hint: { fontSize: 10, color: colors.muted, marginTop: 2 },
 });
 }

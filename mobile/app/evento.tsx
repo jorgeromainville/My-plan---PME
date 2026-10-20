@@ -11,6 +11,7 @@ import { listContacts, type ContactRef } from '../src/services/contacts';
 import { useAppStore } from '../src/store/useAppStore';
 import { colors, useThemedStyles, type ThemeColors } from '../src/theme/colors';
 import { addDays, parseLocalDay } from '../src/utils/dates';
+import { Icon } from '../src/components/Icon';
 
 const NOTIFY = [0, 15, 30, 60];
 const REPEATS: { v: EventRepeat; label: string }[] = [
@@ -24,7 +25,7 @@ const REPEATS: { v: EventRepeat; label: string }[] = [
   { v: 'weekdays', label: 'Laborables' },
   { v: 'weekends', label: 'Fines' },
 ];
-const COLORS = ['#6B9ECF', '#6FA287', '#C9A44A', '#D98162', '#8B7BC7', '#E07A5F'];
+const COLORS = ['#6B9ECF', '#6FA287', '#C9A44A', '#D98162', '#6E7C8A', '#E07A5F'];
 
 function hhmm(v: string): boolean {
   return /^\d{2}:\d{2}$/.test(v);
@@ -191,7 +192,7 @@ export default function EventoForm() {
             accessibilityLabel="Cerrar"
             style={s.x}
           >
-            <Text style={s.xTxt}>✕</Text>
+            <Icon name="x" size={20} color={colors.text} />
           </Pressable>
           <Text style={s.title}>{id ? 'Editar evento' : 'Nuevo evento'}</Text>
           <View style={{ width: 40 }} />
@@ -225,7 +226,10 @@ export default function EventoForm() {
               }}
               style={[s.chip, type === k.name && s.chipOn]}
             >
-              <Text style={type === k.name ? s.chipTxtOn : s.chipTxt}>⬤ {k.name}</Text>
+              <View style={s.chipRow}>
+                <View style={[s.typeDot, { backgroundColor: k.color }]} />
+                <Text style={type === k.name ? s.chipTxtOn : s.chipTxt}>{k.name}</Text>
+              </View>
             </Pressable>
           ))}
         </View>
@@ -244,16 +248,16 @@ export default function EventoForm() {
 
         <Pressable onPress={() => setIsBackup(!isBackup)} style={s.tentRow} accessibilityRole="checkbox">
           <View style={[s.box, isBackup && s.boxOn]}>
-            {isBackup ? <Text style={s.boxTxt}>✓</Text> : null}
+            {isBackup ? <Icon name="check" size={14} color={colors.text} strokeWidth={3} /> : null}
           </View>
           <Text style={s.tentTxt}>Es respaldo (se ve opaco y va después, sin recordatorio)</Text>
         </Pressable>
 
         <Text style={s.label}>Fecha</Text>
         <View style={s.row}>
-          <Pressable onPress={() => setDate(addDays(date, -1))} style={s.nav}><Text style={s.navTxt}>‹</Text></Pressable>
+          <Pressable onPress={() => setDate(addDays(date, -1))} style={s.nav}><Icon name="chevronLeft" size={20} color={colors.muted} /></Pressable>
           <Text style={s.date}>{date.toLocaleDateString()}</Text>
-          <Pressable onPress={() => setDate(addDays(date, 1))} style={s.nav}><Text style={s.navTxt}>›</Text></Pressable>
+          <Pressable onPress={() => setDate(addDays(date, 1))} style={s.nav}><Icon name="chevronRight" size={20} color={colors.muted} /></Pressable>
         </View>
 
         <Text style={s.label}>Inicio</Text>
@@ -314,7 +318,7 @@ export default function EventoForm() {
           <>
             <Pressable onPress={() => setHasUntil(!hasUntil)} style={s.tentRow} accessibilityRole="checkbox">
               <View style={[s.box, hasUntil && s.boxOn]}>
-                {hasUntil ? <Text style={s.boxTxt}>✓</Text> : null}
+                {hasUntil ? <Icon name="check" size={14} color={colors.text} strokeWidth={3} /> : null}
               </View>
               <Text style={s.tentTxt}>Repetir hasta…</Text>
             </Pressable>
@@ -391,6 +395,8 @@ function createStyles(colors: ThemeColors) {
   box: { width: 26, height: 26, borderRadius: 8, borderWidth: 2, borderColor: colors.muted, alignItems: 'center', justifyContent: 'center', backgroundColor: colors.card },
   boxOn: { backgroundColor: colors.yellowBg, borderColor: colors.yellow },
   boxTxt: { fontWeight: '900', color: colors.text },
+  chipRow: { flexDirection: 'row', alignItems: 'center', gap: 6 },
+  typeDot: { width: 8, height: 8, borderRadius: 99 },
   tentTxt: { fontWeight: '600', color: colors.text, fontSize: 13 },
   hint: { color: colors.muted, fontSize: 12 },
   row2: { flexDirection: 'row', gap: 12 },

@@ -8,6 +8,7 @@ import { buildPickerHtml } from '../src/components/mapHtml';
 import { errorMessage } from '../src/services/api';
 import { createPlace, deletePlace, getPlace, updatePlace, DEFAULT_PLACE_CATS } from '../src/services/places';
 import { colors, useThemedStyles, type ThemeColors } from '../src/theme/colors';
+import { Icon } from '../src/components/Icon';
 
 // Formulario de lugar: punto arrastrable (MapLibre + OpenFreeMap) + categorías con color.
 const PERU = { lat: -9.19, lng: -75.0152 };
@@ -30,7 +31,7 @@ export default function LugarForm() {
   const [error, setError] = useState('');
   const [confirmDel, setConfirmDel] = useState(false);
 
-  const catColor = cats.find((c) => c.name === category)?.color ?? '#8B7BC7';
+  const catColor = cats.find((c) => c.name === category)?.color ?? colors.slate;
 
   useEffect(() => {
     if (!id) return;
@@ -133,7 +134,7 @@ export default function LugarForm() {
       <ScrollView contentContainerStyle={s.body} keyboardShouldPersistTaps="handled">
         <View style={s.top}>
           <Pressable onPress={() => router.back()} style={s.x} accessibilityLabel="Volver">
-            <Text style={s.xTxt}>‹</Text>
+            <Icon name="chevronLeft" size={24} color={colors.text} />
           </Pressable>
           <Text style={s.title}>{id ? 'Editar lugar' : 'Nuevo lugar'}</Text>
           <View style={{ width: 40 }} />
@@ -157,12 +158,12 @@ export default function LugarForm() {
             style={s.plus}
             onPress={() => {
               if (!newCat.trim()) return;
-              setCats([...cats, { name: newCat.trim(), color: '#8B7BC7' }]);
+              setCats([...cats, { name: newCat.trim(), color: colors.blue }]);
               setCategory(newCat.trim());
               setNewCat('');
             }}
           >
-            <Text style={s.plusTxt}>+</Text>
+            <Icon name="plus" size={22} color={colors.onPrimary} />
           </Pressable>
         </View>
 
@@ -187,7 +188,16 @@ export default function LugarForm() {
         ) : null}
         <View style={s.row}>
           <Pressable onPress={useMine} style={s.mini} disabled={locating}>
-            <Text style={s.miniTxt}>{locating ? '…' : '📍'} Mi ubicación</Text>
+            <View style={s.btnRow}>
+              {locating ? (
+                <Text style={s.miniTxt}>…</Text>
+              ) : (
+                <>
+                  <Icon name="locate" size={16} color={colors.onPrimary} />
+                  <Text style={s.miniTxt}>Mi ubicación</Text>
+                </>
+              )}
+            </View>
           </Pressable>
         </View>
 
@@ -236,6 +246,7 @@ function createStyles(colors: ThemeColors) {
   label: { fontSize: 13, fontWeight: '700', color: colors.text, marginTop: 12, marginBottom: 6 },
   input: { backgroundColor: colors.card, borderRadius: 12, borderWidth: 1, borderColor: colors.line, padding: 13, marginBottom: 4, color: colors.text },
   row: { flexDirection: 'row', gap: 8, alignItems: 'center' },
+  btnRow: { flexDirection: 'row', alignItems: 'center', gap: 6 },
   wrap: { flexDirection: 'row', gap: 8, flexWrap: 'wrap' },
   chip: { flexDirection: 'row', alignItems: 'center', borderWidth: 1, borderColor: colors.line, borderRadius: 99, paddingHorizontal: 14, paddingVertical: 8, backgroundColor: colors.card },
   chipOn: { backgroundColor: colors.primary, borderColor: colors.primary },
@@ -250,8 +261,8 @@ function createStyles(colors: ThemeColors) {
   mini: { flex: 1, backgroundColor: colors.primary, borderRadius: 12, padding: 12, alignItems: 'center' },
   miniTxt: { color: colors.onPrimary, fontWeight: '800' },
   error: { color: colors.danger, marginTop: 12 },
-  btn: { marginTop: 18, backgroundColor: colors.purple, borderRadius: 14, padding: 15, alignItems: 'center' },
-  btnTxt: { color: colors.onAccent, fontWeight: '800' },
+  btn: { marginTop: 18, backgroundColor: colors.primary, borderRadius: 14, padding: 15, alignItems: 'center' },
+  btnTxt: { color: colors.onPrimary, fontWeight: '800' },
   del: { marginTop: 10, padding: 14, alignItems: 'center' },
   delTxt: { color: colors.danger, fontWeight: '700' },
   confirm: { backgroundColor: colors.card, borderRadius: 14, borderWidth: 1, borderColor: colors.line, padding: 14, marginTop: 10 },

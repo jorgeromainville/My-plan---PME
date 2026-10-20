@@ -4,6 +4,7 @@ import { Pressable, ScrollView, StyleSheet, Text, TextInput, View } from 'react-
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { createTask, deleteTask, getTask, updateTask, type Priority, type TaskStatus } from '../src/services/tasks';
 import { errorMessage } from '../src/services/api';
+import { Icon } from '../src/components/Icon';
 import { NativeTime } from '../src/components/NativeTime';
 import { useAppStore } from '../src/store/useAppStore';
 import { colors, useThemedStyles, type ThemeColors } from '../src/theme/colors';
@@ -110,7 +111,7 @@ export default function TareaForm() {
             accessibilityLabel="Cerrar"
             style={s.x}
           >
-            <Text style={s.xTxt}>✕</Text>
+            <Icon name="x" size={20} color={colors.text} />
           </Pressable>
           <Text style={s.title}>{id ? 'Editar tarea' : 'Nueva tarea'}</Text>
           <View style={{ width: 40 }} />
@@ -135,15 +136,18 @@ export default function TareaForm() {
 
         <Text style={s.label}>Fecha</Text>
         <View style={s.row}>
-          <Pressable onPress={() => setDate(addDays(date, -1))} style={s.nav}><Text style={s.navTxt}>‹</Text></Pressable>
+          <Pressable onPress={() => setDate(addDays(date, -1))} style={s.nav}><Icon name="chevronLeft" size={20} color={colors.muted} /></Pressable>
           <Text style={s.date}>{date.toLocaleDateString()}</Text>
-          <Pressable onPress={() => setDate(addDays(date, 1))} style={s.nav}><Text style={s.navTxt}>›</Text></Pressable>
+          <Pressable onPress={() => setDate(addDays(date, 1))} style={s.nav}><Icon name="chevronRight" size={20} color={colors.muted} /></Pressable>
         </View>
 
         <Text style={s.label}>Hora (opcional)</Text>
         {time === '' ? (
           <Pressable onPress={() => setTime('09:00')} style={s.addTime}>
-            <Text style={s.addTimeTxt}>+ Agregar hora</Text>
+            <View style={s.addTimeRow}>
+              <Icon name="plus" size={15} color={colors.muted} />
+              <Text style={s.addTimeTxt}>Agregar hora</Text>
+            </View>
           </Pressable>
         ) : (
           <View>
@@ -223,6 +227,7 @@ function createStyles(colors: ThemeColors) {
   chipTxtOn: { color: colors.onPrimary, fontWeight: '700', fontSize: 12 },
   error: { color: colors.danger, marginTop: 12 },
   addTime: { borderWidth: 1, borderStyle: 'dashed', borderColor: colors.muted, borderRadius: 12, padding: 13, alignItems: 'center' },
+  addTimeRow: { flexDirection: 'row', alignItems: 'center', gap: 6 },
   addTimeTxt: { fontWeight: '700', color: colors.muted },
   noTime: { color: colors.muted, fontSize: 12, marginTop: 6, textAlign: 'center' },
   btn: { marginTop: 18, backgroundColor: colors.primary, borderRadius: 14, padding: 15, alignItems: 'center' },

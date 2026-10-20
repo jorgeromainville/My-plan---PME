@@ -1,8 +1,9 @@
 import { Tabs, useRouter } from 'expo-router';
 import { useFocusEffect } from 'expo-router';
 import React, { useCallback } from 'react';
-import { Pressable, StyleSheet, Text, View } from 'react-native';
+import { Pressable, StyleSheet, View } from 'react-native';
 import { AndeanBand } from '../../src/components/AndeanMotifs';
+import { Icon } from '../../src/components/Icon';
 import { rescheduleReminders } from '../../src/services/reminders';
 import { usePrefs } from '../../src/store/usePrefs';
 import { colors, useThemedStyles, type ThemeColors } from '../../src/theme/colors';
@@ -17,7 +18,7 @@ function CenterButton() {
       onPress={() => router.push('/nuevo-registro')}
       style={styles.plus}
     >
-      <Text style={styles.plusTxt}>+</Text>
+      <Icon name="plus" size={32} color={colors.onPrimary} strokeWidth={2.4} />
     </Pressable>
   );
 }
@@ -48,8 +49,14 @@ export default function TabsLayout() {
         tabBarLabelStyle: { fontSize: 11, fontWeight: '700' },
       }}
     >
-      <Tabs.Screen name="index" options={{ title: 'Inicio', tabBarIcon: () => <Text style={styles.tabIcon}>🏠</Text> }} />
-      <Tabs.Screen name="mapa" options={{ title: 'Mapa', tabBarIcon: () => <Text style={styles.tabIcon}>🗺️</Text> }} />
+      <Tabs.Screen
+        name="index"
+        options={{ title: 'Inicio', tabBarIcon: ({ color, size }) => <Icon name="home" size={size} color={color} /> }}
+      />
+      <Tabs.Screen
+        name="mapa"
+        options={{ title: 'Mapa', tabBarIcon: ({ color, size }) => <Icon name="map" size={size} color={color} /> }}
+      />
       <Tabs.Screen
         name="plus"
         options={{
@@ -57,8 +64,14 @@ export default function TabsLayout() {
           tabBarButton: () => <CenterButton />,
         }}
       />
-      <Tabs.Screen name="planificador" options={{ title: 'Planificador', tabBarIcon: () => <Text style={styles.tabIcon}>📅</Text> }} />
-      <Tabs.Screen name="estadisticas" options={{ title: 'Estadísticas', tabBarIcon: () => <Text style={styles.tabIcon}>📈</Text> }} />
+      <Tabs.Screen
+        name="planificador"
+        options={{ title: 'Planificador', tabBarIcon: ({ color, size }) => <Icon name="calendar" size={size} color={color} /> }}
+      />
+      <Tabs.Screen
+        name="estadisticas"
+        options={{ title: 'Estadísticas', tabBarIcon: ({ color, size }) => <Icon name="chart" size={size} color={color} /> }}
+      />
     </Tabs>
   );
 }

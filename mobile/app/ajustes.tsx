@@ -3,12 +3,13 @@ import React, { useState } from 'react';
 import { Pressable, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Card } from '../src/components/Card';
+import { Icon, templateIconName } from '../src/components/Icon';
 import { NativeTime } from '../src/components/NativeTime';
 import { DEFAULT_KINDS, DEFAULT_TEMPLATES, useCatalog, type EventKind, type Template } from '../src/store/useCatalog';
 import { colors, useThemedStyles, type ThemeColors } from '../src/theme/colors';
 
-const PALETTE = ['#6B9ECF', '#6FA287', '#C9A44A', '#D98162', '#8B7BC7', '#E07A5F', '#4DB6AC', '#BA68C8'];
-const ICONS = ['📌', '🍳', '🍽️', '👥', '💼', '📚', '🏠', '✈️', '❤️', '⭐'];
+const PALETTE = ['#6B9ECF', '#6FA287', '#C9A44A', '#D98162', '#6E7C8A', '#E07A5F', '#4DB6AC', '#5E8FA8'];
+const ICONS = ['mapPin', 'coffee', 'utensils', 'users', 'briefcase', 'book', 'home', 'plane', 'heart', 'star'];
 
 // Ajustes: tipos de evento y plantillas, todo editable y con color.
 export default function Ajustes() {
@@ -17,7 +18,7 @@ export default function Ajustes() {
   const { kinds, templates, saveKinds, saveTemplates } = useCatalog();
   const [newKind, setNewKind] = useState('');
   const [newColor, setNewColor] = useState(PALETTE[0]);
-  const [newT, setNewT] = useState<Template>({ title: '', icon: '📌', start: '09:00', end: '10:00', type: 'Evento' });
+  const [newT, setNewT] = useState<Template>({ title: '', icon: 'mapPin', start: '09:00', end: '10:00', type: 'Evento' });
 
   async function renameKind(i: number, name: string) {
     const next = kinds.map((k, j) => (j === i ? { ...k, name } : k));
@@ -43,7 +44,7 @@ export default function Ajustes() {
   async function addTemplate() {
     if (!newT.title.trim()) return;
     await saveTemplates([...templates, { ...newT, title: newT.title.trim() }]);
-    setNewT({ title: '', icon: '📌', start: '09:00', end: '10:00', type: kinds[0]?.name ?? 'Evento' });
+    setNewT({ title: '', icon: 'mapPin', start: '09:00', end: '10:00', type: kinds[0]?.name ?? 'Evento' });
   }
 
   async function deleteTemplate(i: number) {
@@ -60,7 +61,7 @@ export default function Ajustes() {
       <ScrollView contentContainerStyle={s.body} keyboardShouldPersistTaps="handled">
         <View style={s.top}>
           <Pressable onPress={() => router.back()} style={s.x} accessibilityLabel="Volver">
-            <Text style={s.xTxt}>‹</Text>
+            <Icon name="chevronLeft" size={24} color={colors.text} />
           </Pressable>
           <Text style={s.title}>Tipos y plantillas</Text>
           <View style={{ width: 40 }} />
@@ -95,15 +96,15 @@ export default function Ajustes() {
           <Text style={s.hint}>Crean el evento al toque desde el +.</Text>
           {templates.map((t, i) => (
             <View key={`${t.title}-${i}`} style={s.tRow}>
-              <Text style={s.tIcon}>{t.icon}</Text>
+              <Icon name={templateIconName(t.icon)} size={22} color={colors.text} />
               <View style={{ flex: 1 }}>
                 <Text style={s.tTitle}>{t.title}</Text>
                 <Text style={s.tSub}>
                   {t.start} – {t.end} · {t.type}
                 </Text>
               </View>
-              <Pressable onPress={() => deleteTemplate(i)} accessibilityLabel="Eliminar plantilla">
-                <Text style={s.del}>✕</Text>
+              <Pressable onPress={() => deleteTemplate(i)} accessibilityLabel="Eliminar plantilla" style={s.delBtn}>
+                <Icon name="x" size={16} color={colors.danger} />
               </Pressable>
             </View>
           ))}
@@ -111,7 +112,7 @@ export default function Ajustes() {
           <View style={s.row}>
             {ICONS.map((ic) => (
               <Pressable key={ic} onPress={() => setNewT({ ...newT, icon: ic })} style={[s.ichip, newT.icon === ic && s.ichipOn]}>
-                <Text>{ic}</Text>
+                <Icon name={ic} size={18} color={newT.icon === ic ? colors.onPrimary : colors.text} />
               </Pressable>
             ))}
           </View>
@@ -168,8 +169,8 @@ function KindRow({ kind, onRename, onColor, onDelete, canDelete }: {
         }}
       />
       {canDelete ? (
-        <Pressable onPress={onDelete} accessibilityLabel="Eliminar tipo">
-          <Text style={s.del}>✕</Text>
+        <Pressable onPress={onDelete} accessibilityLabel="Eliminar tipo" style={s.delBtn}>
+          <Icon name="x" size={16} color={colors.danger} />
         </Pressable>
       ) : null}
       <View style={s.kColors}>
@@ -187,7 +188,6 @@ function createStyles(colors: ThemeColors) {
   body: { padding: 16, gap: 12 },
   top: { flexDirection: 'row', alignItems: 'center', marginBottom: 4 },
   x: { width: 40, paddingVertical: 6 },
-  xTxt: { fontSize: 28, color: colors.text },
   title: { flex: 1, textAlign: 'center', fontSize: 18, fontWeight: '800', color: colors.text },
   h: { fontSize: 17, fontWeight: '800', color: colors.text },
   hint: { fontSize: 12, color: colors.muted, marginBottom: 10 },
@@ -202,9 +202,8 @@ function createStyles(colors: ThemeColors) {
   btnTxt: { color: colors.onPrimary, fontWeight: '800' },
   kRow: { flexDirection: 'row', alignItems: 'center', gap: 8, marginBottom: 10, flexWrap: 'wrap' },
   kColors: { flexDirection: 'row', gap: 6 },
-  del: { fontSize: 16, color: colors.danger, padding: 8 },
+  delBtn: { padding: 8 },
   tRow: { flexDirection: 'row', alignItems: 'center', gap: 10, paddingVertical: 8, borderBottomWidth: 1, borderBottomColor: colors.line },
-  tIcon: { fontSize: 22, color: colors.text },
   tTitle: { fontWeight: '800', color: colors.text },
   tSub: { fontSize: 12, color: colors.muted },
   ichip: { borderWidth: 1, borderColor: colors.line, borderRadius: 12, padding: 8, backgroundColor: colors.card },

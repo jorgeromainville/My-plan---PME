@@ -6,12 +6,13 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { AndeanTopBand, Chakana } from '../../src/components/AndeanMotifs';
 import { Card } from '../../src/components/Card';
 import { DateSelector } from '../../src/components/DateSelector';
+import { Icon, contactIconName, goalIconName } from '../../src/components/Icon';
 import { ProgressBar } from '../../src/components/ProgressBar';
 import { SectionHeader } from '../../src/components/SectionHeader';
 import { dayRange, listTasks } from '../../src/services/tasks';
 import { financeSummary, type FinanceSummary } from '../../src/services/incomes';
 import { goalsProgress, type Goal } from '../../src/services/goals';
-import { categoryIcon, listContacts, type Contact as ApiContact } from '../../src/services/contacts';
+import { listContacts, type Contact as ApiContact } from '../../src/services/contacts';
 import { useAppStore } from '../../src/store/useAppStore';
 import { useNet } from '../../src/store/useNet';
 import { usePrefs } from '../../src/store/usePrefs';
@@ -35,16 +36,7 @@ function goalBg(kind: string): string {
   if (kind === 'contactos') return colors.blueBg;
   if (kind === 'tareas') return colors.yellowBg;
   if (kind === 'horas') return colors.coralBg;
-  return colors.purpleBg;
-}
-
-function goalIcon(kind: string): string {
-  if (kind === 'ingresos') return '💰';
-  if (kind === 'contactos') return '👥';
-  if (kind === 'tareas') return '✅';
-  if (kind === 'horas') return '⏱️';
-  if (kind === 'veces') return '🔁';
-  return '🎯';
+  return colors.bgSoft;
 }
 
 function goalVal(kind: string, v: number): string {
@@ -110,13 +102,13 @@ export default function Inicio() {
   // Personas: reales > demo (si no se borraron) > vacío.
   const people =
     realPeople && realPeople.length > 0
-      ? realPeople.slice(0, 5).map((c) => ({ id: c.id, name: c.firstName, badge: categoryIcon(c.category) }))
+      ? realPeople.slice(0, 5).map((c) => ({ id: c.id, name: c.firstName, badge: contactIconName(c.category) }))
       : demoCleared
         ? []
         : demoPeople.slice(0, 5).map((c) => ({
             id: c.id,
             name: c.firstName,
-            badge: c.badge === 'star' ? '★' : c.badge === 'check' ? '●' : '♡',
+            badge: c.badge === 'star' ? 'star' : c.badge === 'check' ? 'check' : 'heart',
           }));
 
   return (
@@ -129,23 +121,31 @@ export default function Inicio() {
             {theme === 'andean' ? (
               <Chakana size={22} color={colors.bg} filled />
             ) : (
-              <Text>🗓️</Text>
+              <Icon name="calendarCheck" size={22} color={colors.onPrimary} />
             )}
           </View>
           <View style={{ flex: 1 }}>
             <Text style={styles.appName}>Planner Today</Text>
             <Text style={styles.appSub}>Inicio</Text>
           </View>
-          <Text style={styles.hIcon}>🔍</Text>
-          <Text style={styles.hIcon}>🔔</Text>
+          <Icon name="search" size={20} color={colors.muted} style={styles.hIcon} />
+          <Icon name="bell" size={20} color={colors.muted} style={styles.hIcon} />
           <Pressable onPress={() => router.push('/perfil')} accessibilityLabel="Abrir perfil" style={styles.avatar}>
-            <Text>👤</Text>
+            <Icon name="user" size={20} color={colors.onPrimary} />
           </Pressable>
         </View>
 
         <Text style={styles.hola}>¡Hola, {shownName}!</Text>
-        <Text style={styles.sub}>Un gran día, hoy también cuentas ☀️</Text>
-        {offline ? <Text style={styles.offline}>● Sin conexión · mostrando datos guardados</Text> : null}
+        <View style={styles.subRow}>
+          <Text style={styles.sub}>Un gran día, hoy también cuentas</Text>
+          <Icon name="sun" size={15} color={colors.yellow} />
+        </View>
+        {offline ? (
+          <View style={styles.offlineRow}>
+            <View style={styles.offlineDot} />
+            <Text style={styles.offline}>Sin conexión · mostrando datos guardados</Text>
+          </View>
+        ) : null}
 
         <DateSelector date={selectedDate} onChange={setSelectedDate} />
 
@@ -188,8 +188,8 @@ export default function Inicio() {
             title="Metas diarias"
             subtitle="Hoy es un gran paso"
             action={
-              <Pressable onPress={() => router.push('/metas')}>
-                <Text style={styles.chev}>›</Text>
+              <Pressable onPress={() => router.push('/metas')} accessibilityLabel="Ver metas diarias">
+                <Icon name="chevronRight" size={20} color={colors.muted} />
               </Pressable>
             }
           />
@@ -198,7 +198,7 @@ export default function Inicio() {
               ? dayGoals.slice(0, 2).map((g) => (
                   <View key={g.id} style={[styles.goal, { backgroundColor: goalBg(g.kind) }]}>
                     <View style={styles.goalTop}>
-                      <Text style={styles.goalIcon}>{goalIcon(g.kind)}</Text>
+                      <Icon name={goalIconName(g.kind)} size={20} color={colors.text} />
                       <Text style={styles.goalPct}>{g.pct ?? 0}%</Text>
                     </View>
                     <Text style={styles.goalName}>{g.title}</Text>
@@ -219,7 +219,7 @@ export default function Inicio() {
               : goals.slice(0, 2).map((g) => (
                   <View key={g.id} style={[styles.goal, { backgroundColor: bgForColor(g.color) }]}>
                     <View style={styles.goalTop}>
-                      <Text style={styles.goalIcon}>{g.icon}</Text>
+                      <Icon name={goalIconName(g.icon)} size={20} color={colors.text} />
                       <Text style={styles.goalPct}>{pct(g.current, g.target)}%</Text>
                     </View>
                     <Text style={styles.goalName}>{g.title}</Text>
@@ -237,8 +237,8 @@ export default function Inicio() {
             title="Metas semanales"
             subtitle="Seguimiento de la semana"
             action={
-              <Pressable onPress={() => router.push('/metas')}>
-                <Text style={styles.chev}>›</Text>
+              <Pressable onPress={() => router.push('/metas')} accessibilityLabel="Ver metas semanales">
+                <Icon name="chevronRight" size={20} color={colors.muted} />
               </Pressable>
             }
           />
@@ -246,7 +246,7 @@ export default function Inicio() {
             <>
               <View style={styles.weekRow}>
                 <View style={styles.weekIcon}>
-                  <Text>🎯</Text>
+                  <Icon name="target" size={20} color={colors.link} />
                 </View>
                 <View style={{ flex: 1 }}>
                   <Text style={styles.weekTitle}>{weekGoals[0].title}</Text>
@@ -261,7 +261,9 @@ export default function Inicio() {
               <View style={styles.grid3}>
                 {weekGoals.slice(1, 4).map((w) => (
                   <View key={w.id} style={styles.mini}>
-                    <Text style={styles.miniCheck}>✓</Text>
+                    <View style={styles.miniCheck}>
+                      <Icon name="check" size={10} color={colors.text} strokeWidth={3} />
+                    </View>
                     <Text style={styles.miniName}>{w.title}</Text>
                     <Text style={styles.miniNum}>
                       {w.current}/{w.target}
@@ -282,7 +284,7 @@ export default function Inicio() {
             <>
           <View style={styles.weekRow}>
             <View style={styles.weekIcon}>
-              <Text>🎯</Text>
+              <Icon name="target" size={20} color={colors.link} />
             </View>
             <View style={{ flex: 1 }}>
               <Text style={styles.weekTitle}>{weeklyMain.title}</Text>
@@ -296,7 +298,9 @@ export default function Inicio() {
           <View style={styles.grid3}>
             {weeklyGoals.map((w) => (
               <View key={w.id} style={styles.mini}>
-                <Text style={styles.miniCheck}>✓</Text>
+                <View style={styles.miniCheck}>
+                  <Icon name="check" size={10} color={colors.text} strokeWidth={3} />
+                </View>
                 <Text style={styles.miniName}>{w.title}</Text>
                 <Text style={styles.miniNum}>
                   {w.current}/{w.target}
@@ -314,8 +318,9 @@ export default function Inicio() {
             title="Personas"
             subtitle="Tus contactos más importantes"
             action={
-              <Pressable onPress={() => router.push('/personas')}>
-                <Text style={styles.verMas}>Ver más ›</Text>
+              <Pressable onPress={() => router.push('/personas')} style={styles.verMasRow}>
+                <Text style={styles.verMas}>Ver más</Text>
+                <Icon name="chevronRight" size={14} color={colors.link} />
               </Pressable>
             }
           />
@@ -323,9 +328,9 @@ export default function Inicio() {
             {people.map((p) => (
               <Pressable key={p.id} style={styles.person} onPress={() => router.push('/personas')}>
                 <View style={styles.face}>
-                  <Text style={{ fontSize: 26 }}>👤</Text>
+                  <Icon name="user" size={26} color={colors.text} />
                   <View style={styles.badge}>
-                    <Text style={{ fontSize: 10, color: colors.text }}>{p.badge}</Text>
+                    <Icon name={p.badge} size={10} color={colors.text} />
                   </View>
                 </View>
                 <Text style={styles.pName}>{p.name}</Text>
@@ -333,14 +338,14 @@ export default function Inicio() {
             ))}
             <Pressable style={styles.person} onPress={() => router.push('/persona')}>
               <View style={[styles.face, styles.addFace]}>
-                <Text style={{ fontSize: 26, color: colors.muted }}>+</Text>
+                <Icon name="plus" size={26} color={colors.muted} />
               </View>
               <Text style={styles.pName}>Añadir</Text>
             </Pressable>
           </ScrollView>
           {people.length === 0 ? (
             <Text style={styles.peopleEmpty}>
-              {demoCleared ? 'Aún no tienes personas: añade la primera con +.' : 'Sin personas todavía.'}
+              {demoCleared ? 'Aún no tienes personas: añade la primera con el botón de añadir.' : 'Sin personas todavía.'}
             </Text>
           ) : null}
         </View>
@@ -359,10 +364,11 @@ function createStyles(colors: ThemeColors) {
   logo: { width: 38, height: 38, borderRadius: 12, backgroundColor: colors.primary, alignItems: 'center', justifyContent: 'center' },
   appName: { fontSize: 17, fontWeight: '800', color: colors.text },
   appSub: { fontSize: 12, color: colors.muted },
-  hIcon: { fontSize: 18, marginHorizontal: 4 },
+  hIcon: { marginHorizontal: 6 },
   avatar: { width: 36, height: 36, borderRadius: 18, backgroundColor: colors.primary, alignItems: 'center', justifyContent: 'center' },
   hola: { fontSize: 28, fontWeight: '900', color: colors.text },
-  sub: { fontSize: 14, color: colors.muted, marginBottom: 12 },
+  subRow: { flexDirection: 'row', alignItems: 'center', gap: 6, marginBottom: 12 },
+  sub: { fontSize: 14, color: colors.muted },
   mt: { marginTop: 14 },
   fin: { marginTop: 14, flexDirection: 'row' },
   finCol: { flex: 1, alignItems: 'center' },
@@ -372,11 +378,9 @@ function createStyles(colors: ThemeColors) {
   resRow: { flexDirection: 'row', gap: 10 },
   resBtn: { flex: 1, backgroundColor: colors.primary, borderRadius: 12, padding: 12, alignItems: 'center' },
   resBtnTxt: { color: colors.onPrimary, fontWeight: '800' },
-  chev: { fontSize: 24, color: colors.muted },
   grid: { flexDirection: 'row', gap: 10 },
   goal: { flex: 1, borderRadius: radius.md, padding: 12 },
   goalTop: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
-  goalIcon: { fontSize: 20 },
   goalPct: { fontWeight: '800', color: colors.text },
   goalName: { marginTop: 8, fontSize: 13, color: colors.text },
   goalNum: { fontSize: 22, fontWeight: '900', color: colors.text },
@@ -388,9 +392,17 @@ function createStyles(colors: ThemeColors) {
   weekNum: { fontWeight: '900', fontSize: 18, color: colors.text },
   grid3: { flexDirection: 'row', gap: 8, marginTop: 12 },
   mini: { flex: 1, backgroundColor: colors.bg, borderRadius: radius.md, padding: 10, alignItems: 'center', borderWidth: 1, borderColor: colors.line },
-  miniCheck: { fontSize: 12, backgroundColor: colors.greenBg, borderRadius: 99, paddingHorizontal: 6, paddingVertical: 2, color: colors.text },
+  miniCheck: {
+    width: 18,
+    height: 18,
+    borderRadius: 99,
+    backgroundColor: colors.greenBg,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
   miniName: { fontSize: 11, textAlign: 'center', marginTop: 6, color: colors.text },
   miniNum: { fontWeight: '800', marginTop: 4, color: colors.text },
+  verMasRow: { flexDirection: 'row', alignItems: 'center', gap: 2 },
   verMas: { color: colors.link, fontWeight: '700' },
   peopleRow: { flexDirection: 'row', gap: 12 },
   person: { alignItems: 'center', width: 64 },
@@ -399,7 +411,9 @@ function createStyles(colors: ThemeColors) {
   badge: { position: 'absolute', right: 0, bottom: 0, backgroundColor: colors.yellowBg, borderRadius: 99, width: 20, height: 20, alignItems: 'center', justifyContent: 'center' },
   pName: { marginTop: 6, fontSize: 12, fontWeight: '600', color: colors.text },
   peopleEmpty: { fontSize: 12, color: colors.muted, marginTop: 8 },
-  offline: { fontSize: 12, color: colors.danger, fontWeight: '700', marginBottom: 8 },
+  offlineRow: { flexDirection: 'row', alignItems: 'center', gap: 6, marginBottom: 8 },
+  offlineDot: { width: 7, height: 7, borderRadius: 99, backgroundColor: colors.danger },
+  offline: { fontSize: 12, color: colors.danger, fontWeight: '700' },
   empty: { backgroundColor: colors.bg, borderRadius: radius.md, padding: 14, borderWidth: 1, borderColor: colors.line },
   emptyTitle: { fontWeight: '800', color: colors.text },
   emptySub: { fontSize: 12, color: colors.muted, marginTop: 4, marginBottom: 10 },

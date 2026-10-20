@@ -4,6 +4,7 @@ import React, { useCallback, useState } from 'react';
 import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Card } from '../src/components/Card';
+import { Icon } from '../src/components/Icon';
 import { errorMessage } from '../src/services/api';
 import { listExpenses, type Expense } from '../src/services/expenses';
 import { dayRange } from '../src/services/tasks';
@@ -39,11 +40,11 @@ export default function Gastos() {
     <SafeAreaView style={s.safe} edges={['top']}>
       <View style={s.header}>
         <Pressable onPress={() => router.back()} style={s.back} accessibilityLabel="Volver">
-          <Text style={s.backTxt}>‹</Text>
+          <Icon name="chevronLeft" size={24} color={colors.text} />
         </Pressable>
         <Text style={s.title}>Gastos</Text>
         <Pressable onPress={() => router.push('/gasto')} style={s.add} accessibilityLabel="Registrar gasto">
-          <Text style={s.addTxt}>+</Text>
+          <Icon name="plus" size={24} color={colors.onAccent} />
         </Pressable>
       </View>
       <ScrollView contentContainerStyle={s.body} showsVerticalScrollIndicator={false}>
@@ -55,7 +56,7 @@ export default function Gastos() {
         {items.map((i) => (
           <Pressable key={i.id} onPress={() => router.push(`/gasto?id=${i.id}`)} style={s.row}>
             <View style={s.badge}>
-              <Text>🧾</Text>
+              <Icon name="receipt" size={20} color={colors.coral} />
             </View>
             <View style={{ flex: 1 }}>
               <Text style={s.name}>{i.title}</Text>

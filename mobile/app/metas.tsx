@@ -9,6 +9,7 @@ import { errorMessage } from '../src/services/api';
 import { goalsProgress, updateGoal, type Goal, type GoalPeriod } from '../src/services/goals';
 import { colors, useThemedStyles, type ThemeColors } from '../src/theme/colors';
 import { formatMoney } from '../src/utils/format';
+import { Icon } from '../src/components/Icon';
 
 const PERIODS: { v: GoalPeriod | 'all'; label: string }[] = [
   { v: 'all', label: 'Todas' },
@@ -59,11 +60,11 @@ export default function Metas() {
     <SafeAreaView style={s.safe} edges={['top']}>
       <View style={s.header}>
         <Pressable onPress={() => router.back()} style={s.back} accessibilityLabel="Volver">
-          <Text style={s.backTxt}>‹</Text>
+          <Icon name="chevronLeft" size={24} color={colors.text} />
         </Pressable>
         <Text style={s.title}>Metas</Text>
         <Pressable onPress={() => router.push('/meta')} style={s.add} accessibilityLabel="Nueva meta">
-          <Text style={s.addTxt}>+</Text>
+          <Icon name="plus" size={24} color={colors.onAccent} />
         </Pressable>
       </View>
 
@@ -94,7 +95,7 @@ export default function Metas() {
                   <Text style={s.name}>{g.title}</Text>
                   <Text style={s.sub}>
                     {g.kind} · {g.period === 'day' ? 'diaria' : g.period === 'week' ? 'semanal' : 'mensual'}
-                    {g.status === 'pausada' ? ' · ⏸ pausada' : ''}
+                    {g.status === 'pausada' ? ' · pausada' : ''}
                   </Text>
                 </View>
                 <Text style={s.pct}>{g.pct ?? 0}%</Text>
@@ -107,7 +108,10 @@ export default function Metas() {
               <View style={s.rowBtns}>
                 {tab === 'active' && g.status !== 'completada' && (g.pct ?? 0) >= 100 ? (
                   <Pressable onPress={() => complete(g)} style={[s.mini, s.done]}>
-                    <Text style={s.miniTxt}>✓ Completar</Text>
+                    <View style={s.miniRow}>
+                      <Icon name="check" size={14} color={colors.green} strokeWidth={3} />
+                      <Text style={s.miniTxt}>Completar</Text>
+                    </View>
                   </Pressable>
                 ) : null}
               </View>
@@ -151,6 +155,7 @@ function createStyles(colors: ThemeColors) {
   mini: { borderWidth: 1, borderColor: colors.line, borderRadius: 99, paddingHorizontal: 14, paddingVertical: 7, backgroundColor: colors.card },
   done: { backgroundColor: colors.greenBg, borderColor: colors.green },
   miniTxt: { fontWeight: '700', fontSize: 12, color: colors.text },
+  miniRow: { flexDirection: 'row', alignItems: 'center', gap: 5 },
   empty: { color: colors.muted, textAlign: 'center', marginTop: 16 },
 });
 }
