@@ -23,15 +23,16 @@ import { addOp, flushOps, getIdMap, loadOps, type FlushResult } from './sync';
 
 // En desarrollo, el servidor de Metro corre en la misma PC/IP LAN que la API,
 // así que derivamos la IP de ahí: si cambia el Wi-Fi, la app se adapta sola y
-// ya no hay que editar `mobile/.env`.
+// ya no hay que editar `mobile/.env`. Si `EXPO_PUBLIC_API_URL` está definida,
+// manda siempre (nube, túnel o backend en otra máquina).
 function resolveBase(): string {
-  const env = process.env.EXPO_PUBLIC_API_URL ?? '';
-  const port = env.match(/:(\d{2,5})(?:\/|$)/)?.[1] ?? '4000';
+  const env = process.env.EXPO_PUBLIC_API_URL?.trim();
+  if (env) return env;
   // En Expo Go, hostUri es "10.19.140.106:8081".
   const ip = Constants.expoConfig?.hostUri?.split(':')[0] ?? '';
   const isLan = /^(10\.|192\.168\.|172\.(1[6-9]|2\d|3[01])\.)\d/.test(ip);
-  if (__DEV__ && isLan) return `http://${ip}:${port}`;
-  return env || `http://localhost:4000`;
+  if (__DEV__ && isLan) return `http://${ip}:4000`;
+  return 'http://localhost:4000';
 }
 
 export const API_BASE = resolveBase();
