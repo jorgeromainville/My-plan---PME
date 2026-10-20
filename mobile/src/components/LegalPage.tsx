@@ -71,7 +71,7 @@ function createStyles(colors: ThemeColors) {
     h: { fontSize: 16, fontWeight: '800', color: colors.text },
     p: { fontSize: 14, lineHeight: 21, color: colors.text },
     bulletRow: { flexDirection: 'row', gap: 8 },
-    bulletDot: { fontSize: 14, lineHeight: 21, color: colors.primary, fontWeight: '900' },
+    bulletDot: { fontSize: 14, lineHeight: 21, color: colors.link, fontWeight: '900' },
     bullet: { flex: 1, fontSize: 14, lineHeight: 21, color: colors.text },
     foot: { textAlign: 'center', fontSize: 12, color: colors.muted, marginTop: 8 },
   });

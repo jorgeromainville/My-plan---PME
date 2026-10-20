@@ -307,7 +307,7 @@ export default function Escaner() {
           </>
         ) : (
           <>
-            <TextInput
+            <TextInput placeholderTextColor={colors.muted}
               style={[s.input, s.area]}
               value={pasted}
               onChangeText={setPasted}
@@ -333,7 +333,7 @@ export default function Escaner() {
             {rows.map((r) => (
               <View key={r.key} style={s.card}>
                 <View style={s.row}>
-                  <TextInput style={[s.input, { flex: 1, marginBottom: 0 }]} value={r.title} onChangeText={(t) => patch(r.key, { title: t })} placeholder="Materia" />
+                  <TextInput placeholderTextColor={colors.muted} style={[s.input, { flex: 1, marginBottom: 0 }]} value={r.title} onChangeText={(t) => patch(r.key, { title: t })} placeholder="Materia" />
                   <Pressable onPress={() => setRows((rs) => rs.filter((x) => x.key !== r.key))} style={s.del} accessibilityLabel="Quitar">
                     <Text style={s.delTxt}>✕</Text>
                   </Pressable>
@@ -346,9 +346,9 @@ export default function Escaner() {
                   ))}
                 </View>
                 <View style={s.row}>
-                  <TextInput style={[s.input, s.time]} value={r.start} onChangeText={(t) => patch(r.key, { start: t })} placeholder="08:00" maxLength={5} />
+                  <TextInput placeholderTextColor={colors.muted} style={[s.input, s.time]} value={r.start} onChangeText={(t) => patch(r.key, { start: t })} placeholder="08:00" maxLength={5} />
                   <Text style={s.to}>→</Text>
-                  <TextInput style={[s.input, s.time]} value={r.end} onChangeText={(t) => patch(r.key, { end: t })} placeholder="10:00" maxLength={5} />
+                  <TextInput placeholderTextColor={colors.muted} style={[s.input, s.time]} value={r.end} onChangeText={(t) => patch(r.key, { end: t })} placeholder="10:00" maxLength={5} />
                 </View>
               </View>
             ))}
@@ -412,7 +412,7 @@ function createStyles(colors: ThemeColors) {
   segOpt: { flex: 1, paddingVertical: 8, alignItems: 'center', borderRadius: 99 },
   segOn: { backgroundColor: colors.coral, elevation: 2 },
   segTxt: { fontWeight: '700', color: colors.muted, fontSize: 13 },
-  segTxtOn: { color: '#fff' },
+  segTxtOn: { color: colors.onAccent },
   cam: { height: 320, borderRadius: 14, overflow: 'hidden', marginBottom: 10 },
   preview: { height: 320, borderRadius: 14, marginBottom: 10, backgroundColor: '#000' },
   hint: { color: colors.muted, fontSize: 12, marginTop: 8 },
@@ -428,17 +428,17 @@ function createStyles(colors: ThemeColors) {
   aiBarOn: { backgroundColor: colors.greenBg },
   aiBarOff: { backgroundColor: colors.bgSoft },
   aiTxt: { fontSize: 12, color: colors.text, lineHeight: 17 },
-  input: { backgroundColor: colors.card, borderRadius: 12, borderWidth: 1, borderColor: colors.line, padding: 13, marginBottom: 8 },
-  area: { minHeight: 110, textAlignVertical: 'top' },
+  input: { backgroundColor: colors.card, borderRadius: 12, borderWidth: 1, borderColor: colors.line, padding: 13, marginBottom: 8, color: colors.text },
+  area: { minHeight: 110, textAlignVertical: 'top', color: colors.text },
   row: { flexDirection: 'row', gap: 8, alignItems: 'center' },
   mini: { flex: 1, backgroundColor: colors.primary, borderRadius: 12, padding: 12, alignItems: 'center' },
   miniTxt: { color: '#fff', fontWeight: '800' },
   miniGhost: { borderWidth: 1, borderColor: colors.line, borderRadius: 12, padding: 12, alignItems: 'center', marginBottom: 8 },
   miniGhostTxt: { color: colors.muted, fontWeight: '700' },
   btn: { marginTop: 12, backgroundColor: colors.purple, borderRadius: 14, padding: 15, alignItems: 'center' },
-  btnTxt: { color: '#fff', fontWeight: '800' },
+  btnTxt: { color: colors.onAccent, fontWeight: '800' },
   rawToggle: { marginTop: 12, alignItems: 'center' },
-  rawToggleTxt: { color: colors.primary, fontWeight: '700', fontSize: 12 },
+  rawToggleTxt: { color: colors.link, fontWeight: '700', fontSize: 12 },
   raw: { backgroundColor: colors.bgSoft, borderRadius: 12, padding: 10, marginTop: 8, fontSize: 11, color: colors.muted },
   h: { fontSize: 16, fontWeight: '800', color: colors.text, marginTop: 16, marginBottom: 8 },
   card: { backgroundColor: colors.card, borderRadius: 14, borderWidth: 1, borderColor: colors.line, padding: 12, marginBottom: 8, gap: 8 },
@@ -449,7 +449,7 @@ function createStyles(colors: ThemeColors) {
   dayOn: { backgroundColor: colors.primary, borderColor: colors.primary },
   dayTxt: { fontSize: 11, fontWeight: '700', color: colors.muted },
   dayTxtOn: { fontSize: 11, fontWeight: '700', color: '#fff' },
-  time: { flex: 1, marginBottom: 0, textAlign: 'center' },
+  time: { flex: 1, marginBottom: 0, textAlign: 'center', color: colors.text },
   to: { fontWeight: '800', color: colors.muted },
   label: { fontSize: 13, fontWeight: '700', color: colors.text, marginTop: 12, marginBottom: 6 },
   chips: { flexDirection: 'row', flexWrap: 'wrap', gap: 6, marginBottom: 8 },

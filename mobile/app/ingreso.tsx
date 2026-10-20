@@ -117,7 +117,7 @@ export default function IngresoForm() {
         </View>
 
         <Text style={s.label}>Título *</Text>
-        <TextInput style={s.input} value={title} onChangeText={setTitle} placeholder="Ej. Venta de pan, Pago cliente" />
+        <TextInput placeholderTextColor={colors.muted} style={s.input} value={title} onChangeText={setTitle} placeholder="Ej. Venta de pan, Pago cliente" />
 
         <Text style={s.label}>Fecha</Text>
         <View style={s.row}>
@@ -137,11 +137,11 @@ export default function IngresoForm() {
         <View style={s.row2}>
           <View style={{ flex: 1 }}>
             <Text style={s.label}>Cantidad</Text>
-            <TextInput style={s.input} value={quantity} onChangeText={setQuantity} keyboardType="decimal-pad" placeholder="1" />
+            <TextInput placeholderTextColor={colors.muted} style={s.input} value={quantity} onChangeText={setQuantity} keyboardType="decimal-pad" placeholder="1" />
           </View>
           <View style={{ flex: 1 }}>
             <Text style={s.label}>Precio unit.</Text>
-            <TextInput style={s.input} value={price} onChangeText={setPrice} keyboardType="decimal-pad" placeholder="0.00" />
+            <TextInput placeholderTextColor={colors.muted} style={s.input} value={price} onChangeText={setPrice} keyboardType="decimal-pad" placeholder="0.00" />
           </View>
         </View>
 
@@ -151,7 +151,7 @@ export default function IngresoForm() {
         </Card>
 
         <Text style={s.label}>Categoría</Text>
-        <TextInput style={s.input} value={category} onChangeText={setCategory} placeholder="General" />
+        <TextInput placeholderTextColor={colors.muted} style={s.input} value={category} onChangeText={setCategory} placeholder="General" />
 
         <Text style={s.label}>Método de pago</Text>
         <View style={s.wrap}>
@@ -175,7 +175,7 @@ export default function IngresoForm() {
         </View>
 
         <Text style={s.label}>Nota</Text>
-        <TextInput style={s.input} value={note} onChangeText={setNote} placeholder="Opcional" />
+        <TextInput placeholderTextColor={colors.muted} style={s.input} value={note} onChangeText={setNote} placeholder="Opcional" />
 
         {error ? <Text style={s.error}>{error}</Text> : null}
         <Pressable style={s.btn} onPress={onSave}>
@@ -214,7 +214,7 @@ function createStyles(colors: ThemeColors) {
   xTxt: { fontSize: 28, color: colors.text },
   title: { flex: 1, textAlign: 'center', fontSize: 18, fontWeight: '800', color: colors.text },
   label: { fontSize: 13, fontWeight: '700', color: colors.text, marginTop: 12, marginBottom: 6 },
-  input: { backgroundColor: colors.card, borderRadius: 12, borderWidth: 1, borderColor: colors.line, padding: 13 },
+  input: { backgroundColor: colors.card, borderRadius: 12, borderWidth: 1, borderColor: colors.line, padding: 13, color: colors.text },
   row: { flexDirection: 'row', gap: 8, alignItems: 'center' },
   row2: { flexDirection: 'row', gap: 12 },
   nav: { paddingHorizontal: 16, paddingVertical: 8 },
@@ -230,7 +230,7 @@ function createStyles(colors: ThemeColors) {
   chipTxtOn: { color: '#fff', fontWeight: '700', fontSize: 12 },
   error: { color: colors.danger, marginTop: 12 },
   btn: { marginTop: 18, backgroundColor: colors.green, borderRadius: 14, padding: 15, alignItems: 'center' },
-  btnTxt: { color: '#fff', fontWeight: '800' },
+  btnTxt: { color: colors.onAccent, fontWeight: '800' },
   del: { marginTop: 10, padding: 14, alignItems: 'center' },
   delTxt: { color: colors.danger, fontWeight: '700' },
   confirm: { backgroundColor: colors.card, borderRadius: 14, borderWidth: 1, borderColor: colors.line, padding: 14, marginTop: 10 },

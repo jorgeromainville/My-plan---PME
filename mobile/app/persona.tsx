@@ -362,17 +362,17 @@ function PersonaForm({ id, initial, presetLat, presetLng, onBack, onSaved }: {
 
         <Card>
           <Text style={s.label}>Nombre *</Text>
-          <TextInput style={s.input} value={firstName} onChangeText={setFirstName} placeholder="Juan" />
+          <TextInput placeholderTextColor={colors.muted} style={s.input} value={firstName} onChangeText={setFirstName} placeholder="Juan" />
           <Text style={s.label}>Apellido</Text>
-          <TextInput style={s.input} value={lastName} onChangeText={setLastName} placeholder="Pérez" />
+          <TextInput placeholderTextColor={colors.muted} style={s.input} value={lastName} onChangeText={setLastName} placeholder="Pérez" />
           <Text style={s.label}>Teléfono</Text>
-          <TextInput style={s.input} value={phone} onChangeText={setPhone} placeholder="+51 987 654 321" keyboardType="phone-pad" />
+          <TextInput placeholderTextColor={colors.muted} style={s.input} value={phone} onChangeText={setPhone} placeholder="+51 987 654 321" keyboardType="phone-pad" />
           <Text style={s.label}>WhatsApp</Text>
-          <TextInput style={s.input} value={whatsapp} onChangeText={setWhatsapp} placeholder="Vacío = igual que teléfono" keyboardType="phone-pad" />
+          <TextInput placeholderTextColor={colors.muted} style={s.input} value={whatsapp} onChangeText={setWhatsapp} placeholder="Vacío = igual que teléfono" keyboardType="phone-pad" />
           <Text style={s.label}>Email</Text>
-          <TextInput style={s.input} value={email} onChangeText={setEmail} placeholder="Opcional" autoCapitalize="none" keyboardType="email-address" />
+          <TextInput placeholderTextColor={colors.muted} style={s.input} value={email} onChangeText={setEmail} placeholder="Opcional" autoCapitalize="none" keyboardType="email-address" />
           <Text style={s.label}>Dirección</Text>
-          <TextInput style={s.input} value={address} onChangeText={setAddress} placeholder="Opcional" />
+          <TextInput placeholderTextColor={colors.muted} style={s.input} value={address} onChangeText={setAddress} placeholder="Opcional" />
         </Card>
 
         <Card>
@@ -418,7 +418,7 @@ function PersonaForm({ id, initial, presetLat, presetLng, onBack, onSaved }: {
             ))}
           </View>
           <View style={s.newCat}>
-            <TextInput style={[s.input, { flex: 1, marginBottom: 0 }]} value={newCat} onChangeText={setNewCat} placeholder="Nueva categoría" />
+            <TextInput placeholderTextColor={colors.muted} style={[s.input, { flex: 1, marginBottom: 0 }]} value={newCat} onChangeText={setNewCat} placeholder="Nueva categoría" />
             <Pressable onPress={addCategory} style={s.plus}>
               <Text style={s.plusTxt}>+</Text>
             </Pressable>
@@ -432,9 +432,9 @@ function PersonaForm({ id, initial, presetLat, presetLng, onBack, onSaved }: {
 
         <Card>
           <Text style={s.label}>Notas</Text>
-          <TextInput style={[s.input, s.area]} value={notes} onChangeText={setNotes} multiline placeholder="Opcional" />
+          <TextInput placeholderTextColor={colors.muted} style={[s.input, s.area]} value={notes} onChangeText={setNotes} multiline placeholder="Opcional" />
           <Pressable onPress={() => setHasNext(!hasNext)} style={s.check} accessibilityRole="checkbox">
-            <View style={[s.box, hasNext && s.boxOn]}>{hasNext ? <Text>✓</Text> : null}</View>
+            <View style={[s.box, hasNext && s.boxOn]}>{hasNext ? <Text style={{ color: colors.text }}>✓</Text> : null}</View>
             <Text style={s.checkTxt}>Próximo contacto</Text>
           </Pressable>
           {hasNext ? (
@@ -493,10 +493,10 @@ function createStyles(colors: ThemeColors) {
   editTxt: { fontWeight: '800', color: colors.text },
   actions: { flexDirection: 'row', gap: 8 },
   act: { flex: 1, backgroundColor: colors.green, borderRadius: 14, padding: 13, alignItems: 'center' },
-  actTxt: { color: '#fff', fontWeight: '800' },
+  actTxt: { color: colors.onAccent, fontWeight: '800' },
   label: { fontSize: 13, fontWeight: '700', color: colors.text, marginTop: 10, marginBottom: 6 },
-  input: { backgroundColor: colors.card, borderRadius: 12, borderWidth: 1, borderColor: colors.line, padding: 13, marginBottom: 4 },
-  area: { minHeight: 70, textAlignVertical: 'top' },
+  input: { backgroundColor: colors.card, borderRadius: 12, borderWidth: 1, borderColor: colors.line, padding: 13, marginBottom: 4, color: colors.text },
+  area: { minHeight: 70, textAlignVertical: 'top', color: colors.text },
   rowLine: { flexDirection: 'row', paddingVertical: 6, gap: 10 },
   k: { width: 110, color: colors.muted, fontWeight: '700', fontSize: 13 },
   v: { flex: 1, color: colors.text, fontWeight: '600', fontSize: 13 },

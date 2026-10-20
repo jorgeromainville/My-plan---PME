@@ -184,7 +184,7 @@ function createStyles(colors: ThemeColors) {
     opacity: 0.62,
     borderStyle: 'dashed',
   },
-  icon: { fontSize: 16 },
+  icon: { fontSize: 16, color: colors.text },
   title: { fontWeight: '800', color: colors.text, fontSize: 13 },
   sub: { fontSize: 11, color: colors.muted },
   check: {

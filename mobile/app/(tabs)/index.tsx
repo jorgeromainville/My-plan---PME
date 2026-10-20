@@ -3,6 +3,7 @@ import { useFocusEffect } from 'expo-router';
 import React, { useCallback, useState } from 'react';
 import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { AndeanTopBand, Chakana } from '../../src/components/AndeanMotifs';
 import { Card } from '../../src/components/Card';
 import { DateSelector } from '../../src/components/DateSelector';
 import { ProgressBar } from '../../src/components/ProgressBar';
@@ -19,12 +20,15 @@ import { formatMoney } from '../../src/utils/format';
 import { colors, radius, useThemedStyles, type ThemeColors } from '../../src/theme/colors';
 import { pct } from '../../src/utils/format';
 
-const bgByColor: Record<string, string> = {
-  green: colors.greenBg,
-  blue: colors.blueBg,
-  yellow: colors.yellowBg,
-  coral: colors.coralBg,
-};
+// Los fondos de las metas demo se resuelven en cada render para que sigan
+// el tema activo (no capturarlos en un objeto de módulo).
+function bgForColor(color: string): string {
+  if (color === 'green') return colors.greenBg;
+  if (color === 'blue') return colors.blueBg;
+  if (color === 'yellow') return colors.yellowBg;
+  if (color === 'coral') return colors.coralBg;
+  return colors.bgSoft;
+}
 
 function goalBg(kind: string): string {
   if (kind === 'ingresos') return colors.greenBg;
@@ -54,6 +58,7 @@ export default function Inicio() {
   const { userName, selectedDate, setSelectedDate, dailyGoals, weeklyMain, weeklyGoals, contacts: demoPeople } =
     useAppStore();
   const demoCleared = usePrefs((s) => s.demoCleared);
+  const theme = usePrefs((s) => s.theme);
   const offline = useNet((s) => s.offline);
   const sessionName = useSession((s) => s.userName);
   const token = useSession((s) => s.token);
@@ -116,11 +121,16 @@ export default function Inicio() {
 
   return (
     <SafeAreaView style={styles.safe} edges={['top']}>
+      <AndeanTopBand />
       <ScrollView contentContainerStyle={styles.body} showsVerticalScrollIndicator={false}>
         {/* Header */}
         <View style={styles.header}>
           <View style={styles.logo}>
-            <Text>🗓️</Text>
+            {theme === 'andean' ? (
+              <Chakana size={22} color={colors.bg} filled />
+            ) : (
+              <Text>🗓️</Text>
+            )}
           </View>
           <View style={{ flex: 1 }}>
             <Text style={styles.appName}>Planner Today</Text>
@@ -207,7 +217,7 @@ export default function Inicio() {
                   </View>
                 )
               : goals.slice(0, 2).map((g) => (
-                  <View key={g.id} style={[styles.goal, { backgroundColor: bgByColor[g.color] ?? colors.bgSoft }]}>
+                  <View key={g.id} style={[styles.goal, { backgroundColor: bgForColor(g.color) }]}>
                     <View style={styles.goalTop}>
                       <Text style={styles.goalIcon}>{g.icon}</Text>
                       <Text style={styles.goalPct}>{pct(g.current, g.target)}%</Text>
@@ -315,7 +325,7 @@ export default function Inicio() {
                 <View style={styles.face}>
                   <Text style={{ fontSize: 26 }}>👤</Text>
                   <View style={styles.badge}>
-                    <Text style={{ fontSize: 10 }}>{p.badge}</Text>
+                    <Text style={{ fontSize: 10, color: colors.text }}>{p.badge}</Text>
                   </View>
                 </View>
                 <Text style={styles.pName}>{p.name}</Text>
@@ -375,13 +385,13 @@ function createStyles(colors: ThemeColors) {
   weekIcon: { width: 40, height: 40, borderRadius: 12, backgroundColor: colors.bgSoft, alignItems: 'center', justifyContent: 'center' },
   weekTitle: { fontWeight: '800', color: colors.text },
   weekSub: { color: colors.muted, fontSize: 12 },
-  weekNum: { fontWeight: '900', fontSize: 18 },
+  weekNum: { fontWeight: '900', fontSize: 18, color: colors.text },
   grid3: { flexDirection: 'row', gap: 8, marginTop: 12 },
   mini: { flex: 1, backgroundColor: colors.bg, borderRadius: radius.md, padding: 10, alignItems: 'center', borderWidth: 1, borderColor: colors.line },
-  miniCheck: { fontSize: 12, backgroundColor: colors.greenBg, borderRadius: 99, paddingHorizontal: 6, paddingVertical: 2 },
+  miniCheck: { fontSize: 12, backgroundColor: colors.greenBg, borderRadius: 99, paddingHorizontal: 6, paddingVertical: 2, color: colors.text },
   miniName: { fontSize: 11, textAlign: 'center', marginTop: 6, color: colors.text },
-  miniNum: { fontWeight: '800', marginTop: 4 },
-  verMas: { color: colors.accent, fontWeight: '700' },
+  miniNum: { fontWeight: '800', marginTop: 4, color: colors.text },
+  verMas: { color: colors.link, fontWeight: '700' },
   peopleRow: { flexDirection: 'row', gap: 12 },
   person: { alignItems: 'center', width: 64 },
   face: { width: 60, height: 60, borderRadius: 30, backgroundColor: colors.bgSoft, alignItems: 'center', justifyContent: 'center' },

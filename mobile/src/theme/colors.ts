@@ -12,9 +12,11 @@ const light = {
   bgSoft: '#F5EFE3',
   card: '#FFFFFF',
   text: '#22271F',
-  muted: '#8A8F8B',
+  muted: '#656A65',
   line: '#EDE6D6',
   primary: '#22271F', // botón + y tab activo
+  onAccent: '#22271F', // texto sobre acentos claros (verde, coral, ocre…)
+  link: '#2F6B4F', // enlaces y acciones secundarias
   accent: '#E07A5F', // coral / terracota suave
   green: '#6FA287',
   greenBg: '#E6F1E8',
@@ -38,8 +40,10 @@ const dark = {
   text: '#F4E7CE', // crema
   muted: '#B9A58A',
   line: '#3D2E23',
-  primary: '#C4552A', // terracota
-  accent: '#E0A458', // dorado
+  primary: '#B54A24', // terracota profunda (5.3:1 con texto blanco)
+  onAccent: '#17110D', // los acentos son claros: texto oscuro encima
+  link: '#E0A458', // dorado
+  accent: '#E0A458',
   green: '#8FAE6A', // oliva claro
   greenBg: '#262A18',
   blue: '#5CC8D7', // turquesa
@@ -60,15 +64,17 @@ const andean = {
   bgSoft: '#E0C9A4', // lana
   card: '#FFFAEE',
   text: '#3D2415', // marrón oscuro
-  muted: '#85643F',
+  muted: '#6B4E2E',
   line: '#D8BD92',
   primary: '#A63E1E', // terracota del telar
+  onAccent: '#FFF8E7',
+  link: '#8F3518',
   accent: '#CE5A2C',
   green: '#55702F', // oliva
   greenBg: '#E3E9C9',
-  blue: '#1C8394', // turquesa
+  blue: '#1C7A88', // turquesa
   blueBg: '#CDE9EC',
-  yellow: '#C08A12', // ocre / oro
+  yellow: '#8F6410', // ocre / oro profundo (legible con crema)
   yellowBg: '#F7E3AE',
   coral: '#B03A22', // rojo cochinilla
   coralBg: '#F5D5C6',

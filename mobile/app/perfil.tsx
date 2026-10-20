@@ -2,6 +2,7 @@ import { useFocusEffect, useRouter } from 'expo-router';
 import React, { useCallback, useEffect, useState } from 'react';
 import { Alert, Pressable, ScrollView, StyleSheet, Switch, Text, TextInput, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { AndeanTopBand, Chakana } from '../src/components/AndeanMotifs';
 import { Card } from '../src/components/Card';
 import { API_BASE, errorMessage, flushPending } from '../src/services/api';
 import { changePassword, deleteAccount, updateMe } from '../src/services/auth';
@@ -206,12 +207,13 @@ export default function Perfil() {
 
   return (
     <SafeAreaView style={s.safe}>
+      <AndeanTopBand />
       <ScrollView contentContainerStyle={s.body}>
         <Text style={s.title}>Perfil</Text>
         <Text style={s.sub}>Configura tu cuenta y preferencias</Text>
         <Card>
           <Text style={s.label}>Nombre</Text>
-          <TextInput value={name} onChangeText={setName} style={s.input} placeholder="Tu nombre" />
+          <TextInput placeholderTextColor={colors.muted} value={name} onChangeText={setName} style={s.input} placeholder="Tu nombre" />
           <Text style={s.label}>Moneda de la cuenta</Text>
           <View style={s.row}>
             {PRESETS.map((m) => (
@@ -237,7 +239,7 @@ export default function Perfil() {
             <View style={s.curRow}>
               <View style={{ flex: 1 }}>
                 <Text style={s.label}>Código</Text>
-                <TextInput
+                <TextInput placeholderTextColor={colors.muted}
                   value={currency}
                   onChangeText={(v) => setCurrency(v.toUpperCase())}
                   style={s.input}
@@ -249,7 +251,7 @@ export default function Perfil() {
               </View>
               <View style={{ flex: 1 }}>
                 <Text style={s.label}>Símbolo</Text>
-                <TextInput value={symbol} onChangeText={setSymbol} style={s.input} placeholder="$" maxLength={6} />
+                <TextInput placeholderTextColor={colors.muted} value={symbol} onChangeText={setSymbol} style={s.input} placeholder="$" maxLength={6} />
               </View>
             </View>
           ) : null}
@@ -278,6 +280,13 @@ export default function Perfil() {
                 onPress={() => pickTheme(t.v)}
                 style={[s.chip, prefs.theme === t.v && s.chipOn]}
               >
+                {t.v === 'andean' ? (
+                  <Chakana
+                    size={12}
+                    color={prefs.theme === t.v ? colors.white : colors.primary}
+                    style={s.chipMark}
+                  />
+                ) : null}
                 <Text style={prefs.theme === t.v ? s.chipTxtOn : s.chipTxt}>{t.label}</Text>
               </Pressable>
             ))}
@@ -434,7 +443,7 @@ export default function Perfil() {
         <Card>
           <Text style={s.title2}>Seguridad</Text>
           <Text style={s.label}>Contraseña actual</Text>
-          <TextInput
+          <TextInput placeholderTextColor={colors.muted}
             value={curPass}
             onChangeText={setCurPass}
             style={s.input}
@@ -442,7 +451,7 @@ export default function Perfil() {
             placeholder="Tu contraseña"
           />
           <Text style={s.label}>Nueva contraseña (mínimo 8 caracteres)</Text>
-          <TextInput
+          <TextInput placeholderTextColor={colors.muted}
             value={newPass}
             onChangeText={setNewPass}
             style={s.input}
@@ -465,7 +474,7 @@ export default function Perfil() {
             contactos). No se puede deshacer.
           </Text>
           <Text style={s.label}>Escribe ELIMINAR para confirmar</Text>
-          <TextInput
+          <TextInput placeholderTextColor={colors.muted}
             value={confirmText}
             onChangeText={setConfirmText}
             style={s.input}
@@ -506,10 +515,11 @@ function createStyles(colors: ThemeColors) {
   stepTxt: { fontWeight: '800', color: colors.text },
   sub: { color: colors.muted, marginBottom: 6 },
   label: { fontSize: 13, color: colors.text, marginTop: 10, marginBottom: 6, fontWeight: '600' },
-  input: { borderWidth: 1, borderColor: colors.line, borderRadius: 12, padding: 12, backgroundColor: colors.card },
+  input: { borderWidth: 1, borderColor: colors.line, borderRadius: 12, padding: 12, backgroundColor: colors.card, color: colors.text },
   row: { flexDirection: 'row', gap: 8, flexWrap: 'wrap' },
   curRow: { flexDirection: 'row', gap: 10 },
-  chip: { borderWidth: 1, borderColor: colors.line, borderRadius: 99, paddingHorizontal: 16, paddingVertical: 8 },
+  chip: { flexDirection: 'row', alignItems: 'center', borderWidth: 1, borderColor: colors.line, borderRadius: 99, paddingHorizontal: 16, paddingVertical: 8 },
+  chipMark: { marginRight: 5 },
   chipOn: { backgroundColor: colors.primary, borderColor: colors.primary },
   chipTxt: { color: colors.text, fontWeight: '700' },
   chipTxtOn: { color: '#fff', fontWeight: '700' },

@@ -46,7 +46,7 @@ function createStyles(colors: ThemeColors) {
     flexDirection: 'row',
     alignItems: 'center',
   },
-  icon: { fontSize: 18, marginRight: 8 },
+  icon: { fontSize: 18, marginRight: 8, color: colors.text },
   label: { fontSize: 15, fontWeight: '700', color: colors.text },
   arrow: { paddingHorizontal: 12, paddingVertical: 4 },
   arrowTxt: { fontSize: 22, color: colors.muted, fontWeight: '700' },

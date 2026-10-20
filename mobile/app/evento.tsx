@@ -212,7 +212,7 @@ export default function EventoForm() {
         ) : null}
 
         <Text style={s.label}>Nombre</Text>
-        <TextInput style={s.input} value={title} onChangeText={setTitle} placeholder="Ej. Reunión con cliente" />
+        <TextInput placeholderTextColor={colors.muted} style={s.input} value={title} onChangeText={setTitle} placeholder="Ej. Reunión con cliente" />
 
         <Text style={s.label}>Tipo</Text>
         <View style={s.wrap}>
@@ -268,10 +268,10 @@ export default function EventoForm() {
         <DurationChips start={start} onPick={setEnd} />
 
         <Text style={s.label}>Ubicación</Text>
-        <TextInput style={s.input} value={location} onChangeText={setLocation} placeholder="Opcional" />
+        <TextInput placeholderTextColor={colors.muted} style={s.input} value={location} onChangeText={setLocation} placeholder="Opcional" />
 
         <Text style={s.label}>Reporte / notas</Text>
-        <TextInput style={[s.input, s.area]} value={description} onChangeText={setDescription} multiline placeholder="Escribe un reporte para este evento…" />
+        <TextInput placeholderTextColor={colors.muted} style={[s.input, s.area]} value={description} onChangeText={setDescription} multiline placeholder="Escribe un reporte para este evento…" />
 
         <Text style={s.label}>Personas (adjuntar contactos)</Text>
         {contacts.length === 0 ? (
@@ -367,8 +367,8 @@ function createStyles(colors: ThemeColors) {
   body: { padding: 18 },
   title: { fontSize: 22, fontWeight: '900', color: colors.text, marginBottom: 8 },
   label: { fontSize: 13, fontWeight: '700', color: colors.text, marginTop: 12, marginBottom: 6 },
-  input: { backgroundColor: colors.card, borderRadius: 12, borderWidth: 1, borderColor: colors.line, padding: 13 },
-  area: { minHeight: 80, textAlignVertical: 'top' },
+  input: { backgroundColor: colors.card, borderRadius: 12, borderWidth: 1, borderColor: colors.line, padding: 13, color: colors.text },
+  area: { minHeight: 80, textAlignVertical: 'top', color: colors.text },
   row: { flexDirection: 'row', gap: 8, alignItems: 'center' },
   top: { flexDirection: 'row', alignItems: 'center', marginBottom: 4 },
   x: { width: 40, paddingVertical: 6 },

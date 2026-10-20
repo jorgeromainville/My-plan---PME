@@ -59,7 +59,7 @@ export default function Ingresos() {
         {items.map((i) => (
           <Pressable key={i.id} onPress={() => router.push(`/ingreso?id=${i.id}`)} style={s.row}>
             <View style={s.badge}>
-              <Text>$</Text>
+              <Text style={{ color: colors.text, fontWeight: '800' }}>$</Text>
             </View>
             <View style={{ flex: 1 }}>
               <Text style={s.name}>{i.title}</Text>
@@ -86,7 +86,7 @@ function createStyles(colors: ThemeColors) {
   backTxt: { fontSize: 28, color: colors.text },
   title: { flex: 1, fontSize: 22, fontWeight: '900', color: colors.text },
   add: { width: 44, height: 44, borderRadius: 22, backgroundColor: colors.green, alignItems: 'center', justifyContent: 'center' },
-  addTxt: { color: '#fff', fontSize: 26 },
+  addTxt: { color: colors.onAccent, fontSize: 26 },
   body: { padding: 16, paddingTop: 0 },
   sum: { alignItems: 'center', backgroundColor: colors.greenBg },
   sumLabel: { color: colors.muted, fontWeight: '700' },

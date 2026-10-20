@@ -79,7 +79,7 @@ export default function Ajustes() {
               canDelete={kinds.length > 1}
             />
           ))}
-          <TextInput style={s.input} value={newKind} onChangeText={setNewKind} placeholder="Nuevo tipo (ej. Estudio)" />
+          <TextInput placeholderTextColor={colors.muted} style={s.input} value={newKind} onChangeText={setNewKind} placeholder="Nuevo tipo (ej. Estudio)" />
           <View style={s.row}>
             {PALETTE.map((c) => (
               <Pressable key={c} onPress={() => setNewColor(c)} style={[s.dot, { backgroundColor: c }, newColor === c && s.dotOn]} />
@@ -107,7 +107,7 @@ export default function Ajustes() {
               </Pressable>
             </View>
           ))}
-          <TextInput style={s.input} value={newT.title} onChangeText={(v) => setNewT({ ...newT, title: v })} placeholder="Nueva plantilla (ej. Cena)" />
+          <TextInput placeholderTextColor={colors.muted} style={s.input} value={newT.title} onChangeText={(v) => setNewT({ ...newT, title: v })} placeholder="Nueva plantilla (ej. Cena)" />
           <View style={s.row}>
             {ICONS.map((ic) => (
               <Pressable key={ic} onPress={() => setNewT({ ...newT, icon: ic })} style={[s.ichip, newT.icon === ic && s.ichipOn]}>
@@ -158,7 +158,7 @@ function KindRow({ kind, onRename, onColor, onDelete, canDelete }: {
   return (
     <View style={s.kRow}>
       <View style={[s.dot, { backgroundColor: kind.color }]} />
-      <TextInput
+      <TextInput placeholderTextColor={colors.muted}
         style={[s.input, { flex: 1, marginBottom: 0 }]}
         value={name}
         onChangeText={setName}
@@ -191,7 +191,7 @@ function createStyles(colors: ThemeColors) {
   title: { flex: 1, textAlign: 'center', fontSize: 18, fontWeight: '800', color: colors.text },
   h: { fontSize: 17, fontWeight: '800', color: colors.text },
   hint: { fontSize: 12, color: colors.muted, marginBottom: 10 },
-  input: { backgroundColor: colors.card, borderRadius: 12, borderWidth: 1, borderColor: colors.line, padding: 12, marginBottom: 10 },
+  input: { backgroundColor: colors.card, borderRadius: 12, borderWidth: 1, borderColor: colors.line, padding: 12, marginBottom: 10, color: colors.text },
   row: { flexDirection: 'row', gap: 8, alignItems: 'center', flexWrap: 'wrap', marginBottom: 10 },
   row2: { flexDirection: 'row', gap: 12 },
   lab: { fontSize: 12, fontWeight: '700', color: colors.text, marginBottom: 6, marginTop: 6 },
@@ -204,7 +204,7 @@ function createStyles(colors: ThemeColors) {
   kColors: { flexDirection: 'row', gap: 6 },
   del: { fontSize: 16, color: colors.danger, padding: 8 },
   tRow: { flexDirection: 'row', alignItems: 'center', gap: 10, paddingVertical: 8, borderBottomWidth: 1, borderBottomColor: colors.line },
-  tIcon: { fontSize: 22 },
+  tIcon: { fontSize: 22, color: colors.text },
   tTitle: { fontWeight: '800', color: colors.text },
   tSub: { fontSize: 12, color: colors.muted },
   ichip: { borderWidth: 1, borderColor: colors.line, borderRadius: 12, padding: 8, backgroundColor: colors.card },

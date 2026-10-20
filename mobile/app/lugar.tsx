@@ -140,7 +140,7 @@ export default function LugarForm() {
         </View>
 
         <Text style={s.label}>Nombre *</Text>
-        <TextInput style={s.input} value={name} onChangeText={setName} placeholder="Ej. Oficina, Casa de Juan" />
+        <TextInput placeholderTextColor={colors.muted} style={s.input} value={name} onChangeText={setName} placeholder="Ej. Oficina, Casa de Juan" />
 
         <Text style={s.label}>Categoría</Text>
         <View style={s.wrap}>
@@ -152,7 +152,7 @@ export default function LugarForm() {
           ))}
         </View>
         <View style={s.newCat}>
-          <TextInput style={[s.input, { flex: 1, marginBottom: 0 }]} value={newCat} onChangeText={setNewCat} placeholder="Nueva categoría" />
+          <TextInput placeholderTextColor={colors.muted} style={[s.input, { flex: 1, marginBottom: 0 }]} value={newCat} onChangeText={setNewCat} placeholder="Nueva categoría" />
           <Pressable
             style={s.plus}
             onPress={() => {
@@ -192,10 +192,10 @@ export default function LugarForm() {
         </View>
 
         <Text style={s.label}>Dirección</Text>
-        <TextInput style={s.input} value={address} onChangeText={setAddress} placeholder="Opcional" />
+        <TextInput placeholderTextColor={colors.muted} style={s.input} value={address} onChangeText={setAddress} placeholder="Opcional" />
 
         <Text style={s.label}>Nota</Text>
-        <TextInput style={s.input} value={note} onChangeText={setNote} placeholder="Opcional" />
+        <TextInput placeholderTextColor={colors.muted} style={s.input} value={note} onChangeText={setNote} placeholder="Opcional" />
 
         {error ? <Text style={s.error}>{error}</Text> : null}
         <Pressable style={s.btn} onPress={onSave}>
@@ -234,7 +234,7 @@ function createStyles(colors: ThemeColors) {
   xTxt: { fontSize: 28, color: colors.text },
   title: { flex: 1, textAlign: 'center', fontSize: 18, fontWeight: '800', color: colors.text },
   label: { fontSize: 13, fontWeight: '700', color: colors.text, marginTop: 12, marginBottom: 6 },
-  input: { backgroundColor: colors.card, borderRadius: 12, borderWidth: 1, borderColor: colors.line, padding: 13, marginBottom: 4 },
+  input: { backgroundColor: colors.card, borderRadius: 12, borderWidth: 1, borderColor: colors.line, padding: 13, marginBottom: 4, color: colors.text },
   row: { flexDirection: 'row', gap: 8, alignItems: 'center' },
   wrap: { flexDirection: 'row', gap: 8, flexWrap: 'wrap' },
   chip: { flexDirection: 'row', alignItems: 'center', borderWidth: 1, borderColor: colors.line, borderRadius: 99, paddingHorizontal: 14, paddingVertical: 8, backgroundColor: colors.card },
@@ -251,7 +251,7 @@ function createStyles(colors: ThemeColors) {
   miniTxt: { color: '#fff', fontWeight: '800' },
   error: { color: colors.danger, marginTop: 12 },
   btn: { marginTop: 18, backgroundColor: colors.purple, borderRadius: 14, padding: 15, alignItems: 'center' },
-  btnTxt: { color: '#fff', fontWeight: '800' },
+  btnTxt: { color: colors.onAccent, fontWeight: '800' },
   del: { marginTop: 10, padding: 14, alignItems: 'center' },
   delTxt: { color: colors.danger, fontWeight: '700' },
   confirm: { backgroundColor: colors.card, borderRadius: 14, borderWidth: 1, borderColor: colors.line, padding: 14, marginTop: 10 },

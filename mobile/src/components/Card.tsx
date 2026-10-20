@@ -1,12 +1,20 @@
 import React from 'react';
 import { StyleSheet, View, ViewProps } from 'react-native';
+import { usePrefs } from '../store/usePrefs';
 import { colors, radius, useThemedStyles, type ThemeColors } from '../theme/colors';
+import { AndeanCardPattern } from './AndeanMotifs';
 
 // Tarjeta blanca reutilizable: fondo, bordes redondeados, sombra suave.
 export function Card({ children, style, ...rest }: ViewProps) {
   const styles = useThemedStyles(createStyles);
+  const theme = usePrefs((s) => s.theme);
   return (
     <View style={[styles.card, style]} {...rest}>
+      {theme === 'andean' ? (
+        <View pointerEvents="none" style={styles.pattern}>
+          <AndeanCardPattern />
+        </View>
+      ) : null}
       {children}
     </View>
   );
@@ -25,6 +33,15 @@ function createStyles(colors: ThemeColors) {
     elevation: 2,
     borderWidth: 1,
     borderColor: colors.line,
+  },
+  pattern: {
+    position: 'absolute',
+    top: 0,
+    right: 0,
+    bottom: 0,
+    left: 0,
+    borderRadius: radius.lg,
+    overflow: 'hidden',
   },
 });
 }

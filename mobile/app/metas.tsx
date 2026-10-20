@@ -132,7 +132,7 @@ function createStyles(colors: ThemeColors) {
   backTxt: { fontSize: 28, color: colors.text },
   title: { flex: 1, fontSize: 22, fontWeight: '900', color: colors.text },
   add: { width: 44, height: 44, borderRadius: 22, backgroundColor: colors.yellow, alignItems: 'center', justifyContent: 'center' },
-  addTxt: { color: '#fff', fontSize: 26 },
+  addTxt: { color: colors.onAccent, fontSize: 26 },
   body: { padding: 16, paddingTop: 0 },
   seg: { flexDirection: 'row', backgroundColor: colors.bgSoft, borderRadius: 99, padding: 4, marginBottom: 12 },
   segOpt: { flex: 1, paddingVertical: 8, alignItems: 'center', borderRadius: 99 },

@@ -29,12 +29,12 @@ export interface HourLine {
   label: string;
 }
 
-const PALETTE = [colors.greenBg, colors.blueBg, colors.yellowBg, colors.coralBg, colors.purpleBg];
-
 function colorFor(key: string): string {
+  // Se resuelve en cada llamada para que los bloques sigan el tema activo.
+  const palette = [colors.greenBg, colors.blueBg, colors.yellowBg, colors.coralBg, colors.purpleBg];
   let h = 0;
   for (let i = 0; i < key.length; i++) h = (h * 31 + key.charCodeAt(i)) >>> 0;
-  return PALETTE[h % PALETTE.length];
+  return palette[h % palette.length];
 }
 
 export function toMin(hhmm: string): number {

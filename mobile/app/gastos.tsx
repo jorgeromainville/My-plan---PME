@@ -81,7 +81,7 @@ function createStyles(colors: ThemeColors) {
   backTxt: { fontSize: 28, color: colors.text },
   title: { flex: 1, fontSize: 22, fontWeight: '900', color: colors.text },
   add: { width: 44, height: 44, borderRadius: 22, backgroundColor: colors.coral, alignItems: 'center', justifyContent: 'center' },
-  addTxt: { color: '#fff', fontSize: 26 },
+  addTxt: { color: colors.onAccent, fontSize: 26 },
   body: { padding: 16, paddingTop: 0 },
   sum: { alignItems: 'center', backgroundColor: colors.coralBg },
   sumLabel: { color: colors.muted, fontWeight: '700' },

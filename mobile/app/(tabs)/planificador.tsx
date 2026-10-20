@@ -3,6 +3,7 @@ import { useFocusEffect } from 'expo-router';
 import React, { useCallback, useMemo, useRef, useState } from 'react';
 import { PanResponder, Pressable, ScrollView, StyleSheet, Text, View, useWindowDimensions } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { AndeanTopBand } from '../../src/components/AndeanMotifs';
 import { Card } from '../../src/components/Card';
 import { HOUR_H, layoutDay, toHHMM, toMin, type PlacedBlock } from '../../src/components/DayAgenda';
 import { DraggableBlock, type DropResult } from '../../src/components/DraggableBlock';
@@ -326,6 +327,7 @@ export default function Planificador() {
 
   return (
     <SafeAreaView style={s.safe} edges={['top']}>
+      <AndeanTopBand />
       <View style={s.header}>
         <View style={{ flex: 1 }}>
           <Text style={s.title}>Planificador</Text>
@@ -571,7 +573,7 @@ export default function Planificador() {
                 <Text style={s.dBtnTxt}>Editar</Text>
               </Pressable>
               <Pressable style={[s.dBtn, s.dCopy]} onPress={duplicateDetail}>
-                <Text style={s.dBtnTxt}>{busy ? '…' : 'Duplicar'}</Text>
+                <Text style={[s.dBtnTxt, s.dCopyTxt]}>{busy ? '…' : 'Duplicar'}</Text>
               </Pressable>
             </View>
             {!confirmDel ? (
@@ -934,9 +936,9 @@ function createStyles(colors: ThemeColors) {
   segTxtOn: { color: colors.text },
   sheetOpt: { flexDirection: 'row', alignItems: 'center', gap: 12, backgroundColor: colors.bg, borderRadius: 16, padding: 14 },
   sheetOn: { borderWidth: 2, borderColor: colors.primary },
-  sheetIcon: { fontSize: 24 },
+  sheetIcon: { fontSize: 24, color: colors.text },
   sheetTitle: { fontWeight: '800', color: colors.text, fontSize: 16 },
-  sheetTitleOn: { color: colors.primary },
+  sheetTitleOn: { color: colors.link },
   sheetSub: { color: colors.muted, fontSize: 12 },
   selOn: { backgroundColor: colors.primary, borderColor: colors.primary },
   selOnTxt: { color: '#fff' },
@@ -949,10 +951,11 @@ function createStyles(colors: ThemeColors) {
   bulkTxt: { flex: 1, fontWeight: '800', color: colors.text },
   bulkBtn: { backgroundColor: colors.green, borderRadius: 99, paddingHorizontal: 14, paddingVertical: 8 },
   bulkDel: { backgroundColor: colors.danger },
-  bulkBtnTxt: { color: '#fff', fontWeight: '800', fontSize: 12 },
+  bulkBtnTxt: { color: colors.onAccent, fontWeight: '800', fontSize: 12 },
   dRow: { flexDirection: 'row', gap: 10, marginTop: 4 },
   dBtn: { flex: 1, backgroundColor: colors.primary, borderRadius: 14, padding: 14, alignItems: 'center' },
   dCopy: { backgroundColor: colors.blue },
+  dCopyTxt: { color: colors.onAccent },
   dBtnTxt: { color: '#fff', fontWeight: '800' },
   dDel: { padding: 12, alignItems: 'center' },
   dDelTxt: { color: colors.danger, fontWeight: '700' },

@@ -2,6 +2,7 @@ import { useFocusEffect } from 'expo-router';
 import React, { useCallback, useState } from 'react';
 import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { AndeanTopBand } from '../../src/components/AndeanMotifs';
 import { Card } from '../../src/components/Card';
 import { errorMessage } from '../../src/services/api';
 import { expensesByCategory, statsOverview, type ExpenseSlice, type Overview, type StatPeriod } from '../../src/services/stats';
@@ -45,6 +46,7 @@ export default function Estadisticas() {
 
   return (
     <SafeAreaView style={s.safe} edges={['top']}>
+      <AndeanTopBand />
       <ScrollView contentContainerStyle={s.body} showsVerticalScrollIndicator={false}>
         <Text style={s.title}>Estadísticas</Text>
 
@@ -171,7 +173,7 @@ function createStyles(colors: ThemeColors) {
   segOpt: { flex: 1, paddingVertical: 8, alignItems: 'center', borderRadius: 99 },
   segOn: { backgroundColor: colors.coral, elevation: 2 },
   segTxt: { fontWeight: '700', color: colors.muted, fontSize: 13 },
-  segTxtOn: { color: '#fff' },
+  segTxtOn: { color: colors.onAccent },
   error: { color: colors.danger, marginBottom: 8 },
   h: { fontSize: 16, fontWeight: '800', color: colors.text, marginBottom: 10 },
   grid: { flexDirection: 'row', flexWrap: 'wrap', gap: 8 },

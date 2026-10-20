@@ -210,7 +210,7 @@ export default function MetaForm() {
         </View>
 
         <Text style={s.label}>Nombre *</Text>
-        <TextInput style={s.input} value={title} onChangeText={setTitle} placeholder="Ej. Contactar 2 personas" />
+        <TextInput placeholderTextColor={colors.muted} style={s.input} value={title} onChangeText={setTitle} placeholder="Ej. Contactar 2 personas" />
 
         <Text style={s.label}>Tipo</Text>
         <View style={s.wrap}>
@@ -232,7 +232,7 @@ export default function MetaForm() {
         </View>
 
         <Text style={s.label}>Objetivo * ({unit})</Text>
-        <TextInput style={s.input} value={target} onChangeText={setTarget} keyboardType="decimal-pad" placeholder="Ej. 5" />
+        <TextInput placeholderTextColor={colors.muted} style={s.input} value={target} onChangeText={setTarget} keyboardType="decimal-pad" placeholder="Ej. 5" />
 
         {(kind === 'horas' || kind === 'veces' || kind === 'tareas') && !id ? (
           <>
@@ -300,7 +300,7 @@ export default function MetaForm() {
         {kind === 'custom' ? (
           <>
             <Text style={s.label}>Avance manual</Text>
-            <TextInput style={s.input} value={manual} onChangeText={setManual} keyboardType="decimal-pad" />
+            <TextInput placeholderTextColor={colors.muted} style={s.input} value={manual} onChangeText={setManual} keyboardType="decimal-pad" />
           </>
         ) : null}
 
@@ -308,8 +308,8 @@ export default function MetaForm() {
           <>
             <Text style={s.label}>+ Registrar avance</Text>
             <View style={s.row2}>
-              <TextInput style={[s.input, { flex: 1 }]} value={logAmount} onChangeText={setLogAmount} keyboardType="decimal-pad" placeholder="Ej. 1.5" />
-              <TextInput style={[s.input, { flex: 2 }]} value={logNote} onChangeText={setLogNote} placeholder="Nota (ej. corrí)" />
+              <TextInput placeholderTextColor={colors.muted} style={[s.input, { flex: 1 }]} value={logAmount} onChangeText={setLogAmount} keyboardType="decimal-pad" placeholder="Ej. 1.5" />
+              <TextInput placeholderTextColor={colors.muted} style={[s.input, { flex: 2 }]} value={logNote} onChangeText={setLogNote} placeholder="Nota (ej. corrí)" />
               <Pressable
                 onPress={async () => {
                   const a = num(logAmount);
@@ -365,7 +365,7 @@ export default function MetaForm() {
                     style={[s.box, (e.done || past) && s.boxOn]}
                     accessibilityLabel="Marcar realizado"
                   >
-                    {(e.done || past) ? <Text>✓</Text> : null}
+                    {(e.done || past) ? <Text style={{ color: colors.text }}>✓</Text> : null}
                   </Pressable>
                   <Text style={s.logTxt}>
                     {e.title} · {new Date(e.date).toLocaleDateString()} {e.startTime}–{e.endTime}
@@ -440,7 +440,7 @@ function createStyles(colors: ThemeColors) {
   label: { fontSize: 13, fontWeight: '700', color: colors.text, marginTop: 12, marginBottom: 6 },
   hint: { fontSize: 12, color: colors.muted, marginTop: 4 },
   lab: { fontSize: 12, fontWeight: '700', color: colors.text, marginBottom: 6, marginTop: 6 },
-  input: { backgroundColor: colors.card, borderRadius: 12, borderWidth: 1, borderColor: colors.line, padding: 13 },
+  input: { backgroundColor: colors.card, borderRadius: 12, borderWidth: 1, borderColor: colors.line, padding: 13, color: colors.text },
   wrap: { flexDirection: 'row', gap: 8, flexWrap: 'wrap' },
   row: { flexDirection: 'row', gap: 8, alignItems: 'center' },
   row2: { flexDirection: 'row', gap: 8, alignItems: 'center' },
@@ -457,7 +457,7 @@ function createStyles(colors: ThemeColors) {
   chipTxtOn: { color: '#fff', fontWeight: '700', fontSize: 12 },
   error: { color: colors.danger, marginTop: 12 },
   btn: { marginTop: 18, backgroundColor: colors.yellow, borderRadius: 14, padding: 15, alignItems: 'center' },
-  btnTxt: { color: '#fff', fontWeight: '800' },
+  btnTxt: { color: colors.onAccent, fontWeight: '800' },
   del: { marginTop: 10, padding: 14, alignItems: 'center' },
   delTxt: { color: colors.danger, fontWeight: '700' },
   confirm: { backgroundColor: colors.card, borderRadius: 14, borderWidth: 1, borderColor: colors.line, padding: 14, marginTop: 10 },

@@ -50,6 +50,6 @@ function createStyles(colors: ThemeColors) {
     elevation: 6,
   },
   msg: { color: '#fff', flex: 1, fontWeight: '600' },
-  undo: { color: '#9BD3F5', fontWeight: '800' },
+  undo: { color: '#fff', textDecorationLine: 'underline', fontWeight: '800' },
 });
 }

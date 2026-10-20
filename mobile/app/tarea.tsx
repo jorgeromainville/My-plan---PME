@@ -131,7 +131,7 @@ export default function TareaForm() {
         ) : null}
 
         <Text style={s.label}>Nombre</Text>
-        <TextInput style={s.input} value={title} onChangeText={setTitle} placeholder="Ej. Llamar a cliente" />
+        <TextInput placeholderTextColor={colors.muted} style={s.input} value={title} onChangeText={setTitle} placeholder="Ej. Llamar a cliente" />
 
         <Text style={s.label}>Fecha</Text>
         <View style={s.row}>
@@ -164,10 +164,10 @@ export default function TareaForm() {
         </View>
 
         <Text style={s.label}>Categoría</Text>
-        <TextInput style={s.input} value={category} onChangeText={setCategory} placeholder="General" />
+        <TextInput placeholderTextColor={colors.muted} style={s.input} value={category} onChangeText={setCategory} placeholder="General" />
 
         <Text style={s.label}>Descripción</Text>
-        <TextInput style={[s.input, s.area]} value={description} onChangeText={setDescription} multiline />
+        <TextInput placeholderTextColor={colors.muted} style={[s.input, s.area]} value={description} onChangeText={setDescription} multiline />
 
         {id ? (
           <>
@@ -211,8 +211,8 @@ function createStyles(colors: ThemeColors) {
   dropTxt: { color: colors.danger, fontWeight: '800' },
   title: { fontSize: 22, fontWeight: '900', color: colors.text, marginBottom: 8 },
   label: { fontSize: 13, fontWeight: '700', color: colors.text, marginTop: 12, marginBottom: 6 },
-  input: { backgroundColor: colors.card, borderRadius: 12, borderWidth: 1, borderColor: colors.line, padding: 13 },
-  area: { minHeight: 80, textAlignVertical: 'top' },
+  input: { backgroundColor: colors.card, borderRadius: 12, borderWidth: 1, borderColor: colors.line, padding: 13, color: colors.text },
+  area: { minHeight: 80, textAlignVertical: 'top', color: colors.text },
   row: { flexDirection: 'row', gap: 8, alignItems: 'center' },
   nav: { paddingHorizontal: 16, paddingVertical: 8 },
   navTxt: { fontSize: 24, color: colors.muted },

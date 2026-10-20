@@ -2,22 +2,24 @@ import { useRouter } from 'expo-router';
 import React from 'react';
 import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { AndeanTopBand } from '../src/components/AndeanMotifs';
 import { colors, radius, useThemedStyles, type ThemeColors } from '../src/theme/colors';
-
-const OPTIONS = [
-  { key: 'persona', icon: '👤', bg: colors.blueBg, title: 'Persona', sub: 'Añadir contacto' },
-  { key: 'venta', icon: '$', bg: '#CDEAC0', title: 'Ingreso', sub: 'Registrar ingreso' },
-  { key: 'gasto', icon: '🧾', bg: colors.coralBg, title: 'Gasto', sub: 'Registrar gasto' },
-  { key: 'lugar', icon: '📍', bg: colors.purpleBg, title: 'Lugar', sub: 'Añadir lugar' },
-  { key: 'tarea', icon: '✓', bg: '#CDEAC0', title: 'Tarea', sub: 'Nueva tarea' },
-  { key: 'evento', icon: '📅', bg: colors.purpleBg, title: 'Evento', sub: 'Nuevo evento' },
-  { key: 'meta', icon: '🎯', bg: colors.yellowBg, title: 'Meta', sub: 'Nueva meta' },
-  { key: 'escaner', icon: '📷', bg: colors.blueBg, title: 'Escanear', sub: 'Horario a eventos' },
-];
 
 export default function NuevoRegistro() {
   const s = useThemedStyles(createStyles);
   const router = useRouter();
+
+  // Se define dentro del render para que los fondos sigan el tema activo.
+  const options = [
+    { key: 'persona', icon: '👤', bg: colors.blueBg, title: 'Persona', sub: 'Añadir contacto' },
+    { key: 'venta', icon: '$', bg: colors.greenBg, title: 'Ingreso', sub: 'Registrar ingreso' },
+    { key: 'gasto', icon: '🧾', bg: colors.coralBg, title: 'Gasto', sub: 'Registrar gasto' },
+    { key: 'lugar', icon: '📍', bg: colors.purpleBg, title: 'Lugar', sub: 'Añadir lugar' },
+    { key: 'tarea', icon: '✓', bg: colors.greenBg, title: 'Tarea', sub: 'Nueva tarea' },
+    { key: 'evento', icon: '📅', bg: colors.purpleBg, title: 'Evento', sub: 'Nuevo evento' },
+    { key: 'meta', icon: '🎯', bg: colors.yellowBg, title: 'Meta', sub: 'Nueva meta' },
+    { key: 'escaner', icon: '📷', bg: colors.blueBg, title: 'Escanear', sub: 'Horario a eventos' },
+  ];
 
   function go(key: string) {
     if (key === 'persona') return router.push('/persona');
@@ -31,6 +33,7 @@ export default function NuevoRegistro() {
   }
   return (
     <SafeAreaView style={s.safe}>
+      <AndeanTopBand />
       <View style={s.header}>
         <Pressable onPress={() => router.back()} accessibilityLabel="Volver">
           <Text style={s.back}>←</Text>
@@ -49,7 +52,7 @@ export default function NuevoRegistro() {
         </View>
         <Text style={s.sub}>Elige una opción para continuar</Text>
         <View style={s.grid}>
-          {OPTIONS.map((o) => (
+          {options.map((o) => (
             <Pressable key={o.key} style={s.card} accessibilityLabel={o.title} onPress={() => go(o.key)}>
               <View style={[s.circle, { backgroundColor: o.bg }]}>
                 <Text style={s.icon}>{o.icon}</Text>
@@ -68,7 +71,7 @@ function createStyles(colors: ThemeColors) {
   return StyleSheet.create({
   safe: { flex: 1, backgroundColor: colors.bg },
   header: { flexDirection: 'row', alignItems: 'center', padding: 16, gap: 12, backgroundColor: colors.card },
-  back: { fontSize: 22 },
+  back: { fontSize: 22, color: colors.text },
   title: { fontSize: 18, fontWeight: '800', flex: 1, color: colors.text },
   avatar: { width: 34, height: 34, borderRadius: 17, backgroundColor: '#0F5B6B', alignItems: 'center', justifyContent: 'center' },
   body: { padding: 16 },
@@ -79,7 +82,7 @@ function createStyles(colors: ThemeColors) {
   grid: { flexDirection: 'row', flexWrap: 'wrap', gap: 12 },
   card: { width: '48%', backgroundColor: colors.card, borderRadius: radius.lg, padding: 18, alignItems: 'center' },
   circle: { width: 64, height: 64, borderRadius: 32, alignItems: 'center', justifyContent: 'center', marginBottom: 10 },
-  icon: { fontSize: 26 },
+  icon: { fontSize: 26, color: colors.text },
   cardTitle: { fontSize: 17, fontWeight: '800', color: colors.text },
   cardSub: { fontSize: 12, color: colors.muted, marginTop: 2 },
 });

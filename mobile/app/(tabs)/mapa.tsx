@@ -207,7 +207,7 @@ export default function Mapa() {
               <Text style={s.addTxt}>+</Text>
             </Pressable>
           </View>
-          <TextInput style={s.search} value={q} onChangeText={setQ} placeholder="Buscar lugares o personas…" />
+          <TextInput placeholderTextColor={colors.muted} style={s.search} value={q} onChangeText={setQ} placeholder="Buscar lugares o personas…" />
           <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={s.filters}>
             {FILTERS.map((f) => (
               <Pressable key={f} onPress={() => setCat(f)} style={[s.chip, cat === f && s.chipOn]}>
@@ -328,12 +328,12 @@ function createStyles(colors: ThemeColors) {
   overlay: { position: 'absolute', top: 0, left: 0, right: 0, paddingTop: 16 },
   header: { flexDirection: 'row', alignItems: 'center', paddingHorizontal: 16, paddingBottom: 8, gap: 8 },
   title: {
-    flex: 1, fontSize: 24, fontWeight: '900', color: colors.text,
+    flex: 1, fontSize: 24, fontWeight: '900', color: '#22271F',
     textShadowColor: 'rgba(255,255,255,0.9)', textShadowOffset: { width: 0, height: 1 }, textShadowRadius: 6,
   },
   add: { width: 44, height: 44, borderRadius: 22, backgroundColor: colors.purple, alignItems: 'center', justifyContent: 'center', elevation: 3 },
-  addTxt: { color: '#fff', fontSize: 26 },
-  search: { backgroundColor: colors.card, borderRadius: 12, borderWidth: 1, borderColor: colors.line, padding: 12, marginHorizontal: 16, marginBottom: 8, elevation: 2 },
+  addTxt: { color: colors.onAccent, fontSize: 26 },
+  search: { backgroundColor: colors.card, borderRadius: 12, borderWidth: 1, borderColor: colors.line, padding: 12, marginHorizontal: 16, marginBottom: 8, elevation: 2, color: colors.text },
   filters: { paddingHorizontal: 16, gap: 8, height: 40 },
   chip: { borderWidth: 1, borderColor: colors.line, borderRadius: 99, paddingHorizontal: 14, paddingVertical: 7, backgroundColor: colors.card, marginRight: 8, justifyContent: 'center', elevation: 2 },
   chipOn: { backgroundColor: colors.primary, borderColor: colors.primary },
@@ -352,7 +352,7 @@ function createStyles(colors: ThemeColors) {
   x: { fontSize: 18, color: colors.muted, padding: 6 },
   cardRow: { flexDirection: 'row', gap: 8, marginTop: 12 },
   call: { flex: 1, backgroundColor: colors.green, borderRadius: 12, padding: 12, alignItems: 'center' },
-  callTxt: { color: '#fff', fontWeight: '800' },
+  callTxt: { color: colors.onAccent, fontWeight: '800' },
   visit: { flex: 1, borderWidth: 1, borderColor: colors.line, borderRadius: 12, padding: 12, alignItems: 'center', backgroundColor: colors.bg },
   visitTxt: { fontWeight: '800', color: colors.text },
 });

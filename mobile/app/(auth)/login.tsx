@@ -34,8 +34,8 @@ export default function Login() {
       <View style={s.body}>
         <Text style={s.title}>Planner Today</Text>
         <Text style={s.sub}>Iniciar sesión</Text>
-        <TextInput style={s.input} placeholder="Correo" value={email} onChangeText={setEmail} autoCapitalize="none" keyboardType="email-address" />
-        <TextInput style={s.input} placeholder="Contraseña" value={pass} onChangeText={setPass} secureTextEntry />
+        <TextInput placeholderTextColor={colors.muted} style={s.input} placeholder="Correo" value={email} onChangeText={setEmail} autoCapitalize="none" keyboardType="email-address" />
+        <TextInput placeholderTextColor={colors.muted} style={s.input} placeholder="Contraseña" value={pass} onChangeText={setPass} secureTextEntry />
         {error ? <Text style={s.error}>{error}</Text> : null}
         <Pressable style={[s.btn, busy && s.btnOff]} onPress={onLogin} disabled={busy}>
           <Text style={s.btnTxt}>{busy ? 'Entrando…' : 'Entrar'}</Text>
@@ -53,7 +53,7 @@ function createStyles(colors: ThemeColors) {
   body: { flex: 1, padding: 22, justifyContent: 'center' },
   title: { fontSize: 28, fontWeight: '900', color: colors.text },
   sub: { color: colors.muted, marginBottom: 16 },
-  input: { backgroundColor: colors.card, borderRadius: 12, borderWidth: 1, borderColor: colors.line, padding: 14, marginBottom: 10 },
+  input: { backgroundColor: colors.card, borderRadius: 12, borderWidth: 1, borderColor: colors.line, padding: 14, marginBottom: 10, color: colors.text },
   error: { color: colors.danger, marginBottom: 10 },
   btn: { backgroundColor: colors.primary, borderRadius: 14, padding: 15, alignItems: 'center', marginTop: 6 },
   btnOff: { opacity: 0.6 },
