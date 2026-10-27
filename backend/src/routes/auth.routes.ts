@@ -12,13 +12,13 @@ import {
 } from '../controllers/auth.controller';
 import { asyncHandler } from '../middleware/asyncHandler';
 import { requireAuth } from '../middleware/auth';
-import { loginLimiter, passwordLimiter, registerLimiter } from '../middleware/rateLimit';
+import { loginLimiter, oauthLimiter, passwordLimiter, registerLimiter } from '../middleware/rateLimit';
 
 export const authRoutes = Router();
 authRoutes.post('/register', registerLimiter, asyncHandler(register));
 authRoutes.post('/login', loginLimiter, asyncHandler(login));
 authRoutes.get('/google/config', asyncHandler(googleConfig));
-authRoutes.post('/google', loginLimiter, asyncHandler(googleLogin));
+authRoutes.post('/google', oauthLimiter, asyncHandler(googleLogin));
 authRoutes.post('/refresh', asyncHandler(refresh));
 authRoutes.get('/me', requireAuth, asyncHandler(me));
 authRoutes.patch('/me', requireAuth, asyncHandler(updateMe));

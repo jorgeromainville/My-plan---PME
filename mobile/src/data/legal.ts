@@ -1,5 +1,5 @@
 // Texto legal de la app. Mantener en sintonía con docs/legal/*.md.
-export const LEGAL_UPDATED = '19 de octubre de 2026';
+export const LEGAL_UPDATED = '27 de octubre de 2026';
 export const LEGAL_CONTACT = 'soporte@myplan.today';
 
 export interface LegalSection {
@@ -112,7 +112,7 @@ export const termsSections: LegalSection[] = [
   {
     title: '3. Tu cuenta',
     paragraphs: [
-      'Debes ser mayor de 14 años y dar datos veraces. Eres responsable de tu contraseña y de la actividad de tu cuenta. Avísanos de cualquier uso no autorizado.',
+      'Debes ser mayor de 14 años y dar datos veraces. Eres responsable de tus credenciales (Google o contraseña) y de la actividad de tu cuenta. Avísanos de cualquier uso no autorizado.',
     ],
   },
   {

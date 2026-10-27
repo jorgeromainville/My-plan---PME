@@ -2,6 +2,7 @@ import type { Request, Response } from 'express';
 import { OAuth2Client } from 'google-auth-library';
 import { z } from 'zod';
 import { prisma } from '../config/db';
+import { allowNewAccount } from '../middleware/rateLimit';
 import { hashPassword, verifyPassword } from '../utils/password';
 import { signAccess, signRefresh, verifyRefresh } from '../utils/jwt';
 
@@ -19,6 +20,14 @@ const loginSchema = z.object({
 });
 
 export async function register(req: Request, res: Response) {
+  // Las cuentas nuevas se crean con Google (correo verificado por Google).
+  // Se deja el endpoint para cuando exista verificación por correo; se activa
+  // con ALLOW_PASSWORD_SIGNUP=true.
+  if (process.env.ALLOW_PASSWORD_SIGNUP !== 'true') {
+    return res.status(403).json({
+      error: 'Las cuentas nuevas se crean con Google. Usa "Continuar con Google".',
+    });
+  }
   const data = registerSchema.parse(req.body);
   const exists = await prisma.user.findUnique({ where: { email: data.email } });
   if (exists) return res.status(409).json({ error: 'Email ya registrado' });
@@ -101,6 +110,12 @@ export async function googleLogin(req: Request, res: Response) {
         data: { googleId: payload.sub, passwordHash: null },
       });
     } else {
+      // Solo se aplica a cuentas nuevas, no a logins de cuentas existentes.
+      if (!allowNewAccount(req.ip ?? 'desconocido')) {
+        return res.status(429).json({
+          error: 'Se crearon demasiadas cuentas nuevas desde esta red. Espera un rato e inténtalo de nuevo.',
+        });
+      }
       user = await prisma.user.create({
         data: { name, email, googleId: payload.sub },
       });

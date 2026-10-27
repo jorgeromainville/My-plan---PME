@@ -4,7 +4,7 @@ title: Política de privacidad — My Plan
 
 # Política de privacidad
 
-**Última actualización:** 19 de octubre de 2026
+**Última actualización:** 27 de octubre de 2026
 
 My Plan es una aplicación de organización personal desarrollada por el equipo de My Plan (Perú).
 

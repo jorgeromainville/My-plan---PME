@@ -23,6 +23,9 @@ import { tasksRoutes } from './routes/tasks.routes';
 export function buildApp() {
   const app = express();
   app.disable('x-powered-by');
+  // Render (y casi cualquier PaaS) pone un proxy delante: sin esto `req.ip` es
+  // la IP del proxy y los límites por IP se vuelven globales para todos.
+  app.set('trust proxy', 1);
   app.use(helmet());
   // La app nativa no manda Origin; solo se permiten navegadores de desarrollo
   // locales y los orígenes declarados en CORS_ORIGINS (coma-separados).

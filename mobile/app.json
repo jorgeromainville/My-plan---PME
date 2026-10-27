@@ -19,7 +19,11 @@
     "versionCode": 1,
     "adaptiveIcon": {
       "backgroundColor": "#FAF6EF"
-    }
+    },
+    "permissions": [
+      "android.permission.CAMERA",
+      "android.permission.RECORD_AUDIO"
+    ]
   },
   "plugins": [
     "expo-router",
@@ -30,5 +34,12 @@
   ],
   "experiments": {
     "typedRoutes": true
-  }
+  },
+  "extra": {
+    "router": {},
+    "eas": {
+      "projectId": "e9ecd6df-496e-4611-a99c-87d44e8965d1"
+    }
+  },
+  "owner": "romainville"
 }

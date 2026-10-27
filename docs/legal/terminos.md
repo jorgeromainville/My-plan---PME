@@ -4,7 +4,7 @@ title: Términos de uso — My Plan
 
 # Términos de uso
 
-**Última actualización:** 19 de octubre de 2026
+**Última actualización:** 27 de octubre de 2026
 
 ## 1. Aceptación
 
@@ -16,7 +16,7 @@ My Plan te ayuda a organizar tu día, agenda, ingresos y gastos, metas, contacto
 
 ## 3. Tu cuenta
 
-Debes ser mayor de 14 años y dar datos veraces. Eres responsable de tu contraseña y de la actividad de tu cuenta. Avísanos de cualquier uso no autorizado.
+Debes ser mayor de 14 años y dar datos veraces. Eres responsable de tus credenciales (Google o contraseña) y de la actividad de tu cuenta. Avísanos de cualquier uso no autorizado.
 
 ## 4. Uso aceptable
 

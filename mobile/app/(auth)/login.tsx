@@ -23,8 +23,12 @@ export default function Login() {
       const r = await login(email.trim(), pass);
       await signIn(r.access, r.user);
       router.replace('/(tabs)');
-    } catch {
-      setError('No se pudo entrar. Revisa correo, clave y que la API esté corriendo.');
+    } catch (e) {
+      setError(
+        e instanceof Error
+          ? e.message
+          : 'No se pudo entrar. Revisa correo, clave y que la API esté corriendo.',
+      );
     } finally {
       setBusy(false);
     }
@@ -54,7 +58,7 @@ export default function Login() {
           }}
         />
         <Pressable onPress={() => router.push('/(auth)/register')}>
-          <Text style={s.link}>Crear cuenta</Text>
+          <Text style={s.link}>Crear cuenta con Google</Text>
         </Pressable>
       </View>
     </SafeAreaView>

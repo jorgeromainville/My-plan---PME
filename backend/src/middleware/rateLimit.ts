@@ -59,3 +59,32 @@ export const passwordLimiter = rateLimit({
   max: 5,
   message: 'Demasiados intentos de cambio de contraseña. Espera 15 minutos.',
 });
+
+// Login con Google: límite por IP (no por correo, porque el correo viene dentro
+// del idToken y todavía no lo conocemos). 20 intentos cada 15 min por red.
+export const oauthLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 20,
+  message: 'Demasiados intentos de inicio de sesión. Espera 15 minutos.',
+});
+
+// Tope aparte para **cuentas nuevas** con Google: un login normal no cuenta,
+// solo cuando de verdad se va a crear un usuario. 5 por hora y por IP.
+const newAccountBuckets = new Map<string, Bucket>();
+
+export function allowNewAccount(ip: string, max = 5, windowMs = 60 * 60 * 1000) {
+  const now = Date.now();
+  if (newAccountBuckets.size > 5000) {
+    for (const [k, b] of newAccountBuckets) {
+      if (b.reset <= now) newAccountBuckets.delete(k);
+    }
+  }
+  const cur = newAccountBuckets.get(ip);
+  if (!cur || cur.reset <= now) {
+    newAccountBuckets.set(ip, { count: 1, reset: now + windowMs });
+    return true;
+  }
+  if (cur.count >= max) return false;
+  cur.count += 1;
+  return true;
+}
