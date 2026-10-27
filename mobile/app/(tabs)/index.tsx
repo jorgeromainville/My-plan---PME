@@ -53,7 +53,7 @@ export default function Inicio() {
   const theme = usePrefs((s) => s.theme);
   const offline = useNet((s) => s.offline);
   const sessionName = useSession((s) => s.userName);
-  const token = useSession((s) => s.token);
+  const active = useSession((s) => !!s.token || s.mode === 'guest');
   const [doneToday, setDoneToday] = useState<number | null>(null);
   const [fin, setFin] = useState<FinanceSummary | null>(null);
   const [resultOpen, setResultOpen] = useState(false);
@@ -62,7 +62,7 @@ export default function Inicio() {
 
   // Tareas/metas/personas reales del día (demo si no hay sesión o si está vacío).
   useFocusEffect(useCallback(() => {
-    if (!token) {
+    if (!active) {
       setDoneToday(null);
       setFin(null);
       setRealGoals(null);
@@ -89,12 +89,12 @@ export default function Inicio() {
         setRealPeople(null);
       }
     })();
-  }, [token, selectedDate]));
+  }, [active, selectedDate]));
 
   const goals = dailyGoals.map((g) =>
     g.title === 'Tareas' && doneToday !== null ? { ...g, current: doneToday } : g,
   );
-  const shownName = token ? sessionName : userName;
+  const shownName = active ? sessionName : userName;
   // Metas reales (si existen), si no demo.
   const dayGoals = realGoals && realGoals.some((g) => g.period === 'day') ? realGoals.filter((g) => g.period === 'day') : null;
   const weekGoals = realGoals && realGoals.some((g) => g.period === 'week') ? realGoals.filter((g) => g.period === 'week') : null;

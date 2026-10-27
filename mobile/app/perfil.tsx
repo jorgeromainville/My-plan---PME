@@ -37,6 +37,8 @@ export default function Perfil() {
   const sessionName = useSession((s) => s.userName);
   const user = useSession((s) => s.user);
   const updateSessionUser = useSession((s) => s.updateUser);
+  const mode = useSession((s) => s.mode);
+  const guest = mode === 'guest';
   const prefs = usePrefs();
   const [name, setName] = useState(user?.name ?? sessionName ?? userName);
   const [currency, setCurrency] = useState(user?.currency ?? 'PEN');
@@ -155,12 +157,14 @@ export default function Perfil() {
       return;
     }
     Alert.alert(
-      'Eliminar mi cuenta',
-      'Se borrarán tu cuenta y todos tus datos: ingresos, gastos, tareas, eventos, metas, lugares y contactos. No se puede deshacer.',
+      guest ? 'Borrar datos del teléfono' : 'Eliminar mi cuenta',
+      guest
+        ? 'Se borrarán tus tareas, eventos, ingresos, gastos, metas, lugares y contactos de este teléfono. No se puede deshacer.'
+        : 'Se borrarán tu cuenta y todos tus datos: ingresos, gastos, tareas, eventos, metas, lugares y contactos. No se puede deshacer.',
       [
         { text: 'Cancelar', style: 'cancel' },
         {
-          text: 'Eliminar',
+          text: guest ? 'Borrar' : 'Eliminar',
           style: 'destructive',
           onPress: async () => {
             setDelBusy(true);
@@ -210,7 +214,33 @@ export default function Perfil() {
       <AndeanTopBand />
       <ScrollView contentContainerStyle={s.body}>
         <Text style={s.title}>Perfil</Text>
-        <Text style={s.sub}>Configura tu cuenta y preferencias</Text>
+        <Text style={s.sub}>{guest ? 'Tus datos y preferencias' : 'Configura tu cuenta y preferencias'}</Text>
+        {guest ? (
+          <Card>
+            <Text style={s.title2}>Modo invitado</Text>
+            <Text style={s.remSub}>
+              Tus tareas, eventos, ingresos, gastos, metas, contactos y lugares se guardan solo en
+              este teléfono. No se envía nada a ningún servidor.
+            </Text>
+            <Text style={s.remSub}>
+              Si desinstalas la app o cambias de teléfono se pierden. Crea una cuenta para tener una
+              copia segura y seguir usando My Plan en otros dispositivos.
+            </Text>
+            <Text style={s.remSub}>
+              La subida automática de estos datos a tu cuenta llega en la próxima actualización.
+            </Text>
+            <Pressable
+              style={s.btn}
+              onPress={async () => {
+                // Salir del modo invitado NO borra los datos: quedan en el teléfono.
+                await signOut();
+                router.replace('/(auth)/login');
+              }}
+            >
+              <Text style={s.btnTxt}>Crear cuenta con Google</Text>
+            </Pressable>
+          </Card>
+        ) : null}
         <Card>
           <Text style={s.label}>Nombre</Text>
           <TextInput placeholderTextColor={colors.muted} value={name} onChangeText={setName} style={s.input} placeholder="Tu nombre" />
@@ -298,7 +328,7 @@ export default function Perfil() {
             <Text style={s.btnTxt}>{saving ? 'Guardando…' : 'Guardar'}</Text>
           </Pressable>
           {saveMsg ? <Text style={s.remSub}>{saveMsg}</Text> : null}
-          <Text style={s.remSub}>Servidor: {API_BASE}</Text>
+          <Text style={s.remSub}>{guest ? 'Datos: solo en este teléfono' : `Servidor: ${API_BASE}`}</Text>
         </Card>
         <Card>
           <View style={s.remRow}>
@@ -376,6 +406,7 @@ export default function Perfil() {
             </Pressable>
           )}
         </Card>
+        {!guest ? (
         <Card>
           <Text style={s.title2}>Sincronización</Text>
           <Text style={s.remSub}>
@@ -430,6 +461,7 @@ export default function Perfil() {
             <Text style={s.ghostTxt}>Descartar pendientes</Text>
           </Pressable>
         </Card>
+        ) : null}
         <Card>
           <Text style={s.title2}>Legal</Text>
           <Pressable style={s.ghost} onPress={() => router.push('/privacidad')}>
@@ -440,6 +472,7 @@ export default function Perfil() {
           </Pressable>
           <Text style={s.remSub}>My Plan · 19 oct 2026</Text>
         </Card>
+        {!guest ? (
         <Card>
           <Text style={s.title2}>Seguridad</Text>
           <Text style={s.label}>Contraseña actual</Text>
@@ -467,11 +500,13 @@ export default function Perfil() {
           </Pressable>
           {passMsg ? <Text style={s.remSub}>{passMsg}</Text> : null}
         </Card>
+        ) : null}
         <Card>
-          <Text style={s.title2}>Eliminar cuenta</Text>
+          <Text style={s.title2}>{guest ? 'Borrar datos del teléfono' : 'Eliminar cuenta'}</Text>
           <Text style={s.remSub}>
-            Borra tu perfil y todos tus datos (ingresos, gastos, tareas, eventos, metas, lugares y
-            contactos). No se puede deshacer.
+            {guest
+              ? 'Borra tus tareas, eventos, ingresos, gastos, metas, lugares y contactos de este teléfono. No se puede deshacer.'
+              : 'Borra tu perfil y todos tus datos (ingresos, gastos, tareas, eventos, metas, lugares y contactos). No se puede deshacer.'}
           </Text>
           <Text style={s.label}>Escribe ELIMINAR para confirmar</Text>
           <TextInput placeholderTextColor={colors.muted}
@@ -487,7 +522,9 @@ export default function Perfil() {
             onPress={onDeleteAccount}
             disabled={delBusy || confirmText.trim() !== 'ELIMINAR'}
           >
-            <Text style={s.dangerTxt}>{delBusy ? 'Eliminando…' : 'Eliminar mi cuenta'}</Text>
+            <Text style={s.dangerTxt}>
+              {delBusy ? 'Eliminando…' : guest ? 'Borrar datos' : 'Eliminar mi cuenta'}
+            </Text>
           </Pressable>
           {delMsg ? <Text style={s.remSub}>{delMsg}</Text> : null}
         </Card>
@@ -498,7 +535,7 @@ export default function Perfil() {
             router.replace('/(auth)/login');
           }}
         >
-          <Text style={s.outTxt}>Cerrar sesión</Text>
+          <Text style={s.outTxt}>{guest ? 'Salir del modo invitado' : 'Cerrar sesión'}</Text>
         </Pressable>
       </ScrollView>
     </SafeAreaView>

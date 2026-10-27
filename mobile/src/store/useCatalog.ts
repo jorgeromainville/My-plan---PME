@@ -1,5 +1,6 @@
 import { create } from 'zustand';
 import { api } from '../services/api';
+import { isGuest } from '../services/sessionMode';
 import { storage } from '../services/storage';
 
 export interface EventKind {
@@ -32,14 +33,14 @@ export const DEFAULT_TEMPLATES: Template[] = [
 
 async function readKey<T>(key: string): Promise<T | null> {
   const t = await storage.getToken();
-  if (!t) throw new Error('sin sesión');
+  if (!t && !isGuest()) throw new Error('sin sesión');
   const r = await api<{ value: T | null }>(`/api/settings/${key}`, {}, t);
   return r.value;
 }
 
 async function writeKey(key: string, value: unknown): Promise<void> {
   const t = await storage.getToken();
-  if (!t) throw new Error('sin sesión');
+  if (!t && !isGuest()) throw new Error('sin sesión');
   await api(`/api/settings/${key}`, { method: 'PUT', body: JSON.stringify({ value }) }, t);
 }
 

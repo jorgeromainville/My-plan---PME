@@ -1,4 +1,5 @@
 import { api, API_BASE } from './api';
+import { isGuest } from './sessionMode';
 import { createEvent } from './events';
 import { defaultSemesterEnd, nextWeekdayISO, type ScheduleCandidate } from './scheduleParser';
 import { storage } from './storage';
@@ -38,6 +39,11 @@ export async function parseScheduleWithAi(
 // Usa uploadAsync (multipart nativo) en vez de fetch+FormData: más confiable
 // en Expo Go para archivos file:// (el fetch fallaba con "sin conexión").
 export async function uploadScan(photoUri: string): Promise<ScanResult> {
+  if (isGuest()) {
+    throw new Error(
+      'El escáner con foto necesita una cuenta. Mientras tanto puedes escribir el horario a mano.',
+    );
+  }
   const token = await storage.getToken();
   let res: { status: number; body: string };
   try {

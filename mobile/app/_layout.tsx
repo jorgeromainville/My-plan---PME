@@ -8,28 +8,35 @@ import { usePrefs } from '../src/store/usePrefs';
 import { useSession } from '../src/store/useSession';
 import { useIsDark } from '../src/theme/colors';
 
-// Layout raíz: carga sesión y manda a login si no hay token.
+// Layout raíz: carga sesión y manda a login si no hay token ni modo invitado.
 export default function RootLayout() {
-  const { loaded, token, load, signOut } = useSession();
+  const { loaded, token, mode, load, signOut } = useSession();
   const segments = useSegments();
   const router = useRouter();
   const isDark = useIsDark();
+  const active = !!token || mode === 'guest';
 
   useEffect(() => {
     load();
     usePrefs.getState().load();
-    useCatalog.getState().load();
     setOnSessionExpired(() => signOut());
   }, []);
+
+  // Los catálogos (tipos de evento/plantillas) se leen cuando ya se sabe si la
+  // sesión es de cuenta o invitado: `api()` decide a dónde ir según el modo.
+  useEffect(() => {
+    if (!loaded) return;
+    void useCatalog.getState().load();
+  }, [loaded, mode]);
 
   useEffect(() => {
     if (!loaded) return;
     const inAuth = segments[0] === '(auth)';
     // Privacidad y términos son públicos: se pueden leer antes de crear cuenta.
     const isPublic = inAuth || segments[0] === 'privacidad' || segments[0] === 'terminos';
-    if (!token && !isPublic) router.replace('/(auth)/login');
-    if (token && inAuth) router.replace('/(tabs)');
-  }, [loaded, token, segments]);
+    if (!active && !isPublic) router.replace('/(auth)/login');
+    if (active && inAuth) router.replace('/(tabs)');
+  }, [loaded, active, segments]);
 
   // Al abrir la app o volver a primer plano, intenta enviar lo que quedó
   // pendiente sin conexión.

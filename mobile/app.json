@@ -30,7 +30,8 @@
     "@react-native-community/datetimepicker",
     "expo-localization",
     "expo-camera",
-    "expo-notifications"
+    "expo-notifications",
+    "expo-sqlite"
   ],
   "experiments": {
     "typedRoutes": true

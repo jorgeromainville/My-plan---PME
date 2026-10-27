@@ -8,6 +8,9 @@
 import Constants from 'expo-constants';
 import { useNet } from '../store/useNet';
 import { storage } from './storage';
+import { ApiError } from './errors';
+import { isGuest } from './sessionMode';
+import { localRequest } from './local/localApi';
 import {
   applyOverlay,
   entityFor,
@@ -20,6 +23,8 @@ import {
   type PendingOp,
 } from './syncCore';
 import { addOp, flushOps, getIdMap, loadOps, type FlushResult } from './sync';
+
+export { ApiError, errorMessage } from './errors';
 
 // En desarrollo, el servidor de Metro corre en la misma PC/IP LAN que la API,
 // así que derivamos la IP de ahí: si cambia el Wi-Fi, la app se adapta sola y
@@ -37,14 +42,6 @@ function resolveBase(): string {
 
 export const API_BASE = resolveBase();
 const BASE = API_BASE;
-
-export class ApiError extends Error {
-  status: number;
-  constructor(status: number, message: string) {
-    super(message);
-    this.status = status;
-  }
-}
 
 let onSessionExpired: () => void = () => {};
 export function setOnSessionExpired(fn: () => void) {
@@ -92,6 +89,10 @@ export async function api<T>(
   retry = true,
   offline = true,
 ): Promise<T> {
+  // Modo invitado: todo se resuelve contra SQLite, sin red ni cola.
+  if (isGuest() && path.startsWith('/api/')) {
+    return localRequest<T>(path, opts);
+  }
   const method = ((opts.method ?? 'GET') as string).toUpperCase();
   const isGet = method === 'GET';
   const canOffline = offline && offlineTarget(path, opts);
@@ -210,6 +211,8 @@ function scheduleFlush(delay = 400) {
 
 /** Envía lo pendiente. `force` ignora el freno de 15 s (botón "Sincronizar ahora"). */
 export async function flushPending(force = false): Promise<FlushResult> {
+  // En invitado no hay cola: la base SQLite ya es la fuente de verdad.
+  if (isGuest()) return { sent: 0, failed: 0, left: 0 };
   const pending = await loadOps();
   if (!pending.length) return { sent: 0, failed: 0, left: 0 };
   if (flushing) return { sent: 0, failed: 0, left: pending.length };
@@ -245,10 +248,4 @@ async function friendly(res: Response): Promise<string> {
     return `${d.path}: ${d.message}`;
   }
   return body.error ?? `Error ${res.status}. Intenta de nuevo.`;
-}
-
-export function errorMessage(e: unknown): string {
-  if (e instanceof ApiError) return e.message;
-  if (e instanceof Error) return e.message;
-  return 'Error inesperado.';
 }

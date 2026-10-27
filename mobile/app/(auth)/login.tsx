@@ -11,10 +11,24 @@ export default function Login() {
   const s = useThemedStyles(createStyles);
   const router = useRouter();
   const signIn = useSession((s) => s.signIn);
+  const startGuest = useSession((s) => s.startGuest);
   const [email, setEmail] = useState('');
   const [pass, setPass] = useState('');
   const [error, setError] = useState('');
   const [busy, setBusy] = useState(false);
+
+  async function onGuest() {
+    setError('');
+    setBusy(true);
+    try {
+      await startGuest();
+      router.replace('/(tabs)');
+    } catch (e) {
+      setError(e instanceof Error ? e.message : 'No se pudo entrar sin cuenta.');
+    } finally {
+      setBusy(false);
+    }
+  }
 
   async function onLogin() {
     setError('');
@@ -60,6 +74,12 @@ export default function Login() {
         <Pressable onPress={() => router.push('/(auth)/register')}>
           <Text style={s.link}>Crear cuenta con Google</Text>
         </Pressable>
+        <Pressable style={[s.guest, busy && s.btnOff]} onPress={onGuest} disabled={busy}>
+          <Text style={s.guestTxt}>Entrar sin cuenta</Text>
+        </Pressable>
+        <Text style={s.guestNote}>
+          Tus datos se guardan solo en este teléfono. Puedes crear una cuenta después.
+        </Text>
       </View>
     </SafeAreaView>
   );
@@ -79,5 +99,8 @@ function createStyles(colors: ThemeColors) {
   orLine: { flex: 1, height: 1, backgroundColor: colors.line },
   orTxt: { color: colors.muted, fontSize: 12, fontWeight: '700' },
   link: { textAlign: 'center', marginTop: 14, fontWeight: '700', color: colors.text },
+  guest: { marginTop: 20, borderWidth: 1, borderColor: colors.line, borderRadius: 14, padding: 14, alignItems: 'center', backgroundColor: colors.card },
+  guestTxt: { fontWeight: '800', color: colors.text },
+  guestNote: { textAlign: 'center', marginTop: 8, fontSize: 12, lineHeight: 17, color: colors.muted },
 });
 }
