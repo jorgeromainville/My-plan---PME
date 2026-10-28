@@ -2,6 +2,7 @@ import cors from 'cors';
 import express from 'express';
 import helmet from 'helmet';
 import morgan from 'morgan';
+import path from 'path';
 import { asyncHandler } from './middleware/asyncHandler';
 import { requireAuth } from './middleware/auth';
 import { errorHandler } from './middleware/errorHandler';
@@ -45,6 +46,17 @@ export function buildApp() {
     }),
   );
   app.use(morgan('dev'));
+
+  // Páginas legales públicas (privacidad, términos y eliminación de cuenta).
+  // Play Console pide URLs abiertas y sin sesión; se generan desde
+  // `docs/legal/*.md` con `npm run build:legal` (y dentro de `npm run build`).
+  app.use(
+    '/legal',
+    express.static(path.join(__dirname, '..', 'public', 'legal'), {
+      extensions: ['html'],
+      maxAge: '1h',
+    }),
+  );
 
   // La importación del invitado trae un lote grande (varios MB): se parsea con
   // su propio límite y va en una sola transacción. El resto de rutas sigue en 1 MB.

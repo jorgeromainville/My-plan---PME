@@ -6,5 +6,6 @@ title: Legal — My Plan
 
 - [Política de privacidad](privacidad.html)
 - [Términos de uso](terminos.html)
+- [Eliminar tu cuenta](eliminar-cuenta.html)
 
 Contacto: **soporte@myplan.today**

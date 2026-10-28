@@ -4,7 +4,7 @@ title: Política de privacidad — My Plan
 
 # Política de privacidad
 
-**Última actualización:** 27 de octubre de 2026
+**Última actualización:** 28 de octubre de 2026
 
 My Plan es una aplicación de organización personal desarrollada por el equipo de My Plan (Perú).
 
@@ -20,6 +20,7 @@ Solo guardamos lo necesario para que la app funcione:
 - **Preferencias:** moneda, tema, inicio de semana, recordatorios y país de feriados.
 - **Contenido que creas:** contactos, ingresos y gastos (importes, categorías, fechas), tareas, eventos, metas, lugares con coordenadas y notas.
 - **Registros técnicos:** fecha, hora, IP y ruta de las peticiones, para seguridad y diagnóstico.
+- **Modo invitado:** si entras sin cuenta, tus datos se guardan solo en tu teléfono y **no se envían al servidor**. En ese modo no sabemos que existes.
 
 ## 3. Qué NO guardamos
 
@@ -29,6 +30,7 @@ Hay datos que la app usa pero no almacena:
 - **Ubicación en tiempo real:** solo se consulta cuando pulsas «Mi ubicación» o eliges un punto en el mapa. No hay seguimiento continuo en segundo plano.
 - **Agenda del teléfono:** no se lee.
 - No usamos publicidad, no vendemos datos y no incluimos SDKs de analítica.
+- **Copias de seguridad:** cuando exportas tu información, el archivo se guarda en la carpeta o la app que tú elijas (Drive, Descargas, correo). No pasa por nuestros servidores.
 
 ## 4. Para qué los usamos
 
