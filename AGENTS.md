@@ -5,7 +5,7 @@ Anfitrión Windows, PowerShell (`copy`, no `cp`).
 
 ## Estructura
 - `mobile/` — Expo SDK 57 + TypeScript + Expo Router (basado en archivos). Entrada `expo-router/entry`.
-  Rutas en `mobile/app/`: `_layout.tsx` (Stack raíz), `(tabs)/_layout.tsx`, `(tabs)/index|mapa|planificador|estadisticas`, `nuevo-registro.tsx` (modal), `perfil.tsx`, `(auth)/login|register`. Código compartido en `mobile/src/` (`theme/`, `components/`, `store/useAppStore.ts`, `services/`, `services/local/` para el modo invitado, `utils/`, `data/demo.ts`, `types/`).
+  Rutas en `mobile/app/`: `_layout.tsx` (Stack raíz), `(tabs)/_layout.tsx`, `(tabs)/index|mapa|planificador|estadisticas`, `nuevo-registro.tsx` (modal), `perfil.tsx`, `backup.tsx` (copia del invitado), `(auth)/login|register`. Código compartido en `mobile/src/` (`theme/`, `components/`, `store/useAppStore.ts`, `services/`, `services/local/` para el modo invitado, `services/backup/`, `utils/`, `data/demo.ts`, `types/`).
 - `backend/` — Express + TypeScript + Prisma + PostgreSQL. Puntos de entrada `src/index.ts` → `buildApp()` en `src/app.ts`. Rutas en `src/routes/`, lógica en `src/controllers/` + `src/services/`.
 - `backend/prisma/schema.prisma` ya está completo (User, Contact, Sale, Expense, Task, Event, Goal, Place, Attachment, Notification, DailyStat, WeeklyStat, Setting). No agregar modelos por fase; reutilizar.
 

@@ -74,6 +74,7 @@ export default function RootLayout() {
         <Stack.Screen name="escaner" options={{ presentation: 'modal' }} />
         <Stack.Screen name="privacidad" />
         <Stack.Screen name="terminos" />
+        <Stack.Screen name="backup" />
       </Stack>
     </>
   );

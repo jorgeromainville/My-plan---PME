@@ -10,6 +10,7 @@ import { isGuest } from './sessionMode';
 import { storage } from './storage';
 import { hasGuestData } from './guestProfile';
 import { buildGuestExport } from './local/exportData';
+import { uuid } from '../utils/uuid';
 
 const BATCH_KEY = '@planner/importBatchId';
 const DECLINED_KEY = '@planner/importDeclined';
@@ -29,20 +30,6 @@ interface ImportResponse {
   ok: true;
   duplicate: boolean;
   imported: ImportCounts;
-}
-
-// Hermes no siempre trae `crypto.randomUUID`: se arma un UUID v4 válido a mano
-// (el backend valida el formato con zod).
-function uuid(): string {
-  const hex = '0123456789abcdef';
-  let out = '';
-  for (let i = 0; i < 36; i += 1) {
-    if (i === 8 || i === 13 || i === 18 || i === 23) out += '-';
-    else if (i === 14) out += '4';
-    else if (i === 19) out += hex[(Math.random() * 4) | 8];
-    else out += hex[(Math.random() * 16) | 0];
-  }
-  return out;
 }
 
 // El mismo lote se reutiliza si el primer intento falló a medias.

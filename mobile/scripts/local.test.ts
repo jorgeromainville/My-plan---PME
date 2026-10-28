@@ -6,7 +6,7 @@
 //
 //   cd mobile; npm run test:local
 import { DatabaseSync } from 'node:sqlite';
-import { __injectDatabase, SCHEMA_SQL, countLocalRows } from '../src/services/local/db';
+import { __injectDatabase, SCHEMA_SQL, countLocalRows, resetLocalData } from '../src/services/local/db';
 import * as tasks from '../src/services/local/tasks';
 import * as events from '../src/services/local/events';
 import * as incomes from '../src/services/local/incomes';
@@ -16,6 +16,9 @@ import * as contacts from '../src/services/local/contacts';
 import * as places from '../src/services/local/places';
 import * as catalog from '../src/services/local/catalog';
 import * as stats from '../src/services/local/stats';
+import { backupText, buildGuestBackup } from '../src/services/backup/exportGuest';
+import { backupCounts, parseBackup } from '../src/services/backup/format';
+import { restoreGuest } from '../src/services/backup/restoreGuest';
 
 type Bind = string | number | null;
 
@@ -274,6 +277,125 @@ async function main() {
 
   await events.deleteEvent(event.id);
   await expectError('evento: borrado', () => events.getEvent(event.id), 404);
+
+  // ── Copia de seguridad (JSON del invitado) ────────────────────────────────
+  const { place: casa } = await places.createPlace({
+    name: 'Casa', category: 'Casa', latitude: -12.1, longitude: -77.03,
+  });
+  const { event: cena } = await events.createEvent({
+    title: 'Cena',
+    date: today.from,
+    startTime: '19:00',
+    endTime: '20:30',
+    placeId: casa.id,
+    contactIds: [contact.id],
+    isBackup: true,
+  });
+  const { goal: correr } = await goals.createGoal({
+    title: 'Correr', kind: 'custom', period: 'week', target: 20, unit: 'km',
+  });
+  await goals.addGoalLog(correr.id, { amount: 5, note: 'parque' });
+
+  const backup = await buildGuestBackup('0.1.0', {
+    name: 'Invitado',
+    currency: 'PEN',
+    currencySymbol: 'S/',
+    theme: 'auto',
+    weekStartsOn: 'monday',
+  });
+  eq('copia: esquema', backup.schema, 'myplan.backup/1');
+  check(
+    'copia: lote uuid',
+    /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/.test(backup.batchId),
+    backup.batchId,
+  );
+  eq('copia: perfil incluido', backup.profile?.weekStartsOn, 'monday');
+
+  const parsedBackup = parseBackup(backupText(backup));
+  const counts = backupCounts(parsedBackup.data);
+  eq('copia: contactos', counts.contacts, 1);
+  eq('copia: eventos', counts.events, 2);
+  eq('copia: metas', counts.goals, 2);
+
+  await expectError('copia: texto inválido', async () => parseBackup('esto no es json'), 400);
+  await expectError(
+    'copia: esquema desconocido',
+    async () => parseBackup(JSON.stringify({ ...backup, schema: 'otra/9' })),
+    400,
+  );
+  await expectError(
+    'copia: ids repetidos',
+    async () =>
+      parseBackup(
+        JSON.stringify({
+          ...backup,
+          data: { ...backup.data, tasks: [backup.data.tasks[0], backup.data.tasks[0]] },
+        }),
+      ),
+    400,
+  );
+  await expectError(
+    'copia: evento sin hora válida',
+    async () =>
+      parseBackup(
+        JSON.stringify({
+          ...backup,
+          data: { ...backup.data, events: [{ ...backup.data.events[0], startTime: '9' }] },
+        }),
+      ),
+    400,
+  );
+
+  // Reemplazar: borra todo, conserva ids y vínculos.
+  await resetLocalData();
+  eq('copia: base borrada', await countLocalRows(), 0);
+  const replaced = await restoreGuest(parsedBackup, 'replace');
+  eq('copia: reemplazo inserta todo', replaced.inserted.total, counts.total);
+  eq('copia: perfil devuelto', replaced.profile?.currency, 'PEN');
+  const restoredEvent = await events.getEvent(cena.id);
+  eq('copia: id del evento conservado', restoredEvent.event.title, 'Cena');
+  eq('copia: contacto del evento conservado', restoredEvent.event.contacts?.[0]?.id, contact.id);
+  eq('copia: lugar del evento conservado', restoredEvent.event.placeId, casa.id);
+  eq('copia: evento de respaldo', restoredEvent.event.isBackup, true);
+  const restoredIncome = await incomes.getIncome(income.id);
+  eq('copia: cliente del ingreso conservado', restoredIncome.income.clientId, contact.id);
+  const restoredLogs = await goals.listGoalLogs(correr.id);
+  eq('copia: avance de meta conservado', restoredLogs.logs[0]?.amount, 5);
+  const restoredSetting = await catalog.getSetting('eventTypes');
+  eq('copia: ajustes conservados', (restoredSetting.value as { name: string }[])[0]?.name, 'Clase');
+  const restoredCats = await catalog.listContactCategories();
+  eq('copia: categoría personalizada conservada', restoredCats.categories.length, 7);
+  const restoredTask = (await tasks.listTasks({})).tasks[0];
+  eq('copia: fecha de creación conservada', restoredTask?.createdAt, task.createdAt);
+
+  // Fusionar: agrega con ids nuevos, remapea vínculos y no pisa ajustes.
+  const beforeMerge = await countLocalRows();
+  await catalog.putSetting('eventTypes', [{ name: 'Actual', color: '#000000' }]);
+  const merged = await restoreGuest(parsedBackup, 'merge');
+  eq(
+    'copia: fusionar agrega todo',
+    await countLocalRows(),
+    // `countLocalRows` no cuenta avances de metas ni categorías/ajustes.
+    beforeMerge + counts.total - counts.goalLogs,
+  );
+  eq('copia: fusionar informa', merged.inserted.total, counts.total);
+  eq('copia: contacto duplicado', (await contacts.listContacts({})).contacts.length, 2);
+  const cenas = (await events.listEvents({})).events.filter((e) => e.title === 'Cena');
+  eq('copia: evento duplicado', cenas.length, 2);
+  const newCena = cenas.find((e) => e.id !== cena.id);
+  check(
+    'copia: vínculo remapeado a contacto nuevo',
+    !!newCena?.contacts?.length && newCena.contacts[0].id !== contact.id,
+    newCena?.contacts,
+  );
+  check(
+    'copia: lugar remapeado',
+    !!newCena?.placeId && newCena.placeId !== casa.id,
+    newCena?.placeId,
+  );
+  const keptSetting = await catalog.getSetting('eventTypes');
+  eq('copia: fusionar no pisa ajustes', (keptSetting.value as { name: string }[])[0]?.name, 'Actual');
+  eq('copia: fusionar no duplica categorías', (await catalog.listContactCategories()).categories.length, 7);
 
   console.log(`\n${passed} comprobaciones OK`);
   if (failures.length) {

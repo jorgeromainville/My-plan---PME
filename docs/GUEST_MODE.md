@@ -129,6 +129,32 @@ Detalles de implementación que importan:
   ingreso, gasto y registro de meta), remapeo de ids, totales, reenvío idempotente,
   400 inválido y 401 sin token. Usuario de prueba borrado (cascada).
 
+## Copias de seguridad del invitado (hito 6, hecho)
+
+Perfil → **Copia de seguridad** (`/backup`) exporta y restaura todo el SQLite.
+
+- **Formato**: `{ schema: "myplan.backup/1", exportedAt, app, mode: "guest", batchId,
+  profile, data }`. `data` tiene la misma forma que el cuerpo de `POST /api/import`
+  (contactos, lugares, metas, tareas, eventos con `contactIds`, ingresos, gastos,
+  avances, categorías y ajustes), así que el mismo archivo servirá para subirlo a una
+  cuenta sin convertir nada. `batchId` permite que el servidor no duplique al reenviar.
+- **Límites**: 10 MB, 20 000 filas y 5 000 por colección. `parseBackup` valida
+  esquema, tipos, fechas, horas, coordenadas e ids repetidos **antes** de tocar la
+  base; un archivo inválido se rechaza entero con un mensaje en español.
+- **Guardar**: `expo-file-system` 57 ya trae selector de carpetas
+  (`Directory.pickDirectoryAsync`) y de archivos (`File.pickFileAsync`), así que **no
+  hace falta una build nueva**. Si una build vieja no los tiene, la pantalla ofrece
+  pegar el JSON o compartirlo como texto (RN `Share`, copias pequeñas).
+- **Restaurar**: se muestra el resumen (fecha de la copia y registros) y se elige:
+  - **Fusionar**: agrega con ids nuevos y remapea referencias; nunca borra ni pisa
+    ajustes existentes (categorías por nombre con `INSERT OR IGNORE`).
+  - **Reemplazar**: vacía las tablas (`clearDataTables`, sin transacción propia) y
+    deja la copia con sus ids originales. Pide confirmación.
+  Todo va en una transacción: si algo falla, la base queda como estaba. El perfil del
+  archivo (nombre, moneda, tema) se devuelve pero **no** se aplica.
+- **Pruebas**: `npm run test:local` incluye exportar → borrar → restaurar, fusión con
+  remapeo de vínculos, ajustes que no se pisan y archivos inválidos (83 comprobaciones).
+
 ## Hitos
 
 - [x] Documento y decisión de arquitectura.
@@ -137,16 +163,18 @@ Detalles de implementación que importan:
       catálogos, ajustes, estadísticas y perfil del invitado.
 - [x] `useSession.mode`, ruteo en `api()`, login "Entrar sin cuenta", Perfil invitado.
 - [x] Importación a cuenta (`POST /api/import`) y borrado del local tras migrar.
-- [x] Pruebas funcionales de la capa local con SQL real (`npm run test:local`, `node:sqlite`): tareas, contactos, ingresos, gastos, eventos, metas, lugares, categorías, estadísticas y errores. 53 comprobaciones.
+- [x] Pruebas funcionales de la capa local con SQL real (`npm run test:local`, `node:sqlite`): tareas, contactos, ingresos, gastos, eventos, metas, lugares, categorías, estadísticas y errores. 83 comprobaciones.
 - [ ] Pruebas de volumen (5 000 eventos) y de migración de esquema.
-- [ ] Copia de seguridad manual a archivo (exportar/importar JSON) — opcional.
+- [x] Copia de seguridad manual a archivo (exportar/restaurar JSON) — ver arriba.
+- [ ] Copia desde una cuenta (exportar por API y restaurar con `/api/import`, solo fusionar), ICS y recordatorio a los 30 días.
 
 ## Riesgos y límites
 
-- **Reinstalar la app borra el SQLite.** Avisar en Perfil; el respaldo llega con la
-  exportación manual o al crear cuenta.
-- **Sin respaldo automático**: si el teléfono se pierde, los datos se pierden. Es el
-  precio de "solo en tu celular" y debe estar en la política de privacidad.
+- **Reinstalar la app borra el SQLite.** Perfil → "Copia de seguridad" permite guardar
+  un archivo antes; si no se guarda, los datos se pierden.
+- **Sin respaldo automático**: si el teléfono se pierde, los datos se pierden. La copia
+  es manual (recordatorio a los 30 días, pendiente). Es el precio de "solo en tu
+  celular" y debe estar en la política de privacidad.
 - Un build nuevo hace falta al añadir un módulo nativo (`expo-sqlite`). Los cambios de
   JS posteriores siguen entrando por Metro.
 - `expo-sqlite` no funciona en web; el modo invitado es solo Android/iOS.

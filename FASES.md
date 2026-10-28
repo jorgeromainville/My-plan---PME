@@ -1,6 +1,6 @@
 # My Plan — Mapa de fases
 
-Estado general: **Fases 1–7 terminadas y verificadas**. Fase 8 en curso; Fase 9 pendiente.
+Estado general: **Fases 1–7 terminadas y verificadas**. Fase 8 en curso; Fase 9 empezada (copias de seguridad del invitado).
 
 > Ver también: `README.md` (cómo correr el proyecto), `AGENTS.md` (guía para agentes).
 
@@ -155,7 +155,8 @@ Estado general: **Fases 1–7 terminadas y verificadas**. Fase 8 en curso; Fase 
 
 ## ⬜ FASE 9 — Nube y colaboración
 
-- [ ] Copias de seguridad: exportar/importar (JSON/ICS) + copia automática en la nube con cuenta (invitado sin copia)
+- [x] **Copias de seguridad del invitado (2026-10-28)**: Perfil → "Copia de seguridad" (`/backup`). Exporta un JSON versionado (`schema: myplan.backup/1`, mismo cuerpo que `/api/import`) con contactos, lugares, tareas, eventos con invitados, ingresos, gastos, metas con avances, categorías, ajustes y perfil. Se guarda con el selector de carpetas de `expo-file-system` 57 o se comparte como texto (10 MB / 20 000 filas, 5 000 por colección). Restaurar muestra el resumen y permite **fusionar** (ids nuevos + referencias remapeadas, no pisa ajustes) o **reemplazar** (vacía las tablas y conserva los ids de la copia), todo en una transacción. Sin módulos nativos nuevos; si la build no trae selectores, se pega el JSON. `npm run test:local` sube a 83 comprobaciones (ida y vuelta, fusión, archivos inválidos).
+- [ ] Copia de seguridad de la **cuenta** (exportar desde la API y restaurar con `/api/import`, solo fusionar), ICS de eventos, recordatorio a los 30 días y copia automática en la nube
 - [ ] Agenda compartida: invitar por correo/enlace, permisos ver/editar, color propio, aviso de cambios
 - [ ] Google Calendar doble vía + importar `.ics` (universidad); anti-duplicados por `externalId`; feriados display-only jamás se sincronizan
 - [ ] APIs externas restantes: Fixer (moneda), Nominatim (geocodificar), validación email/tel

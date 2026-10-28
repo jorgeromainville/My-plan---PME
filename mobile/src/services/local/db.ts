@@ -303,11 +303,14 @@ export async function countLocalRows(): Promise<number> {
   return rows[0]?.n ?? 0;
 }
 
+/** Borra todas las tablas de datos. No abre transacción: lo decide quien llama. */
+export async function clearDataTables(): Promise<void> {
+  for (const table of DATA_TABLES) {
+    await run(`DELETE FROM ${table}`);
+  }
+}
+
 /** Borra todos los datos locales (equivale a "eliminar mi cuenta" en invitado). */
 export async function resetLocalData(): Promise<void> {
-  await tx(async () => {
-    for (const table of DATA_TABLES) {
-      await run(`DELETE FROM ${table}`);
-    }
-  });
+  await tx(clearDataTables);
 }

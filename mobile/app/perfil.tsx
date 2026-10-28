@@ -7,6 +7,7 @@ import { Card } from '../src/components/Card';
 import { API_BASE, errorMessage, flushPending } from '../src/services/api';
 import { changePassword, deleteAccount, updateMe } from '../src/services/auth';
 import { guestRowCount, importGuestDataWithAlerts } from '../src/services/guestImport';
+import { getLastBackup, lastBackupLabel } from '../src/services/backup/lastBackup';
 import { clearOps, loadOps } from '../src/services/sync';
 import { storage } from '../src/services/storage';
 import { cancelReminders, remindersGranted, remindersNativeMissing, rescheduleReminders, sendTestReminder } from '../src/services/reminders';
@@ -62,6 +63,7 @@ export default function Perfil() {
   // Registros que quedaron del modo invitado (cuenta creada después).
   const [localRows, setLocalRows] = useState(0);
   const [localBusy, setLocalBusy] = useState(false);
+  const [lastBackup, setLastBackup] = useState<string | null>(null);
 
   // Si la sesión carga después de abrir Perfil, refleja los datos del servidor.
   useEffect(() => {
@@ -77,6 +79,7 @@ export default function Perfil() {
       loadOps().then((o) => setPending(o.length));
       // Solo con cuenta: en invitado la función devuelve 0.
       void guestRowCount().then((n) => setLocalRows(n));
+      void getLastBackup().then(setLastBackup);
     }, []),
   );
 
@@ -281,6 +284,19 @@ export default function Perfil() {
               }}
             >
               <Text style={s.btnTxt}>Crear cuenta con Google</Text>
+            </Pressable>
+          </Card>
+        ) : null}
+        {guest ? (
+          <Card>
+            <Text style={s.title2}>Copia de seguridad</Text>
+            <Text style={s.remSub}>
+              Guarda tus datos en un archivo para no perderlos si cambias de teléfono o reinstalas
+              la app. También puedes restaurar una copia anterior.
+            </Text>
+            <Text style={s.remSub}>{lastBackupLabel(lastBackup)}</Text>
+            <Pressable style={s.btn} onPress={() => router.push('/backup')}>
+              <Text style={s.btnTxt}>Exportar o restaurar</Text>
             </Pressable>
           </Card>
         ) : null}
