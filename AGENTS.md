@@ -12,6 +12,7 @@ Anfitrión Windows, PowerShell (`copy`, no `cp`).
 ## Comandos
 - Móvil: `cd mobile; npm install; npx expo start` (`a` = emulador Android). Verificar: `npm run typecheck` (`tsc --noEmit`) y `npm run test:local` (capa SQLite del invitado con SQL real, sin teléfono). Sin config de lint.
 - Backend: `cd backend; copy .env.example .env; npm install; npx prisma generate; npx prisma migrate dev --name init` (requiere Postgres local en `localhost:5432`), luego `npm run dev` (`tsx watch`). Compilar: `npm run build` / `npm start`.
+- Tienda sin EAS: el AAB se compila en GitHub Actions (`.github/workflows/android-build.yml`, manual) o con `npx expo prebuild --platform android` + `node scripts/patch-signing.mjs` + `cd android; ./gradlew bundleRelease`. `android/` e `ios/` son salida de CNG y **no** se versionan. Guía completa en `docs/BUILD.md`.
 - Base API: `mobile/src/services/api.ts` deriva la IP LAN del PC desde Metro (`Constants.expoConfig.hostUri`) en desarrollo; `EXPO_PUBLIC_API_URL` es respaldo y el último fallback es `http://localhost:4000`. Endpoints: `GET /health`, `/api/auth/*`, `GET /api`.
 
 ## Detalles que rompen cosas

@@ -4,3 +4,8 @@
 
 expo-env.d.ts
 # @end expo-cli
+
+# Proyectos nativos (CNG): los regenera `npx expo prebuild`.
+# No se versionan; el build de CI los crea en cada ejecución.
+android/
+ios/

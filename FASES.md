@@ -150,7 +150,8 @@ Estado general: **Fases 1–7 terminadas y verificadas**. Fase 8 en curso; Fase 
 - [x] Legal y privacidad (2026-10-19): pantallas **`/privacidad`** y **`/terminos`** (públicas, también accesibles desde el registro), tarjeta **Legal** en Perfil (al final, junto a Seguridad y Eliminar cuenta) y enlaces desde el alta. Texto canónico en `mobile/src/data/legal.ts`; copia para publicar en `docs/legal/*.md` (GitHub Pages, carpeta `/docs`) con la URL que pedirá Play Console. El correo de contacto es provisional hasta confirmarlo.
 - [x] Limpieza: datos demo eliminables desde la app (2026-10-19, ver arriba)
 - [x] Backend en la nube (2026-10-20): **Neon Postgres + Render free** (`https://my-plan-api.onrender.com`), deploy desde GitHub con `render.yaml`, migraciones automáticas al arrancar, secretos en el dashboard de Render y móvil apuntando a la nube. Verificado por HTTPS: `/health`, registro, login, tarea y borrado de cuenta en cascada. Pendiente: pinger sobre `/health` (el plan free duerme a los 15 min).
-- [ ] Preparación producción (builds EAS Android/iOS, variables, logs)
+- [x] **Build para tienda sin EAS (2026-10-28)**: `npx expo prebuild` genera `android/` con todos los plugins resueltos y el AAB/APK se compila en **GitHub Actions** (`.github/workflows/android-build.yml`, manual: `variant` aab|apk) o con Gradle en local; los módulos del SDK siguen funcionando (son open source, autolinkean). `mobile/scripts/patch-signing.mjs` apunta el release a la llave de subida (env `MYPLAN_KEYSTORE_*`) porque prebuild deja la llave debug; `.github/workflows/android-keystore.yml` crea el keystore una vez sin instalar Java. `android/` e `ios/` no se versionan (CNG). Guía en `docs/BUILD.md`.
+- [ ] Preparación producción (primer AAB real por CI, variables, logs, SHA-1 de Play App Signing en Google Cloud)
 - [ ] Sentry día 1 (errores de backend y app)
 
 ## ⬜ FASE 9 — Nube y colaboración
