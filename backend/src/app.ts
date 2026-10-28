@@ -13,6 +13,7 @@ import { expenseCategoriesRoutes } from './routes/expenseCategories.routes';
 import { expensesRoutes } from './routes/expenses.routes';
 import { financeSummary } from './controllers/finance.controller';
 import { goalsRoutes } from './routes/goals.routes';
+import { importRoutes } from './routes/import.routes';
 import { incomesRoutes } from './routes/incomes.routes';
 import { settingsRoutes } from './routes/settings.routes';
 import { scannerRoutes } from './routes/scanner.routes';
@@ -43,8 +44,13 @@ export function buildApp() {
       },
     }),
   );
-  app.use(express.json({ limit: '1mb' }));
   app.use(morgan('dev'));
+
+  // La importación del invitado trae un lote grande (varios MB): se parsea con
+  // su propio límite y va en una sola transacción. El resto de rutas sigue en 1 MB.
+  app.use('/api/import', express.json({ limit: '6mb' }), importRoutes);
+
+  app.use(express.json({ limit: '1mb' }));
 
   app.get('/health', (_req, res) => res.json({ ok: true }));
 

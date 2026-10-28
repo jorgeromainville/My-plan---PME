@@ -6,6 +6,7 @@ import { AndeanTopBand, Chakana } from '../src/components/AndeanMotifs';
 import { Card } from '../src/components/Card';
 import { API_BASE, errorMessage, flushPending } from '../src/services/api';
 import { changePassword, deleteAccount, updateMe } from '../src/services/auth';
+import { guestRowCount, importGuestDataWithAlerts } from '../src/services/guestImport';
 import { clearOps, loadOps } from '../src/services/sync';
 import { storage } from '../src/services/storage';
 import { cancelReminders, remindersGranted, remindersNativeMissing, rescheduleReminders, sendTestReminder } from '../src/services/reminders';
@@ -58,6 +59,9 @@ export default function Perfil() {
   const [confirmText, setConfirmText] = useState('');
   const [delMsg, setDelMsg] = useState('');
   const [delBusy, setDelBusy] = useState(false);
+  // Registros que quedaron del modo invitado (cuenta creada después).
+  const [localRows, setLocalRows] = useState(0);
+  const [localBusy, setLocalBusy] = useState(false);
 
   // Si la sesión carga después de abrir Perfil, refleja los datos del servidor.
   useEffect(() => {
@@ -71,6 +75,8 @@ export default function Perfil() {
   useFocusEffect(
     useCallback(() => {
       loadOps().then((o) => setPending(o.length));
+      // Solo con cuenta: en invitado la función devuelve 0.
+      void guestRowCount().then((n) => setLocalRows(n));
     }, []),
   );
 
@@ -182,6 +188,42 @@ export default function Perfil() {
     );
   }
 
+  async function onUploadLocal() {
+    setLocalBusy(true);
+    try {
+      const ok = await importGuestDataWithAlerts();
+      if (ok) setLocalRows(await guestRowCount());
+    } finally {
+      setLocalBusy(false);
+    }
+  }
+
+  function onDiscardLocal() {
+    Alert.alert(
+      'Borrar datos del teléfono',
+      'Se borrarán los datos que creaste en modo invitado. Tu cuenta no se toca. No se puede deshacer.',
+      [
+        { text: 'Cancelar', style: 'cancel' },
+        {
+          text: 'Borrar',
+          style: 'destructive',
+          onPress: async () => {
+            setLocalBusy(true);
+            try {
+              const { resetLocalData } = await import('../src/services/local/db');
+              await resetLocalData();
+              setLocalRows(0);
+            } catch (e) {
+              Alert.alert('No se pudo borrar', errorMessage(e));
+            } finally {
+              setLocalBusy(false);
+            }
+          },
+        },
+      ],
+    );
+  }
+
   async function toggleReminders(v: boolean) {
     await prefs.set({ reminders: v });
     if (v) {
@@ -227,7 +269,8 @@ export default function Perfil() {
               copia segura y seguir usando My Plan en otros dispositivos.
             </Text>
             <Text style={s.remSub}>
-              La subida automática de estos datos a tu cuenta llega en la próxima actualización.
+              Al crear la cuenta te ofreceremos pasar estos datos a ella; se borran del teléfono
+              cuando el servidor confirma que están guardados.
             </Text>
             <Pressable
               style={s.btn}
@@ -238,6 +281,21 @@ export default function Perfil() {
               }}
             >
               <Text style={s.btnTxt}>Crear cuenta con Google</Text>
+            </Pressable>
+          </Card>
+        ) : null}
+        {!guest && localRows > 0 ? (
+          <Card>
+            <Text style={s.title2}>Datos en este teléfono</Text>
+            <Text style={s.remSub}>
+              Tienes {localRows} registro(s) creados en modo invitado en este teléfono. Súbelos a tu
+              cuenta para no perderlos y poder verlos en otros dispositivos.
+            </Text>
+            <Pressable style={[s.btn, localBusy && { opacity: 0.6 }]} onPress={onUploadLocal} disabled={localBusy}>
+              <Text style={s.btnTxt}>{localBusy ? 'Subiendo…' : 'Subir a mi cuenta'}</Text>
+            </Pressable>
+            <Pressable style={s.ghost} onPress={onDiscardLocal} disabled={localBusy}>
+              <Text style={s.ghostTxt}>Borrar del teléfono</Text>
             </Pressable>
           </Card>
         ) : null}

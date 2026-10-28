@@ -89,13 +89,45 @@ cliente. Si la fórmula cambia en el backend, hay que actualizar `local/stats.ts
    invitado" vuelve al login **sin borrar** los datos locales (se recuperan al volver).
 5. "Crear cuenta" lleva al login de Google con los datos locales intactos.
 
-## Migración invitado → cuenta (pendiente, hito 5)
+## Migración invitado → cuenta (hito 5, hecha)
 
-1. Al entrar con Google con datos locales, preguntar: conservar / subir / descartar.
-2. `POST /api/import` (nuevo, autenticado) recibe un lote y lo inserta en **una
-   transacción**, con ids temporales reescritos y `userId` del token.
-3. Solo si el servidor confirma, borrar el SQLite local (o marcarlo como migrado).
-4. Nunca subir automáticamente sin confirmación: son datos del usuario.
+Contrato: `POST /api/import` (autenticado, `importLimiter` 10/h/IP, cuerpo hasta 6 MB)
+recibe `{ batchId, contacts, places, goals, tasks, events, incomes, expenses,
+goalLogs, contactCategories, expenseCategories, settings }`.
+
+1. Al entrar con Google (login o registro) con datos locales, la app pregunta una vez
+   por ejecución: **Subir ahora / Ahora no / No preguntar más**. Perfil siempre deja
+   la tarjeta "Datos en este teléfono" con subir o borrar.
+2. El servidor inserta **todo en una transacción** (`timeout` 120 s) y genera ids
+   nuevos (uuid) reescribiendo referencias: `contactId`/`clientId`, `placeId`,
+   `goalId`, `members` de metas y la relación eventos↔contactos.
+3. `batchId` (uuid) da idempotencia: se guarda en `Setting` como `import:<batchId>`;
+   un reenvío responde `200 { duplicate: true }` sin duplicar. El móvil conserva el
+   id en `@planner/importBatchId` hasta que la subida confirma.
+4. Los ajustes (`eventTypes`, `templates`) solo se crean si la cuenta no los tiene;
+   las categorías se insertan con `skipDuplicates` (nunca pisan el color existente).
+5. Solo con `201`/`200` se borra el SQLite del teléfono (`resetLocalData`). Si falla,
+   los datos siguen ahí y se puede reintentar (sin duplicar).
+6. Nunca se sube sin confirmación: son datos del usuario.
+
+Detalles de implementación que importan:
+
+- La tabla puente implícita de Prisma es `_EventContacts` (`A` = `Contact.id`,
+  `B` = `Event.id`). Los vínculos se insertan en bruto por bloques de 400 pares
+  (`INSERT ... ON CONFLICT DO NOTHING`) porque un `create` por evento costaba ~450 ms
+  de ida y vuelta a Neon. Hay comprobación con `to_regclass` y un camino de respaldo
+  evento por evento por si el esquema cambiara.
+- SQLite no tiene booleanos: `isBackup` y `done` se convierten a `true`/`false` al
+  exportar (zod los valida como boolean).
+- `Event` y `Place` **no** tienen `createdAt` en Prisma (los demás sí): no enviarlos
+  al servidor ni asumirlos en el orden.
+- Límites: 3000 por colección y 8000 registros por envío; por encima responde 413/400
+  y el móvil muestra el aviso (no borra nada).
+- El timeout del móvil para `/api/import` es 180 s (el normal es 8 s).
+- Verificado de punta a punta contra Neon: lote generado por la exportación real del
+  móvil (contactos, lugar, meta con miembros, tarea, evento con 2 contactos y respaldo,
+  ingreso, gasto y registro de meta), remapeo de ids, totales, reenvío idempotente,
+  400 inválido y 401 sin token. Usuario de prueba borrado (cascada).
 
 ## Hitos
 
@@ -104,7 +136,7 @@ cliente. Si la fórmula cambia en el backend, hay que actualizar `local/stats.ts
 - [x] Enrutador local: tareas, eventos, ingresos, gastos, contactos, lugares, metas,
       catálogos, ajustes, estadísticas y perfil del invitado.
 - [x] `useSession.mode`, ruteo en `api()`, login "Entrar sin cuenta", Perfil invitado.
-- [ ] Importación a cuenta (`POST /api/import`) y borrado del local tras migrar.
+- [x] Importación a cuenta (`POST /api/import`) y borrado del local tras migrar.
 - [x] Pruebas funcionales de la capa local con SQL real (`npm run test:local`, `node:sqlite`): tareas, contactos, ingresos, gastos, eventos, metas, lugares, categorías, estadísticas y errores. 53 comprobaciones.
 - [ ] Pruebas de volumen (5 000 eventos) y de migración de esquema.
 - [ ] Copia de seguridad manual a archivo (exportar/importar JSON) — opcional.

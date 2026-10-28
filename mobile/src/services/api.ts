@@ -53,8 +53,14 @@ export function setOnSessionExpired(fn: () => void) {
 const TIMEOUT_MS = 8000;
 
 async function raw(path: string, opts: RequestInit, token?: string | null) {
-  // El escáner (IA/OCR) tarda ~10 s: no se le puede aplicar el timeout corto.
-  const ms = path.startsWith('/api/scanner') ? 60000 : TIMEOUT_MS;
+  // El escáner (IA/OCR) tarda ~10 s y la importación del invitado corre en una
+  // sola transacción contra Neon (~6-15 s con volumen): no se les puede aplicar
+  // el timeout corto.
+  const ms = path.startsWith('/api/scanner')
+    ? 60000
+    : path === '/api/import'
+      ? 180000
+      : TIMEOUT_MS;
   const ctrl = new AbortController();
   const timer = setTimeout(() => ctrl.abort(), ms);
   try {

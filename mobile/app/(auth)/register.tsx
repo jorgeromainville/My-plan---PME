@@ -3,6 +3,7 @@ import React, { useState } from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { GoogleButton } from '../../src/components/GoogleButton';
+import { offerGuestImport } from '../../src/services/guestImport';
 import { useSession } from '../../src/store/useSession';
 import { useThemedStyles, type ThemeColors } from '../../src/theme/colors';
 
@@ -26,6 +27,8 @@ export default function Register() {
           onSuccess={async (r) => {
             await signIn(r.access, r.user);
             router.replace('/(tabs)');
+            // Si venía del modo invitado, ofrece pasar esos datos a la cuenta.
+            void offerGuestImport();
           }}
         />
         <Pressable onPress={() => router.replace('/(auth)/login')}>

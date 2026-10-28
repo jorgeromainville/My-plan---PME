@@ -68,6 +68,14 @@ export const oauthLimiter = rateLimit({
   message: 'Demasiados intentos de inicio de sesión. Espera 15 minutos.',
 });
 
+// Importación del modo invitado: operación pesada y poco frecuente (una vez por
+// cuenta, como mucho). 10 por hora y por red.
+export const importLimiter = rateLimit({
+  windowMs: 60 * 60 * 1000,
+  max: 10,
+  message: 'Demasiadas importaciones desde esta red. Espera una hora.',
+});
+
 // Tope aparte para **cuentas nuevas** con Google: un login normal no cuenta,
 // solo cuando de verdad se va a crear un usuario. 5 por hora y por IP.
 const newAccountBuckets = new Map<string, Bucket>();
