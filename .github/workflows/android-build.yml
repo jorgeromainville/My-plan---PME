@@ -83,15 +83,21 @@ jobs:
           fi
           node scripts/patch-signing.mjs
 
+      - name: Más memoria para Gradle (NDK / New Arch)
+        working-directory: mobile/android
+        run: echo "org.gradle.jvmargs=-Xmx4096m -XX:MaxMetaspaceSize=1024m" >> gradle.properties
+
       - name: Compilar AAB
         if: ${{ inputs.variant == 'aab' }}
         working-directory: mobile/android
         run: ./gradlew bundleRelease --no-daemon --stacktrace
 
+      # APK para compartir: solo ARM (los teléfonos reales). Sin x86/x86_64 el
+      # archivo baja a la mitad y compila mucho más rápido.
       - name: Compilar APK
         if: ${{ inputs.variant == 'apk' }}
         working-directory: mobile/android
-        run: ./gradlew assembleRelease --no-daemon --stacktrace
+        run: ./gradlew assembleRelease --no-daemon --stacktrace -PreactNativeArchitectures=arm64-v8a,armeabi-v7a
 
       - name: Subir AAB
         if: ${{ inputs.variant == 'aab' }}

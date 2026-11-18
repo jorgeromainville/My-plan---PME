@@ -75,12 +75,14 @@ if (!text.includes(releaseDebugSign)) {
 }
 text = text.replace(releaseDebugSign, releaseRealSign);
 
-// 3) Permitir fijar el versionCode desde la CI sin tocar app.json.
-const versionLine = '        versionCode 1\n';
-if (text.includes(versionLine)) {
+// 3) Permitir fijar el versionCode desde la CI sin tocar app.json, pero
+// respetando el valor que `expo prebuild` tomó de `app.json` si no se pasa.
+const versionMatch = /^(\s*)versionCode\s+(\d+)\r?\n/m.exec(text);
+if (versionMatch) {
+  const [, indent, original] = versionMatch;
   text = text.replace(
-    versionLine,
-    '        versionCode (System.getenv("MYPLAN_VERSION_CODE") ?: "1").toInteger()\n',
+    versionMatch[0],
+    `${indent}versionCode (System.getenv("MYPLAN_VERSION_CODE") ?: "${original}").toInteger()\n`,
   );
 }
 
