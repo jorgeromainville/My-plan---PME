@@ -44,7 +44,6 @@ jobs:
     env:
       EXPO_PUBLIC_API_URL: ${{ secrets.EXPO_PUBLIC_API_URL || 'https://my-plan-api.onrender.com' }}
       EXPO_PUBLIC_GOOGLE_MAPS_KEY: ${{ secrets.EXPO_PUBLIC_GOOGLE_MAPS_KEY }}
-      MYPLAN_VERSION_CODE: ${{ inputs.version_code }}
     steps:
       - uses: actions/checkout@v4
 
@@ -63,6 +62,14 @@ jobs:
 
       - name: Instalar dependencias
         run: npm ci
+
+      # El versionCode se fija aquí (no en Gradle): `expo prebuild` lo copia como
+      # literal y así no hay expresiones de Groovy que puedan fallar.
+      - name: Aplicar versionCode de la entrada
+        if: ${{ inputs.version_code != '' }}
+        env:
+          MYPLAN_VERSION_CODE: ${{ inputs.version_code }}
+        run: node -e "const fs=require('fs');const j=JSON.parse(fs.readFileSync('app.json','utf8'));j.android.versionCode=Number(process.env.MYPLAN_VERSION_CODE);fs.writeFileSync('app.json',JSON.stringify(j,null,2)+'\n');console.log('versionCode ->',j.android.versionCode)"
 
       - name: Generar el proyecto Android
         run: npx expo prebuild --platform android --no-install

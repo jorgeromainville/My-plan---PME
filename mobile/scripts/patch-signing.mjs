@@ -75,16 +75,11 @@ if (!text.includes(releaseDebugSign)) {
 }
 text = text.replace(releaseDebugSign, releaseRealSign);
 
-// 3) Permitir fijar el versionCode desde la CI sin tocar app.json, pero
-// respetando el valor que `expo prebuild` tomó de `app.json` si no se pasa.
-const versionMatch = /^(\s*)versionCode\s+(\d+)\r?\n/m.exec(text);
-if (versionMatch) {
-  const [, indent, original] = versionMatch;
-  text = text.replace(
-    versionMatch[0],
-    `${indent}versionCode (System.getenv("MYPLAN_VERSION_CODE") ?: "${original}").toInteger()\n`,
-  );
-}
+// 3) El versionCode NO se toca aquí: lo deja `expo prebuild` como literal
+// entero desde app.json. Antes se inyectaba una expresión de Groovy con
+// System.getenv, y Gradle reventaba al evaluar :app ("Value is null") cuando la
+// variable llegaba vacía. Para cambiarlo desde la CI se edita app.json antes
+// del prebuild (ver .github/workflows/android-build.yml).
 
 writeFileSync(gradlePath, text);
 console.log('Firma: build.gradle parcheado para usar la llave de MYPLAN_KEYSTORE_PATH.');
