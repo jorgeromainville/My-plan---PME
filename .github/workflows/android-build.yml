@@ -63,6 +63,13 @@ jobs:
       - name: Instalar dependencias
         run: npm ci
 
+      # Expo SDK 57 llama a `mirror-kotlin-inline-modules` con una lista vacía y
+      # con rutas fuera de "android/": el comando sale con 1 y Gradle muere con
+      # "Process 'command 'node'' finished with non-zero exit value 1".
+      # El parche lo deja como no-op (no usamos módulos inline). Ver el script.
+      - name: Parchear autolinking de Expo
+        run: node scripts/patch-expo-autolinking.mjs
+
       # El versionCode se fija aquí (no en Gradle): `expo prebuild` lo copia como
       # literal y así no hay expresiones de Groovy que puedan fallar.
       - name: Aplicar versionCode de la entrada
