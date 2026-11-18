@@ -26,3 +26,4 @@ yarn-error.log*
 # Sistema
 .DS_Store
 Thumbs.db
+autolinking-error.log

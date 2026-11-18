@@ -130,3 +130,16 @@ jobs:
           path: mobile/android/app/build/outputs/apk/release/*.apk
           if-no-files-found: error
           retention-days: 30
+
+      # El stderr del comando de autolinking no llega al log de Gradle: el
+      # parche lo deja en este archivo. Se imprime siempre, falle o no.
+      - name: Revisar autolinking
+        if: always()
+        working-directory: .
+        run: |
+          if [ -f autolinking-error.log ]; then
+            echo "::warning::El comando de autolinking falló:"
+            cat autolinking-error.log
+          else
+            echo "Sin errores de autolinking."
+          fi

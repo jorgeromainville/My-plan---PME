@@ -101,3 +101,44 @@ npx expo export --platform android --output-dir "$env:TEMP\myplan-export"
 
 Si `prebuild` termina sin errores y `expo export` produce el bundle, el código no
 depende de nada exclusivo de EAS.
+
+---
+
+## Errores conocidos del build (Expo SDK 57)
+
+Dos fallos del CI no vienen del código de la app, sino de cómo Expo SDK 57
+genera y configura el proyecto Android. Los dos ya están resueltos por scripts;
+esta sección existe para reconocerlos si vuelven.
+
+### `Value is null` al evaluar `:app`
+
+```
+A problem occurred evaluating project ':app'
+> Value is null
+  app/build.gradle line: 95
+```
+
+Era el parche de firma: inyectaba `versionCode` con una expresión de Groovy
+basada en `System.getenv("MYPLAN_VERSION_CODE")` y Gradle la evaluaba a `null`.
+**Regla:** `patch-signing.mjs` solo toca la firma. El `versionCode` se queda
+como literal entero que escribe `prebuild` desde `app.json`, y el input
+`version_code` del workflow se aplica reescribiendo `app.json` antes.
+
+### `Process 'command 'node'' finished with non-zero exit value 1`
+
+Aparece al evaluar el proyecto, sin mensaje útil, justo después de listar los
+módulos de Expo. Lo provoca `expo-modules-autolinking`:
+
+1. `ExpoAutolinkingPlugin.kt` pasa `expo.inlineModules.watchedDirectories` como
+   lista vacía; Gradle expande una lista vacía a **cero argumentos** y
+   `commander` aborta con `option '--watched-directories-serialized' argument
+   missing`.
+2. Aunque llegara el valor, el comando exige que las rutas contengan `android`,
+   pero las calcula sobre el proyecto `:expo` (`node_modules/expo/src/main/...`),
+   así que lanza `Generation path is not inside any android directory!`.
+
+No está corregido hasta 57.0.18. Como la app no usa módulos inline, el comando
+es un no-op y `mobile/scripts/patch-expo-autolinking.mjs` lo deja saliendo con
+código 0. **Si algún día se hace `rm -rf node_modules` o cambia la versión de
+Expo, hay que volver a correrlo** (y revisar que siga encontrando los
+fragmentos; si no, el script falla ruidosamente en vez de seguir de largo).
