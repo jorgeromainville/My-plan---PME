@@ -180,3 +180,13 @@ Un APK firmado con el keystore **debug** que genera cada runner de GitHub tiene
 un certificado distinto en cada build, así que Android rechaza instalar encima
 ("App not installed") y el SHA-1 de Google Sign-In nunca coincide. Con la llave
 propia la firma es estable y el APK se actualiza sin desinstalar.
+
+### Comprobar la firma de un APK sin Java
+
+```powershell
+node mobile/scripts/apk-signer-sha1.mjs dist\MyPlan-1.0.0.apk 44:31:FD:...
+```
+
+El script lee el bloque de firma v2 del propio APK, extrae el certificado y
+compara su SHA-1 con el esperado (devuelve código 1 si no coincide). Sirve para
+verificar que un APK descargado de Actions es de verdad el firmado con tu llave.
