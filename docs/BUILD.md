@@ -142,3 +142,41 @@ es un no-op y `mobile/scripts/patch-expo-autolinking.mjs` lo deja saliendo con
 código 0. **Si algún día se hace `rm -rf node_modules` o cambia la versión de
 Expo, hay que volver a correrlo** (y revisar que siga encontrando los
 fragmentos; si no, el script falla ruidosamente en vez de seguir de largo).
+
+---
+
+## Llave de firma
+
+La llave se genera una sola vez con el workflow **Android keystore** y queda
+como 4 secretos del repositorio:
+
+| Secreto | Valor |
+|---|---|
+| `MYPLAN_KEYSTORE_BASE64` | `upload.keystore` en base64 |
+| `MYPLAN_KEYSTORE_PASSWORD` | contraseña del almacén |
+| `MYPLAN_KEY_ALIAS` | `upload` |
+| `MYPLAN_KEY_PASSWORD` | contraseña de la llave |
+
+El build imprime el SHA-1 y el SHA-256 del certificado en el paso **Huella de
+la firma** (`./gradlew signingReport`). Ese SHA-1 es el que hay que registrar en
+Google Cloud para que funcione el inicio de sesión con Google.
+
+### Registrar el SHA-1 en Google Cloud
+
+1. Google Cloud Console → **APIs y servicios → Credenciales**.
+2. Abre el cliente OAuth de tipo **Android** con el paquete `app.myplan.today`
+   (o créalo si no existe).
+3. Añade el **SHA-1** que imprimió el build. Puedes tener varios: el de la llave
+   de subida y el que use Play App Signing (la huella definitiva de las
+   instalaciones de Play Store).
+4. Guarda y espera unos minutos: Google tarda en propagar el cambio.
+
+Mientras el SHA-1 no coincida, `GoogleSignin.signIn()` devuelve el error
+`DEVELOPER_ERROR` (código 10). El modo invitado no se ve afectado.
+
+### Sin un keystore propio no hay actualizaciones
+
+Un APK firmado con el keystore **debug** que genera cada runner de GitHub tiene
+un certificado distinto en cada build, así que Android rechaza instalar encima
+("App not installed") y el SHA-1 de Google Sign-In nunca coincide. Con la llave
+propia la firma es estable y el APK se actualiza sin desinstalar.
