@@ -44,6 +44,13 @@ jobs:
     env:
       EXPO_PUBLIC_API_URL: ${{ secrets.EXPO_PUBLIC_API_URL || 'https://my-plan-api.onrender.com' }}
       EXPO_PUBLIC_GOOGLE_MAPS_KEY: ${{ secrets.EXPO_PUBLIC_GOOGLE_MAPS_KEY }}
+      # La firma lee estas tres del entorno de Gradle. Si se declaran solo en el
+      # paso que decodifica el keystore, Gradle no las ve y cae en los valores
+      # por defecto de la llave debug ("androiddebugkey"/"android"), que no
+      # abren un keystore real: "keystore password was incorrect".
+      MYPLAN_KEYSTORE_PASSWORD: ${{ secrets.MYPLAN_KEYSTORE_PASSWORD }}
+      MYPLAN_KEY_ALIAS: ${{ secrets.MYPLAN_KEY_ALIAS }}
+      MYPLAN_KEY_PASSWORD: ${{ secrets.MYPLAN_KEY_PASSWORD }}
     steps:
       - uses: actions/checkout@v4
 
@@ -89,6 +96,10 @@ jobs:
           MYPLAN_KEY_PASSWORD: ${{ secrets.MYPLAN_KEY_PASSWORD }}
         run: |
           if [ -n "$MYPLAN_KEYSTORE_BASE64" ]; then
+            if [ -z "$MYPLAN_KEYSTORE_PASSWORD" ] || [ -z "$MYPLAN_KEY_ALIAS" ] || [ -z "$MYPLAN_KEY_PASSWORD" ]; then
+              echo "::error::Hay keystore en los secretos pero falta MYPLAN_KEYSTORE_PASSWORD, MYPLAN_KEY_ALIAS o MYPLAN_KEY_PASSWORD."
+              exit 1
+            fi
             echo "$MYPLAN_KEYSTORE_BASE64" | base64 -d > android/app/upload.keystore
             echo "MYPLAN_KEYSTORE_PATH=upload.keystore" >> "$GITHUB_ENV"
             echo "Firmando con la llave de subida."
