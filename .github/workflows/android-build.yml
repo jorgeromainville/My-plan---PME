@@ -143,3 +143,10 @@ jobs:
           else
             echo "Sin errores de autolinking."
           fi
+
+      # Huella del certificado: es la que se registra en Google Cloud para que
+      # funcione el inicio de sesión con Google (cliente OAuth de Android).
+      - name: Huella de la firma
+        if: ${{ inputs.variant == 'apk' }}
+        working-directory: mobile/android
+        run: ./gradlew -q signingReport 2>&1 | grep -E "Variant:|Config:|Alias:|SHA-1:|SHA-256:" || true
